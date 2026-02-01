@@ -88,6 +88,29 @@
             box-shadow: 0 0 40px rgba(225, 29, 72, 0.8);
         }
 
+        #caller-name-input {
+            padding: 16px 24px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            width: 300px;
+            outline: none;
+        }
+
+        #caller-name-input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        #caller-name-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(225, 29, 72, 0.4);
+        }
+
         /* --- LEFT SIDE (The Board) --- */
         .board-container{
             flex-grow: 1;
@@ -190,8 +213,25 @@
         .header-history-title {
             font-family: 'Impact', 'Arial Black', sans-serif;
             color: var(--muted);
-            font-size: 1.5rem;
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+        }
+
+        .caller-name-display {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            color: var(--gold);
+            font-size: 1.8rem;
             margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header-history-subtitle {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            color: var(--muted);
+            font-size: 1rem;
+            margin-bottom: 8px;
             letter-spacing: 1px;
         }
 
@@ -672,6 +712,7 @@ option {
     <!-- START SCREEN (Click to unlock media/audio) -->
     <div id="start-screen">
         <h1>BINGO CALLER V3</h1>
+        <input type="text" id="caller-name-input" placeholder="Enter Caller's Name" autocomplete="off">
         <button id="btn-start-app">CLICK TO START</button>
     </div>
 
@@ -702,9 +743,11 @@ option {
                 <!-- Caller name removed as requested -->
             </div>
 
-            <!-- 3. LAST 5 BALLS (Right) -->
+            <!-- 3. CALLER INFO & LAST 5 BALLS (Right) -->
             <div class="header-history">
-                <div class="header-history-title">LAST 5 CALLS</div>
+                <div class="header-history-title">TONIGHT'S CALLER</div>
+                <div class="caller-name-display" id="caller-name-display">--</div>
+                <div class="header-history-subtitle">LAST 5 CALLS</div>
                 <div class="header-history-balls" id="header-history-list">
                     <!-- JS will populate balls here -->
                 </div>
@@ -977,15 +1020,21 @@ option {
         
         // --- START BUTTON LOGIC ---
         btnStartApp.addEventListener('click', () => {
+            // Get caller's name and display it
+            const callerNameInput = document.getElementById('caller-name-input');
+            const callerNameDisplay = document.getElementById('caller-name-display');
+            const callerName = callerNameInput.value.trim() || 'Anonymous';
+            callerNameDisplay.textContent = callerName;
+
             // Hide start screen
             startScreen.style.display = 'none';
-            
+
             // Try to start video immediately (user interaction blessing)
             const vidEl = document.getElementById('banner-vid');
             if (vidEl && vidEl.style.display !== 'none') {
                 vidEl.play().catch(e => console.log("Play error", e));
             }
-            
+
             // Also try to init speech synthesis (needs interaction sometimes)
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
