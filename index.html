@@ -1024,6 +1024,27 @@ option {
             resizeCanvas();
         }
         
+        // --- WAKE LOCK (Prevent Screen Sleep) ---
+        let wakeLock = null;
+
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('Wake Lock active - screen will stay on');
+                }
+            } catch (err) {
+                console.log('Wake Lock failed:', err);
+            }
+        }
+
+        // Re-acquire wake lock if page becomes visible again
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && !wakeLock) {
+                requestWakeLock();
+            }
+        });
+
         // --- START BUTTON LOGIC ---
         btnStartApp.addEventListener('click', () => {
             // Get caller's name and display it
@@ -1034,6 +1055,9 @@ option {
 
             // Hide start screen
             startScreen.style.display = 'none';
+
+            // Request wake lock to prevent screen sleep
+            requestWakeLock();
 
             // Try to start video immediately (user interaction blessing)
             const vidEl = document.getElementById('banner-vid');
