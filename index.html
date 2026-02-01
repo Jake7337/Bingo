@@ -171,30 +171,25 @@
             z-index: 0;
         }
 
-        /* Section 2: Welcome (Middle) - UPDATED FOR BACKGROUND IMAGE */
+        /* Section 2: Welcome (Middle) - VIDEO VERSION */
         .header-welcome {
             flex: 1;
-            background: url('welcomelogo.gif') no-repeat center center;
-            background-size: contain; /* Changed to contain so image doesn't spill out */
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 0;
             position: relative;
+            overflow: hidden;
+            background: rgba(0,0,0,0.3);
         }
 
-        /* Optional overlay to make text pop if image is busy */
-        .header-welcome::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            /* Removed tint to see logo clearer, add background-color if needed for empty space */
-            /* background: rgba(0,0,0,0.2); */
-            border-radius: var(--radius-md);
-            z-index: 0;
+        .header-welcome video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         /* Section 3: History (Right) */
@@ -744,9 +739,11 @@ option {
                 <div id="media-error" class="media-error-msg"></div>
             </div>
 
-            <!-- 2. WELCOME / CALLER NAME (Middle) - UPDATED with logo BG -->
+            <!-- 2. WELCOME LOGO VIDEO (Middle) -->
             <div class="header-welcome">
-                <!-- Caller name removed as requested -->
+                <video id="welcome-video" autoplay muted loop playsinline>
+                    <source src="welcomelogo.mp4" type="video/mp4">
+                </video>
             </div>
 
             <!-- 3. CALLER INFO & LAST 5 BALLS (Right) -->
