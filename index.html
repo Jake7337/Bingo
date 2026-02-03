@@ -828,7 +828,7 @@ option {
     <!-- Visuals -->
     <div id="winner-overlay">BINGO!</div>
     <div id="winner-video-overlay" onclick="stopWinnerEffect()">
-        <video id="winner-video" playsinline loop></video>
+        <video id="winner-video" playsinline loop muted></video>
     </div>
     <canvas id="confetti-canvas"></canvas>
 
@@ -1354,7 +1354,7 @@ option {
         }
 
         // --- Winner Effect ---
-        const winnerVideos = ['bingo1.mp4', 'bingo2.mp4', 'Bingo3.mp4'];
+        const winnerVideos = ['winner1.mp4', 'winner2.mp4', 'winner3.mp4', 'winner4.mp4', 'winner5.mp4'];
         const winnerVideoOverlay = document.getElementById('winner-video-overlay');
         const winnerVideoEl = document.getElementById('winner-video');
 
