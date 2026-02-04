@@ -508,6 +508,11 @@
             box-shadow: 0 0 14px rgba(96,165,250,0.35);
         }
 
+        .pattern-cell.free-space{
+            background: rgba(250, 204, 21, 0.7);
+            box-shadow: 0 0 10px rgba(250, 204, 21, 0.4);
+        }
+
         select{
             padding: 14px 14px;
             border-radius: 12px;
@@ -804,6 +809,10 @@
         .modal-pattern-cell.target{
             background-color: var(--pattern-color);
             box-shadow: 0 0 20px rgba(96,165,250,0.5);
+        }
+        .modal-pattern-cell.free-space{
+            background: rgba(250, 204, 21, 0.7);
+            box-shadow: 0 0 14px rgba(250, 204, 21, 0.4);
         }
         #pattern-modal-buttons{
             display: flex;
@@ -1326,7 +1335,9 @@ option {
             for (let i = 0; i < 25; i++) {
                 const cell = document.createElement('div');
                 cell.className = 'pattern-cell';
-                if (activePatternIndices.has(i)) {
+                if (i === 12) {
+                    cell.classList.add('free-space');
+                } else if (activePatternIndices.has(i)) {
                     cell.classList.add('target');
                 }
                 patternVisualEl.appendChild(cell);
@@ -1355,19 +1366,24 @@ option {
             for (let i = 0; i < 25; i++) {
                 const cell = document.createElement('div');
                 cell.className = 'modal-pattern-cell';
-                if (activePatternIndices.has(i)) {
-                    cell.classList.add('target');
-                }
-                cell.onclick = () => {
+                if (i === 12) {
+                    cell.classList.add('free-space');
+                    // Free space is always free - no click toggle
+                } else {
                     if (activePatternIndices.has(i)) {
-                        activePatternIndices.delete(i);
-                    } else {
-                        activePatternIndices.add(i);
+                        cell.classList.add('target');
                     }
-                    patternSelect.value = "custom";
-                    modalPatternSelect.value = "custom";
-                    renderModalPatternGrid();
-                };
+                    cell.onclick = () => {
+                        if (activePatternIndices.has(i)) {
+                            activePatternIndices.delete(i);
+                        } else {
+                            activePatternIndices.add(i);
+                        }
+                        patternSelect.value = "custom";
+                        modalPatternSelect.value = "custom";
+                        renderModalPatternGrid();
+                    };
+                }
                 modalPatternGrid.appendChild(cell);
             }
         }
