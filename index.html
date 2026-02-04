@@ -1846,6 +1846,18 @@ option {
 
         initGame();
 
+        // --- Auto-Scale to Fit Screen ---
+        function autoScale() {
+            const designWidth = 1920;
+            const designHeight = 1080;
+            const scaleX = window.innerWidth / designWidth;
+            const scaleY = window.innerHeight / designHeight;
+            const scale = Math.min(scaleX, scaleY, 1); // Never scale up, only down
+            document.body.style.zoom = scale;
+        }
+        autoScale();
+        window.addEventListener('resize', autoScale);
+
     </script>
 </body>
 </html>
