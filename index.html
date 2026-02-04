@@ -827,6 +827,17 @@
             border-color: rgba(248, 113, 113, 0.5);
             color: #f87171;
         }
+        #modal-pattern-select{
+            padding: 14px 20px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: #fff;
+            width: min(400px, 80vw);
+            cursor: pointer;
+        }
 
         #flash-message{
             position: fixed;
@@ -1029,6 +1040,22 @@ option {
     </div>
     <div id="pattern-modal">
         <h2>Edit Pattern</h2>
+        <select id="modal-pattern-select">
+            <option value="fullcard">Full Card</option>
+            <option value="x">X Pattern</option>
+            <option value="t">T Pattern</option>
+            <option value="l">L Pattern</option>
+            <option value="corners">4 Corners</option>
+            <option value="outsidebox">Outside Box</option>
+            <option value="insidebox">Inside Box</option>
+            <option value="blackout">Blackout</option>
+            <option value="diamond">Diamond</option>
+            <option value="checkerboard">Checkerboard</option>
+            <option value="v">V</option>
+            <option value="plus">Plus Sign</option>
+            <option value="airplane">Airplane</option>
+            <option value="custom">Custom...</option>
+        </select>
         <div id="modal-pattern-grid"></div>
         <div id="pattern-modal-buttons">
             <button id="btn-pattern-confirm">CONFIRM</button>
@@ -1297,9 +1324,11 @@ option {
         // --- Pattern Logic ---
         const patternModal = document.getElementById('pattern-modal');
         const modalPatternGrid = document.getElementById('modal-pattern-grid');
+        const modalPatternSelect = document.getElementById('modal-pattern-select');
         const btnPatternConfirm = document.getElementById('btn-pattern-confirm');
         const btnPatternCancel = document.getElementById('btn-pattern-cancel');
         let savedPatternIndices = new Set();
+        let savedPatternKey = 'fullcard';
 
         function renderPatternGrid() {
             patternVisualEl.innerHTML = '';
@@ -1319,6 +1348,9 @@ option {
         function openPatternModal() {
             // Save current state in case of cancel
             savedPatternIndices = new Set(activePatternIndices);
+            savedPatternKey = patternSelect.value;
+            // Sync modal dropdown with main dropdown
+            modalPatternSelect.value = patternSelect.value;
             renderModalPatternGrid();
             patternModal.classList.add('show');
         }
@@ -1342,13 +1374,26 @@ option {
                         activePatternIndices.add(i);
                     }
                     patternSelect.value = "custom";
+                    modalPatternSelect.value = "custom";
                     renderModalPatternGrid();
                 };
                 modalPatternGrid.appendChild(cell);
             }
         }
 
+        // Handle modal dropdown changes
+        modalPatternSelect.addEventListener('change', (e) => {
+            const key = e.target.value;
+            activePatternIndices.clear();
+            if (patterns[key]) {
+                patterns[key].forEach(idx => activePatternIndices.add(idx));
+            }
+            renderModalPatternGrid();
+        });
+
         btnPatternConfirm.onclick = () => {
+            // Sync main dropdown with modal
+            patternSelect.value = modalPatternSelect.value;
             renderPatternGrid();
             closePatternModal();
         };
@@ -1356,6 +1401,7 @@ option {
         btnPatternCancel.onclick = () => {
             // Restore saved state
             activePatternIndices = new Set(savedPatternIndices);
+            patternSelect.value = savedPatternKey;
             renderPatternGrid();
             closePatternModal();
         };
