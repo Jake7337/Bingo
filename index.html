@@ -549,6 +549,35 @@
 
         input[type="range"]{ accent-color: var(--accent); }
 
+        .voice-toggle{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0,0,0,0.22);
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+        }
+        .voice-toggle input[type="checkbox"]{
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+        .toggle-label{
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+        #voice-status{
+            color: #4ade80;
+        }
+        .voice-toggle:has(input:not(:checked)) #voice-status{
+            color: #f87171;
+        }
+
         button{
             padding: 16px;
             font-size: 1.15rem;
@@ -898,6 +927,12 @@ option {
                 </div>
                 <input type="range" id="delay-slider" min="0" max="8" value="5" step="1" style="width: 100%; cursor: pointer;">
             </div>
+
+            <!-- Voice Toggle -->
+            <label class="voice-toggle">
+                <input type="checkbox" id="voice-enabled" checked>
+                <span class="toggle-label">Voice: <span id="voice-status">ON</span></span>
+            </label>
 
             <button id="btn-call">CALL NUMBER</button>
 <button id="btn-winner">WINNER!</button>
@@ -1430,11 +1465,19 @@ option {
             }
         }
 
+        const voiceToggle = document.getElementById('voice-enabled');
+        const voiceStatus = document.getElementById('voice-status');
+
+        voiceToggle.addEventListener('change', () => {
+            voiceStatus.textContent = voiceToggle.checked ? 'ON' : 'OFF';
+        });
+
         function speak(text) {
+            if (!voiceToggle.checked) return;
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 0.9; 
+                utterance.rate = 0.9;
                 window.speechSynthesis.speak(utterance);
             }
         }
