@@ -976,18 +976,12 @@ option {
         <div class="pattern-container">
             <select id="pattern-select">
                 <option value="fullcard">Full Card</option>
-                <option value="x">Letter X</option>
-                <option value="t">Letter T (Any Way)</option>
-                <option value="l">Letter L (Any Way)</option>
-                <option value="a">Letter A</option>
-                <option value="m">Letter M</option>
+                <option value="x">X Pattern</option>
+                <option value="t">T Pattern</option>
+                <option value="l">L Pattern</option>
                 <option value="corners">4 Corners</option>
-                <option value="frame">Picture Frame</option>
+                <option value="outsidebox">Outside Box</option>
                 <option value="insidebox">Inside Box</option>
-                <option value="fieldgoal">Field Goal</option>
-                <option value="stripes">Stripes</option>
-                <option value="kite">Kite (Any Way)</option>
-                <option value="heart">Heart</option>
                 <option value="v">V</option>
                 <option value="plus">Plus Sign</option>
                 <option value="airplane">Airplane</option>
@@ -1048,9 +1042,6 @@ option {
             <option value="corners">4 Corners</option>
             <option value="outsidebox">Outside Box</option>
             <option value="insidebox">Inside Box</option>
-            <option value="blackout">Blackout</option>
-            <option value="diamond">Diamond</option>
-            <option value="checkerboard">Checkerboard</option>
             <option value="v">V</option>
             <option value="plus">Plus Sign</option>
             <option value="airplane">Airplane</option>
@@ -1196,7 +1187,7 @@ option {
             'a': [1,2,3, 5,9, 10,11,12,13,14, 15,19, 20,24],
             'm': [0,4, 5,6,8,9, 10,12,14, 15,19, 20,24],
             'corners': [0, 4, 20, 24],
-            'frame': [0,1,2,3,4, 5,9, 10,14, 15,19, 20,21,22,23,24],
+            'outsidebox': [0,1,2,3,4, 5,9, 10,14, 15,19, 20,21,22,23,24],
             'insidebox': [6,7,8, 11,12,13, 16,17,18], 
             'fieldgoal': [0,2,4, 5,9, 10,11,12,13,14, 17,22],
             'stripes': [0,1,2,3,4, 10,11,12,13,14, 20,21,22,23,24],
@@ -1392,9 +1383,10 @@ option {
         });
 
         btnPatternConfirm.onclick = () => {
-            // Sync main dropdown with modal
+            // Sync main dropdown and apply auto-dimming
             patternSelect.value = modalPatternSelect.value;
             renderPatternGrid();
+            applyAutoDimming(modalPatternSelect.value);
             closePatternModal();
         };
 
@@ -1412,10 +1404,13 @@ option {
                 patterns[key].forEach(idx => activePatternIndices.add(idx));
             }
             renderPatternGrid();
-            
+            applyAutoDimming(key);
+        }
+
+        function applyAutoDimming(key) {
             // Auto-Dimming Logic (Horizontal Rows)
-            resetBoardDimming(); 
-            
+            resetBoardDimming();
+
             // Logic: Index 0=B, 1=I, 2=N, 3=G, 4=O
             if (key === 'x') {
                 // Dim N row (Index 2)
