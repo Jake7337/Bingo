@@ -695,6 +695,40 @@
             object-fit: cover;
         }
 
+        /* Intermission Overlay */
+        #intermission-overlay{
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,1);
+            z-index: 300;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        #intermission-overlay.show{
+            display: flex;
+        }
+
+        #intermission-video{
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Split buttons container */
+        .split-buttons{
+            display: flex;
+            gap: 8px;
+        }
+        .split-buttons button{
+            flex: 1;
+        }
+
         #flash-message{
             position: fixed;
             top: 50%;
@@ -738,14 +772,14 @@ option {
 }
 
 
-        #btn-fullscreen{
-            background: rgba(96, 165, 250, 0.18);
-            border-color: rgba(96, 165, 250, 0.35);
+        #btn-intermission{
+            background: rgba(168, 85, 247, 0.18);
+            border-color: rgba(168, 85, 247, 0.35);
         }
-        #btn-fullscreen:hover{
+        #btn-intermission:hover{
             filter: brightness(1.08);
         }
-    
+
 </style>
 </head>
 <body>
@@ -860,8 +894,10 @@ option {
 
             <button id="btn-call">CALL NUMBER</button>
 <button id="btn-winner">WINNER!</button>
-            <button id="btn-reset">RESET GAME</button>
-            <button id="btn-fullscreen">FULL SCREEN</button>
+            <div class="split-buttons">
+                <button id="btn-reset">RESET</button>
+                <button id="btn-intermission">INTERMISSION</button>
+            </div>
         </div>
     </div>
 
@@ -874,6 +910,9 @@ option {
     </div>
     <div id="winner-video-overlay" onclick="stopWinnerEffect()">
         <video id="winner-video" playsinline loop muted></video>
+    </div>
+    <div id="intermission-overlay" onclick="stopIntermission()">
+        <video id="intermission-video" playsinline loop muted></video>
     </div>
     <canvas id="confetti-canvas"></canvas>
 
@@ -1532,27 +1571,24 @@ option {
         btnCall.addEventListener('click', callNumber);
         btnReset.addEventListener('click', initGame);
         
-        // --- Fullscreen Toggle (caller-friendly) ---
-        const btnFullscreen = document.getElementById('btn-fullscreen');
-        if (btnFullscreen) {
-            const syncFsLabel = () => {
-                btnFullscreen.textContent = document.fullscreenElement ? "EXIT FULL SCREEN" : "FULL SCREEN";
-            };
-            btnFullscreen.addEventListener('click', async () => {
-                try {
-                    if (!document.fullscreenElement) {
-                        await document.documentElement.requestFullscreen();
-                    } else {
-                        await document.exitFullscreen();
-                    }
-                } catch (e) {
-                    console.warn("Fullscreen failed:", e);
-                }
-                syncFsLabel();
-            });
-            document.addEventListener('fullscreenchange', syncFsLabel);
-            syncFsLabel();
+        // --- Intermission ---
+        const btnIntermission = document.getElementById('btn-intermission');
+        const intermissionOverlay = document.getElementById('intermission-overlay');
+        const intermissionVideo = document.getElementById('intermission-video');
+
+        function startIntermission() {
+            intermissionVideo.src = 'intermission.mp4';
+            intermissionVideo.play();
+            intermissionOverlay.classList.add('show');
         }
+
+        function stopIntermission() {
+            intermissionOverlay.classList.remove('show');
+            intermissionVideo.pause();
+            intermissionVideo.src = '';
+        }
+
+        btnIntermission.addEventListener('click', startIntermission);
     btnWinner.addEventListener('click', toggleWinner);
         
         patternSelect.addEventListener('change', (e) => {
