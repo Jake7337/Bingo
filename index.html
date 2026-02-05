@@ -88,6 +88,25 @@
             box-shadow: 0 0 40px rgba(225, 29, 72, 0.8);
         }
 
+        .created-by {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.45);
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .created-by a {
+            color: rgba(96, 165, 250, 0.6);
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+
+        .created-by a:hover {
+            color: rgba(96, 165, 250, 1);
+            text-decoration: underline;
+        }
+
         #caller-name-input {
             padding: 16px 24px;
             font-size: 1.5rem;
@@ -915,6 +934,10 @@ option {
         <h1>BINGO CALLER V4</h1>
         <input type="text" id="caller-name-input" placeholder="Enter Caller's Name" autocomplete="off">
         <button id="btn-start-app">CLICK TO START</button>
+        <div class="created-by">
+            Created by The Vision Forge<br>
+            <a href="https://www.youtube.com/@The_Vision_Forge" target="_blank">www.youtube.com/@The_Vision_Forge</a>
+        </div>
     </div>
 
     <!-- Left Content (Board) -->
