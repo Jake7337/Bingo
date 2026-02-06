@@ -441,12 +441,43 @@
             padding: 18px;
             border-radius: var(--radius-md);
             border: 1px solid var(--border);
+            flex-grow: 1;
         }
 
-        #btn-edit-pattern {
+        #btn-choose-game {
             background: rgba(96, 165, 250, 0.18);
             border-color: rgba(96, 165, 250, 0.35);
             width: 100%;
+            font-size: 1.3rem;
+        }
+
+        .pattern-display-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            width: 100%;
+            aspect-ratio: 1;
+            max-width: 280px;
+            padding: 12px;
+            background: rgba(0,0,0,0.35);
+            border-radius: 14px;
+            border: 2px solid rgba(255,255,255,0.12);
+        }
+
+        .pattern-display-cell {
+            background: rgba(255,255,255,0.08);
+            border-radius: 8px;
+            aspect-ratio: 1;
+        }
+
+        .pattern-display-cell.target {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            box-shadow: 0 0 12px rgba(96, 165, 250, 0.4);
+        }
+
+        .pattern-display-cell.free-space {
+            background: linear-gradient(135deg, #fcd34d, #f59e0b);
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
         }
 
         select{
@@ -996,7 +1027,7 @@ option {
 
         <!-- Pattern Controls -->
         <div class="pattern-container">
-            <select id="pattern-select">
+            <select id="pattern-select" style="display:none;">
                 <option value="fullcard">Full Card</option>
                 <option value="x">X Pattern</option>
                 <option value="t">T Pattern</option>
@@ -1009,7 +1040,8 @@ option {
                 <option value="airplane">Airplane</option>
                 <option value="custom">Custom...</option>
             </select>
-            <button id="btn-edit-pattern">EDIT PATTERN</button>
+            <button id="btn-choose-game">CHOOSE GAME</button>
+            <div id="pattern-display" class="pattern-display-grid"></div>
         </div>
 
         <!-- Game Controls -->
@@ -1053,7 +1085,6 @@ option {
     </div>
     <div id="letsplay-overlay">
         <div class="letsplay-content">
-            <div class="letsplay-title">TONIGHT'S PATTERN</div>
             <div class="letsplay-pattern-name" id="letsplay-pattern-name">Full Card</div>
             <div class="letsplay-pattern-grid" id="letsplay-pattern-grid"></div>
             <button id="btn-letsplay">LET'S PLAY!</button>
@@ -1101,7 +1132,8 @@ option {
         const boardEl = document.getElementById('board');
         const currentCallEl = document.getElementById('current-call');
         const patternSelect = document.getElementById('pattern-select');
-        const btnEditPattern = document.getElementById('btn-edit-pattern');
+        const btnChooseGame = document.getElementById('btn-choose-game');
+        const patternDisplayEl = document.getElementById('pattern-display');
         const headerHistoryListEl = document.getElementById('header-history-list');
         const btnCall = document.getElementById('btn-call');
         const btnReset = document.getElementById('btn-reset');
@@ -1348,7 +1380,21 @@ option {
         let savedPatternKey = 'fullcard';
 
         // Open modal when clicking edit button
-        btnEditPattern.onclick = () => openPatternModal();
+        btnChooseGame.onclick = () => openPatternModal();
+
+        function renderPatternDisplay() {
+            patternDisplayEl.innerHTML = '';
+            for (let i = 0; i < 25; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'pattern-display-cell';
+                if (i === 12) {
+                    cell.classList.add('free-space');
+                } else if (activePatternIndices.has(i)) {
+                    cell.classList.add('target');
+                }
+                patternDisplayEl.appendChild(cell);
+            }
+        }
 
         function openPatternModal() {
             // Save current state in case of cancel
@@ -1404,6 +1450,7 @@ option {
         btnPatternConfirm.onclick = () => {
             // Sync main dropdown and apply auto-dimming
             patternSelect.value = modalPatternSelect.value;
+            renderPatternDisplay();
             applyAutoDimming(modalPatternSelect.value);
             closePatternModal();
         };
@@ -1412,6 +1459,7 @@ option {
             // Restore saved state
             activePatternIndices = new Set(savedPatternIndices);
             patternSelect.value = savedPatternKey;
+            renderPatternDisplay();
             closePatternModal();
         };
 
@@ -1420,6 +1468,7 @@ option {
             if (patterns[key]) {
                 patterns[key].forEach(idx => activePatternIndices.add(idx));
             }
+            renderPatternDisplay();
             applyAutoDimming(key);
         }
 
