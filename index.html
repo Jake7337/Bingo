@@ -485,11 +485,14 @@
             border-radius: 12px;
             font-size: 1.1rem;
             width: 100%;
-            background: rgba(255,255,255,0.08);
+            background-color: rgba(20, 24, 32, 0.95);
             border: 2px solid rgba(255,255,255,0.12);
-            color: var(--text);
+            color: rgba(255,255,255,0.95);
             font-weight: 800;
             outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
         }
 
         /* --- BOTTOM CONTROLS --- */
@@ -926,16 +929,8 @@
             transform: translate(-50%, -50%) scale(1);
         }
 
-    
-/* FIX dropdown hover/overlay issue on TV */
-select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-color: rgba(20, 24, 32, 0.95);
-  color: rgba(255,255,255,0.95);
-}
 
+/* FIX dropdown hover/overlay issue on TV */
 option {
   background-color: rgb(20, 24, 32);
   color: rgba(255,255,255,0.95);
@@ -999,6 +994,9 @@ option {
                 <video id="welcome-video" autoplay muted loop playsinline>
                     <source src="welcomelogo.mp4" type="video/mp4">
                 </video>
+                <div id="welcome-fallback" style="display:none; color:var(--muted); font-weight:900; font-size:1.5rem; text-align:center; position:absolute;">
+                    BELLWOOD FOE 1859
+                </div>
             </div>
 
             <!-- 3. CALLER INFO & LAST 5 BALLS (Right) -->
@@ -1024,6 +1022,7 @@ option {
     <div class="sidebar">
         <!-- Big Number -->
         <div id="current-call">--</div>
+        <div id="call-count" style="text-align:center; font-weight:900; font-size:1.1rem; color:var(--muted); margin-top:-12px;">0 / 75 Called</div>
 
         <!-- Pattern Controls -->
         <div class="pattern-container">
@@ -1038,6 +1037,12 @@ option {
                 <option value="v">V</option>
                 <option value="plus">Plus Sign</option>
                 <option value="airplane">Airplane</option>
+                <option value="a">Letter A</option>
+                <option value="m">Letter M</option>
+                <option value="fieldgoal">Field Goal</option>
+                <option value="stripes">Stripes</option>
+                <option value="kite">Kite</option>
+                <option value="heart">Heart</option>
                 <option value="custom">Custom...</option>
             </select>
             <button id="btn-choose-game">CHOOSE GAME</button>
@@ -1103,6 +1108,12 @@ option {
             <option value="v">V</option>
             <option value="plus">Plus Sign</option>
             <option value="airplane">Airplane</option>
+            <option value="a">Letter A</option>
+            <option value="m">Letter M</option>
+            <option value="fieldgoal">Field Goal</option>
+            <option value="stripes">Stripes</option>
+            <option value="kite">Kite</option>
+            <option value="heart">Heart</option>
             <option value="custom">Custom...</option>
         </select>
         <div id="modal-pattern-grid"></div>
@@ -1118,6 +1129,7 @@ option {
         const totalNumbers = 75;
         let availableNumbers = [];
         let calledNumbers = [];
+        let calledNumbersSet = new Set();
         let winnerMode = false;
         let rowAnnounced = [false, false, false, false, false]; // Tracks if we announced row completion
         let callDelay = 5;
@@ -1261,6 +1273,7 @@ option {
         function initGame() {
             availableNumbers = Array.from({length: totalNumbers}, (_, i) => i + 1);
             calledNumbers = [];
+            calledNumbersSet = new Set();
             rowAnnounced = [false, false, false, false, false];
             isCooldown = false;
             gameStarted = false;
@@ -1287,6 +1300,14 @@ option {
             currentMediaIndex = 0;
             // Start Media
             initMediaRotator();
+
+            // Welcome video fallback
+            const welcomeVid = document.getElementById('welcome-video');
+            const welcomeFallback = document.getElementById('welcome-fallback');
+            welcomeVid.addEventListener('error', () => {
+                welcomeVid.style.display = 'none';
+                if (welcomeFallback) welcomeFallback.style.display = 'flex';
+            }, { once: true });
 
             resizeCanvas();
         }
@@ -1559,6 +1580,7 @@ option {
 
             const num = availableNumbers.splice(validIndex, 1)[0];
             calledNumbers.push(num);
+            calledNumbersSet.add(num);
             
             const letter = getLetter(num);
             const fullCall = `${letter} ${num}`;
@@ -1617,7 +1639,7 @@ option {
             let allCalled = true;
 
             for (let n = start; n < end; n++) {
-                if (!calledNumbers.includes(n)) {
+                if (!calledNumbersSet.has(n)) {
                     allCalled = false;
                     break;
                 }
@@ -1664,6 +1686,9 @@ option {
                     return `<div class="header-ball"><span>${letter}</span>${n}</div>`;
                 }).join('');
             }
+            // Update called count
+            const countEl = document.getElementById('call-count');
+            if (countEl) countEl.textContent = `${calledNumbers.length} / ${totalNumbers} Called`;
         }
 
         const voiceToggle = document.getElementById('voice-enabled');
@@ -1737,7 +1762,7 @@ option {
             btnWinner.innerText = "Check Card";
             btnWinner.classList.add('active');
 
-            // Randomly pick one of the 3 winner videos
+            // Randomly pick one of the 6 winner videos
             const randomIndex = Math.floor(Math.random() * winnerVideos.length);
             const selectedVideo = winnerVideos[randomIndex];
 
@@ -1769,9 +1794,10 @@ option {
             stopConfetti();
         }
 
-        // --- Confetti Engine ---
+        // --- Confetti Engine (Enhanced) ---
         let particles = [];
         let animationId = null;
+        const confettiColors = ['#e11d48','#fbbf24','#60a5fa','#4ade80','#f472b6','#a78bfa','#fb923c','#fff'];
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -1781,7 +1807,7 @@ option {
 
         function startConfetti() {
             particles = [];
-            for(let i=0; i<200; i++) particles.push(createParticle());
+            for(let i=0; i<250; i++) particles.push(createParticle());
             if(!animationId) loopConfetti();
         }
 
@@ -1792,13 +1818,20 @@ option {
         }
 
         function createParticle() {
+            const shapes = ['rect','circle','strip'];
             return {
                 x: Math.random() * canvas.width,
                 y: Math.random() * -canvas.height,
-                color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-                size: Math.random() * 10 + 5,
-                speedY: Math.random() * 3 + 2,
-                speedX: Math.random() * 4 - 2
+                color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+                size: Math.random() * 8 + 4,
+                shape: shapes[Math.floor(Math.random() * shapes.length)],
+                speedY: Math.random() * 3 + 1.5,
+                speedX: Math.random() * 2 - 1,
+                wind: Math.random() * 0.02 - 0.01,
+                rotation: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - 0.5) * 0.12,
+                wobble: Math.random() * Math.PI * 2,
+                wobbleSpeed: Math.random() * 0.08 + 0.03
             };
         }
 
@@ -1806,14 +1839,32 @@ option {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => {
                 p.y += p.speedY;
-                p.x += p.speedX;
+                p.wobble += p.wobbleSpeed;
+                p.speedX += p.wind;
+                p.x += p.speedX + Math.sin(p.wobble) * 0.8;
+                p.rotation += p.rotSpeed;
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation);
                 ctx.fillStyle = p.color;
                 ctx.beginPath();
-                ctx.rect(p.x, p.y, p.size, p.size);
+
+                if (p.shape === 'circle') {
+                    ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+                } else if (p.shape === 'strip') {
+                    ctx.fillRect(-p.size / 2, -p.size * 1.5, p.size, p.size * 3);
+                } else {
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                }
+
                 ctx.fill();
-                if(p.y > canvas.height) {
-                    p.y = -10;
+                ctx.restore();
+
+                if(p.y > canvas.height + 20) {
+                    p.y = Math.random() * -60;
                     p.x = Math.random() * canvas.width;
+                    p.speedX = Math.random() * 2 - 1;
                 }
             });
             animationId = requestAnimationFrame(loopConfetti);
@@ -1822,6 +1873,30 @@ option {
         // --- Event Listeners ---
         btnCall.addEventListener('click', callNumber);
         btnReset.addEventListener('click', initGame);
+
+        // --- Keyboard Shortcuts ---
+        document.addEventListener('keydown', (e) => {
+            // Ignore if typing in an input
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (startScreen.style.display !== 'none') return;
+                callNumber();
+            } else if (e.code === 'Escape') {
+                e.preventDefault();
+                // Close overlays in priority order
+                if (patternModal.classList.contains('show')) {
+                    btnPatternCancel.click();
+                } else if (letsplayOverlay.classList.contains('show')) {
+                    startGame();
+                } else if (intermissionOverlay.classList.contains('show')) {
+                    stopIntermission();
+                } else if (winnerMode) {
+                    stopWinnerEffect();
+                }
+            }
+        });
         
         // --- Let's Play Overlay ---
         const letsplayOverlay = document.getElementById('letsplay-overlay');
@@ -1840,6 +1915,12 @@ option {
             'v': 'V Pattern',
             'plus': 'Plus Sign',
             'airplane': 'Airplane',
+            'a': 'Letter A',
+            'm': 'Letter M',
+            'fieldgoal': 'Field Goal',
+            'stripes': 'Stripes',
+            'kite': 'Kite',
+            'heart': 'Heart',
             'custom': 'Custom'
         };
 
@@ -1925,15 +2006,25 @@ option {
 
         // --- Auto-Scale to Fit Screen ---
         function autoScale() {
-            // Reset zoom to 100% first to get accurate window dimensions
-            document.body.style.zoom = 1;
+            // Use zoom where supported (Chrome/Edge), transform for Firefox
+            document.body.style.zoom = '';
+            document.body.style.transform = '';
+            document.body.style.transformOrigin = '';
 
             const designWidth = 1920;
             const designHeight = 1080;
             const scaleX = window.innerWidth / designWidth;
             const scaleY = window.innerHeight / designHeight;
             const scale = Math.min(scaleX, scaleY, 1); // Never scale up, only down
-            document.body.style.zoom = scale;
+
+            if ('zoom' in document.body.style && !/firefox/i.test(navigator.userAgent)) {
+                document.body.style.zoom = scale;
+            } else {
+                document.body.style.transform = `scale(${scale})`;
+                document.body.style.transformOrigin = 'top left';
+                document.body.style.width = `${100 / scale}%`;
+                document.body.style.height = `${100 / scale}vh`;
+            }
         }
         autoScale();
         window.addEventListener('resize', autoScale);
