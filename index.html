@@ -1295,6 +1295,7 @@ option {
             // Reset button state - show START for new game
             btnCall.disabled = false;
             btnCall.innerText = "START";
+            btnChooseGame.disabled = false;
 
             // Reset media rotation index
             currentMediaIndex = 0;
@@ -1614,7 +1615,7 @@ option {
             isCooldown = true;
             btnCall.disabled = true;
             let remaining = callDelay;
-            const originalText = "CALL NUMBER"; // Or use SVG icon later
+            const originalText = "CALL NUMBER (SPACEBAR)";
             
             btnCall.innerText = `WAIT ${remaining}...`;
             
@@ -1948,7 +1949,8 @@ option {
         function startGame() {
             letsplayOverlay.classList.remove('show');
             gameStarted = true;
-            btnCall.innerText = "CALL NUMBER";
+            btnCall.innerText = "CALL NUMBER (SPACEBAR)";
+            btnChooseGame.disabled = true;
         }
 
         btnLetsPlay.addEventListener('click', startGame);
