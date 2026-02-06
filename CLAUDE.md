@@ -38,7 +38,10 @@
 
 ### Claude Code Media Workflow
 When Jake asks to process media changes:
-1. Run ffmpeg commands as needed (convert, resize, etc.)
+1. **Always compress new video files** before adding to the project:
+   - ffmpeg: `-c:v libx264 -crf 28 -preset slow -c:a aac -b:a 128k -movflags +faststart`
+   - If the source has no audio, use `-an` instead of audio codec flags
+   - ffmpeg is installed at: `C:\Users\jrsrl\ffmpeg\ffmpeg-8.0.1-essentials_build\bin\ffmpeg.exe`
 2. Use `git rm` for deletions, `git add` for additions
 3. **Always regenerate `media-manifest.json`** as the final step — scan for all MP4 files and assign roles based on filename conventions:
    - `winner*.mp4` → role: `winner`
