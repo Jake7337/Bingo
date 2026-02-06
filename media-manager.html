@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Manager - Bingo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: #16213e;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #0f3460;
+        }
+        .header h1 {
+            font-size: 22px;
+            color: #e94560;
+        }
+        .header a {
+            color: #53d8fb;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 6px 14px;
+            border: 1px solid #53d8fb;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .header a:hover {
+            background: #53d8fb;
+            color: #1a1a2e;
+        }
+
+        /* Main layout */
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            padding: 16px;
+            max-height: calc(100vh - 60px);
+        }
+
+        /* Panels */
+        .panel {
+            background: #16213e;
+            border-radius: 8px;
+            border: 1px solid #0f3460;
+            overflow: hidden;
+        }
+        .panel-title {
+            background: #0f3460;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #53d8fb;
+        }
+        .panel-body {
+            padding: 12px;
+        }
+
+        /* File list */
+        .file-list {
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.15s;
+            border-bottom: 1px solid #0f346040;
+        }
+        .file-item:hover { background: #0f346080; }
+        .file-item.active { background: #0f3460; }
+        .file-item.marked-delete {
+            background: #e9456020;
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+        .file-item.marked-delete .badge { background: #e94560; }
+        .file-name { flex: 1; font-size: 14px; }
+        .badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .badge-rotator { background: #2d6a4f; color: #b7e4c7; }
+        .badge-winner { background: #7b2d8b; color: #e0b0ff; }
+        .badge-welcome { background: #1d4e89; color: #90caf9; }
+        .badge-intermission { background: #bf6900; color: #ffd59a; }
+        .btn-delete {
+            background: none;
+            border: 1px solid #e9456060;
+            color: #e94560;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-delete:hover { background: #e94560; color: white; }
+        .btn-delete.active-delete { background: #e94560; color: white; }
+
+        /* Right column */
+        .right-col {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Preview */
+        .preview-area {
+            position: relative;
+            background: #000;
+            border-radius: 6px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .preview-area video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .preview-placeholder {
+            color: #555;
+            font-size: 14px;
+        }
+        .preview-info {
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #aaa;
+            display: flex;
+            gap: 16px;
+        }
+        .preview-info span { color: #e0e0e0; }
+
+        /* Drop zone */
+        .drop-zone {
+            border: 2px dashed #0f3460;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .drop-zone:hover, .drop-zone.drag-over {
+            border-color: #53d8fb;
+            color: #53d8fb;
+            background: #53d8fb10;
+        }
+        .drop-zone input { display: none; }
+
+        /* Staged files */
+        .staged-file {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            background: #0f346040;
+            border-radius: 4px;
+            margin-top: 6px;
+            font-size: 13px;
+        }
+        .staged-file .file-name { flex: 1; color: #b7e4c7; }
+        .staged-file select {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            border: 1px solid #0f3460;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .staged-file .btn-remove {
+            background: none;
+            border: none;
+            color: #e94560;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Action queue */
+        .action-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .action-item {
+            padding: 6px 10px;
+            font-size: 13px;
+            border-bottom: 1px solid #0f346020;
+            font-family: 'Consolas', monospace;
+        }
+        .action-item.action-delete { color: #e94560; }
+        .action-item.action-add { color: #b7e4c7; }
+        .action-item.action-role { color: #90caf9; }
+        .action-empty {
+            padding: 20px;
+            text-align: center;
+            color: #555;
+            font-size: 13px;
+        }
+        .action-buttons {
+            padding: 10px 12px;
+            display: flex;
+            gap: 8px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.15s;
+        }
+        .btn-primary {
+            background: #53d8fb;
+            color: #1a1a2e;
+        }
+        .btn-primary:hover { background: #7de4fc; }
+        .btn-primary:disabled { background: #53d8fb40; cursor: not-allowed; }
+        .btn-danger {
+            background: #e94560;
+            color: white;
+        }
+        .btn-danger:hover { background: #f06780; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2d6a4f;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s;
+            pointer-events: none;
+            z-index: 100;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #0f3460; border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Media Manager</h1>
+    <a href="index.html">Back to Bingo</a>
+</div>
+
+<div class="main">
+    <!-- Left: File inventory -->
+    <div class="panel">
+        <div class="panel-title">Media Inventory</div>
+        <div class="panel-body file-list" id="file-list">
+            <div class="action-empty">Loading manifest...</div>
+        </div>
+    </div>
+
+    <!-- Right: Preview + Actions -->
+    <div class="right-col">
+        <div class="panel">
+            <div class="panel-title">Preview</div>
+            <div class="panel-body">
+                <div class="preview-area" id="preview-area">
+                    <video id="preview-video" loop muted playsinline style="display:none"></video>
+                    <div class="preview-placeholder" id="preview-placeholder">Click a file to preview</div>
+                </div>
+                <div class="preview-info" id="preview-info" style="display:none">
+                    <div>File: <span id="info-name">-</span></div>
+                    <div>Role: <span id="info-role">-</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add files -->
+        <div class="panel">
+            <div class="panel-title">Add New Files</div>
+            <div class="panel-body">
+                <div class="drop-zone" id="drop-zone">
+                    <div>Drag files here or click to browse</div>
+                    <div style="margin-top:4px;font-size:11px;color:#444">Files will be staged for Claude Code to process</div>
+                    <input type="file" id="file-input" multiple accept="video/*,image/*">
+                </div>
+                <div id="staged-files"></div>
+            </div>
+        </div>
+
+        <!-- Action queue -->
+        <div class="panel">
+            <div class="panel-title">Action Queue</div>
+            <div class="action-list" id="action-list">
+                <div class="action-empty">No pending actions</div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="btn-copy" disabled>Copy to Clipboard</button>
+                <button class="btn btn-danger" id="btn-clear" style="display:none">Clear All</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    // State
+    let manifest = { files: [] };
+    let activeFile = null;
+    let deletions = new Set();
+    let stagedFiles = [];
+    let roleChanges = {};  // filename -> newRole
+
+    // Elements
+    const fileListEl = document.getElementById('file-list');
+    const previewVideo = document.getElementById('preview-video');
+    const previewPlaceholder = document.getElementById('preview-placeholder');
+    const previewInfo = document.getElementById('preview-info');
+    const infoName = document.getElementById('info-name');
+    const infoRole = document.getElementById('info-role');
+    const actionListEl = document.getElementById('action-list');
+    const btnCopy = document.getElementById('btn-copy');
+    const btnClear = document.getElementById('btn-clear');
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const stagedFilesEl = document.getElementById('staged-files');
+    const toastEl = document.getElementById('toast');
+
+    // Load manifest
+    async function loadManifest() {
+        try {
+            const resp = await fetch('media-manifest.json?t=' + Date.now());
+            manifest = await resp.json();
+            renderFileList();
+        } catch (e) {
+            fileListEl.innerHTML = '<div class="action-empty" style="color:#e94560">Failed to load media-manifest.json<br><br><span style="font-size:12px;color:#888">If running locally, try using a local server:<br>python -m http.server</span></div>';
+        }
+    }
+
+    // Render file list
+    function renderFileList() {
+        fileListEl.innerHTML = '';
+        if (manifest.files.length === 0) {
+            fileListEl.innerHTML = '<div class="action-empty">No media files in manifest</div>';
+            return;
+        }
+        manifest.files.forEach(f => {
+            const row = document.createElement('div');
+            row.className = 'file-item';
+            if (activeFile === f.filename) row.classList.add('active');
+            if (deletions.has(f.filename)) row.classList.add('marked-delete');
+
+            const name = document.createElement('div');
+            name.className = 'file-name';
+            name.textContent = f.filename;
+
+            const badge = document.createElement('span');
+            badge.className = 'badge badge-' + f.role;
+            badge.textContent = roleChanges[f.filename] || f.role;
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn-delete';
+            if (deletions.has(f.filename)) delBtn.classList.add('active-delete');
+            delBtn.textContent = deletions.has(f.filename) ? 'Undo' : 'Del';
+            delBtn.onclick = (e) => {
+                e.stopPropagation();
+                toggleDelete(f.filename);
+            };
+
+            row.appendChild(name);
+            row.appendChild(badge);
+            row.appendChild(delBtn);
+            row.onclick = () => previewFile(f);
+            fileListEl.appendChild(row);
+        });
+    }
+
+    // Preview file
+    function previewFile(f) {
+        activeFile = f.filename;
+        previewPlaceholder.style.display = 'none';
+        previewVideo.style.display = 'block';
+        previewVideo.src = f.filename;
+        previewVideo.play().catch(() => {});
+        previewInfo.style.display = 'flex';
+        infoName.textContent = f.filename;
+        infoRole.textContent = roleChanges[f.filename] || f.role;
+        renderFileList();
+    }
+
+    // Toggle deletion
+    function toggleDelete(filename) {
+        if (deletions.has(filename)) {
+            deletions.delete(filename);
+        } else {
+            deletions.add(filename);
+        }
+        renderFileList();
+        renderActions();
+    }
+
+    // Drop zone
+    dropZone.onclick = () => fileInput.click();
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+    });
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('drag-over');
+    });
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        addStagedFiles(e.dataTransfer.files);
+    });
+    fileInput.addEventListener('change', () => {
+        addStagedFiles(fileInput.files);
+        fileInput.value = '';
+    });
+
+    function addStagedFiles(files) {
+        for (const file of files) {
+            if (!stagedFiles.find(s => s.name === file.name)) {
+                stagedFiles.push({ name: file.name, role: 'rotator' });
+            }
+        }
+        renderStagedFiles();
+        renderActions();
+    }
+
+    function renderStagedFiles() {
+        stagedFilesEl.innerHTML = '';
+        stagedFiles.forEach((sf, i) => {
+            const row = document.createElement('div');
+            row.className = 'staged-file';
+
+            const name = document.createElement('div');
+            name.className = 'file-name';
+            name.textContent = sf.name;
+
+            const select = document.createElement('select');
+            ['rotator', 'winner', 'welcome', 'intermission'].forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r;
+                opt.textContent = r;
+                if (r === sf.role) opt.selected = true;
+                select.appendChild(opt);
+            });
+            select.onchange = () => {
+                stagedFiles[i].role = select.value;
+                renderActions();
+            };
+
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'btn-remove';
+            removeBtn.textContent = '\u00d7';
+            removeBtn.onclick = () => {
+                stagedFiles.splice(i, 1);
+                renderStagedFiles();
+                renderActions();
+            };
+
+            row.appendChild(name);
+            row.appendChild(select);
+            row.appendChild(removeBtn);
+            stagedFilesEl.appendChild(row);
+        });
+    }
+
+    // Action queue
+    function renderActions() {
+        const actions = buildActions();
+        actionListEl.innerHTML = '';
+
+        if (actions.length === 0) {
+            actionListEl.innerHTML = '<div class="action-empty">No pending actions</div>';
+            btnCopy.disabled = true;
+            btnClear.style.display = 'none';
+            return;
+        }
+
+        actions.forEach(a => {
+            const item = document.createElement('div');
+            item.className = 'action-item action-' + a.type;
+            item.textContent = a.text;
+            actionListEl.appendChild(item);
+        });
+
+        btnCopy.disabled = false;
+        btnClear.style.display = 'inline-block';
+    }
+
+    function buildActions() {
+        const actions = [];
+        deletions.forEach(fn => {
+            actions.push({ type: 'delete', text: 'DELETE: ' + fn });
+        });
+        stagedFiles.forEach(sf => {
+            actions.push({ type: 'add', text: 'ADD: ' + sf.name + ' (role: ' + sf.role + ')' });
+        });
+        Object.keys(roleChanges).forEach(fn => {
+            const original = manifest.files.find(f => f.filename === fn);
+            if (original && roleChanges[fn] !== original.role) {
+                actions.push({ type: 'role', text: 'CHANGE ROLE: ' + fn + ' -> ' + roleChanges[fn] });
+            }
+        });
+        return actions;
+    }
+
+    function buildClipboardText() {
+        const actions = buildActions();
+        if (actions.length === 0) return '';
+        let lines = ['Please process these media changes:\n'];
+        actions.forEach(a => lines.push('- ' + a.text));
+        lines.push('\nAfter processing, update media-manifest.json.');
+        return lines.join('\n');
+    }
+
+    // Copy to clipboard
+    btnCopy.onclick = () => {
+        const text = buildClipboardText();
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('Copied to clipboard!');
+        }).catch(() => {
+            // Fallback
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showToast('Copied to clipboard!');
+        });
+    };
+
+    // Clear all
+    btnClear.onclick = () => {
+        deletions.clear();
+        stagedFiles = [];
+        roleChanges = {};
+        renderFileList();
+        renderStagedFiles();
+        renderActions();
+        showToast('Actions cleared');
+    };
+
+    // Toast
+    function showToast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add('show');
+        setTimeout(() => toastEl.classList.remove('show'), 2000);
+    }
+
+    // Init
+    loadManifest();
+</script>
+
+</body>
+</html>

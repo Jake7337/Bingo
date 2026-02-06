@@ -1,0 +1,13 @@
+{
+  "files": [
+    { "filename": "advertisement.mp4", "role": "rotator" },
+    { "filename": "intermission.mp4", "role": "intermission" },
+    { "filename": "welcomelogo.mp4", "role": "welcome" },
+    { "filename": "winner1.mp4", "role": "winner" },
+    { "filename": "winner2.mp4", "role": "winner" },
+    { "filename": "winner3.mp4", "role": "winner" },
+    { "filename": "winner4.mp4", "role": "winner" },
+    { "filename": "winner5.mp4", "role": "winner" },
+    { "filename": "winner6.mp4", "role": "winner" }
+  ]
+}

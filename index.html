@@ -2031,6 +2031,24 @@ option {
         autoScale();
         window.addEventListener('resize', autoScale);
 
+        // --- Secret Media Manager Access (type "7337" on start screen) ---
+        (function() {
+            let buffer = '';
+            const SECRET = '7337';
+            document.addEventListener('keydown', function(e) {
+                if (startScreen.style.display === 'none') return;
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+                if (e.key.length === 1 && /\d/.test(e.key)) {
+                    buffer += e.key;
+                    if (buffer.length > SECRET.length) buffer = buffer.slice(-SECRET.length);
+                    if (buffer === SECRET) {
+                        buffer = '';
+                        window.location.href = 'media-manager.html';
+                    }
+                }
+            });
+        })();
+
     </script>
 </body>
 </html>
