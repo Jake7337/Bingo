@@ -537,11 +537,15 @@
         return actions;
     }
 
+    const DROP_FOLDER = 'C:\\Users\\jrsrl\\OneDrive\\Desktop\\media-drop';
+
     function buildClipboardText() {
         const actions = buildActions();
         if (actions.length === 0) return '';
+        const hasAdds = actions.some(a => a.type === 'add');
         let lines = ['Please process these media changes:\n'];
         actions.forEach(a => lines.push('- ' + a.text));
+        if (hasAdds) lines.push('\nNew files are in: ' + DROP_FOLDER);
         lines.push('\nAfter processing, update media-manifest.json.');
         return lines.join('\n');
     }

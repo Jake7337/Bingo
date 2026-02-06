@@ -32,6 +32,7 @@
 - **File**: `media-manager.html` — standalone page with dark theme
 - **Manifest**: `media-manifest.json` — inventory of all media files with roles
 - **Roles**: `rotator`, `winner`, `welcome`, `intermission`
+- **Drop folder**: `C:\Users\jrsrl\OneDrive\Desktop\media-drop` — Jake puts new files here
 - Jake uses the manager to browse/preview files, mark deletions, and stage additions
 - The action queue generates instructions for Claude Code to process
 
