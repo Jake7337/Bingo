@@ -1169,23 +1169,22 @@ option {
         let currentMediaIndex = 0;
         let mediaInterval = null;
 
+        function advanceMedia() {
+            currentMediaIndex = (currentMediaIndex + 1) % mediaPlaylist.length;
+            showMedia(currentMediaIndex);
+        }
+
         function initMediaRotator() {
             if (mediaPlaylist.length === 0) return;
-            
+
             // Clear any existing interval to prevent multiple timers
             if (mediaInterval) {
                 clearInterval(mediaInterval);
                 mediaInterval = null;
             }
-            
+
             // Try showing first media immediately
             showMedia(0);
-            
-            // Cycle every 10 seconds
-            mediaInterval = setInterval(() => {
-                currentMediaIndex = (currentMediaIndex + 1) % mediaPlaylist.length;
-                showMedia(currentMediaIndex);
-            }, 10000); 
         }
 
         function showMedia(index) {
@@ -1202,24 +1201,31 @@ option {
             if(placeholder) placeholder.style.display = 'none';
             if(errorEl) errorEl.style.display = 'none';
 
+            // Clear image timer if running
+            if (mediaInterval) {
+                clearTimeout(mediaInterval);
+                mediaInterval = null;
+            }
+
+            // Remove previous ended listener
+            vidEl.onended = null;
+
             if (isVideo) {
                 // Show Video, Hide Image
                 imgEl.style.display = 'none';
                 vidEl.style.display = 'block';
-                
-                // Set source directly
-                // We check if it's already set to prevent reloading the same video if the interval triggers
-                if (vidEl.src.indexOf(src) === -1) {
-                    vidEl.src = src;
-                    vidEl.load();
-                }
-                
-                // Attempt play - simplified
+
+                vidEl.src = src;
+                vidEl.load();
+
+                // Advance when video finishes playing
+                vidEl.onended = advanceMedia;
+
+                // Attempt play
                 const playPromise = vidEl.play();
                 if (playPromise !== undefined) {
                     playPromise.catch(error => {
                         console.warn("Autoplay prevented or file missing.", error);
-                        // Fallback error message if needed
                         showMediaError(`Autoplay blocked or file missing: ${src}`);
                     });
                 }
@@ -1232,10 +1238,13 @@ option {
                 // Show Image, Hide Video
                 vidEl.style.display = 'none';
                 vidEl.pause();
-                
+
                 imgEl.style.display = 'block';
                 imgEl.src = src;
-                
+
+                // Images show for 10 seconds then advance
+                mediaInterval = setTimeout(advanceMedia, 10000);
+
                 imgEl.onerror = () => {
                     showMediaError(`Error loading image: ${src}<br><small>File not found</small>`);
                 }
