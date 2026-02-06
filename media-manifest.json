@@ -1,6 +1,8 @@
 {
   "files": [
     { "filename": "advertisement.mp4", "role": "rotator" },
+    { "filename": "FH advertisement.mp4", "role": "rotator" },
+    { "filename": "newlywed advertisement.mp4", "role": "rotator" },
     { "filename": "intermission.mp4", "role": "intermission" },
     { "filename": "welcomelogo.mp4", "role": "welcome" },
     { "filename": "winner1.mp4", "role": "winner" },
