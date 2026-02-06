@@ -1086,7 +1086,7 @@ option {
         <video id="winner-video" playsinline loop muted></video>
     </div>
     <div id="intermission-overlay" onclick="stopIntermission()">
-        <video id="intermission-video" playsinline loop muted></video>
+        <video id="intermission-video" playsinline muted></video>
     </div>
     <div id="letsplay-overlay">
         <div class="letsplay-content">
@@ -1971,9 +1971,17 @@ option {
         const intermissionOverlay = document.getElementById('intermission-overlay');
         const intermissionVideo = document.getElementById('intermission-video');
 
-        function startIntermission() {
-            intermissionVideo.src = 'intermission.mp4';
+        const intermissionPlaylist = ['intermission.mp4', ...mediaPlaylist];
+        let intermissionIndex = 0;
+
+        function playIntermissionVideo() {
+            intermissionVideo.src = intermissionPlaylist[intermissionIndex];
             intermissionVideo.play();
+        }
+
+        function startIntermission() {
+            intermissionIndex = 0;
+            playIntermissionVideo();
             intermissionOverlay.classList.add('show');
         }
 
@@ -1981,7 +1989,13 @@ option {
             intermissionOverlay.classList.remove('show');
             intermissionVideo.pause();
             intermissionVideo.src = '';
+            intermissionVideo.onended = null;
         }
+
+        intermissionVideo.onended = () => {
+            intermissionIndex = (intermissionIndex + 1) % intermissionPlaylist.length;
+            playIntermissionVideo();
+        };
 
         btnIntermission.addEventListener('click', startIntermission);
 
