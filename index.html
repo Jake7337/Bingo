@@ -1973,17 +1973,30 @@ option {
 
         const intermissionPlaylist = ['intermission.mp4', ...mediaPlaylist];
         let intermissionIndex = 0;
+        let intermissionActive = false;
 
-        function onIntermissionEnded() {
+        function advanceIntermission() {
+            if (!intermissionActive) return;
             intermissionIndex = (intermissionIndex + 1) % intermissionPlaylist.length;
             intermissionVideo.src = intermissionPlaylist[intermissionIndex];
             intermissionVideo.load();
             intermissionVideo.play().catch(e => console.log('Intermission play error', e));
         }
 
-        intermissionVideo.addEventListener('ended', onIntermissionEnded);
+        // Use both ended and timeupdate as fallback
+        let intermissionAdvancing = false;
+        intermissionVideo.addEventListener('ended', advanceIntermission);
+        intermissionVideo.addEventListener('timeupdate', function() {
+            if (!intermissionActive || intermissionAdvancing) return;
+            if (intermissionVideo.duration > 0 && intermissionVideo.currentTime >= intermissionVideo.duration - 0.3) {
+                intermissionAdvancing = true;
+                setTimeout(() => { intermissionAdvancing = false; }, 1500);
+                advanceIntermission();
+            }
+        });
 
         function startIntermission() {
+            intermissionActive = true;
             intermissionIndex = 0;
             intermissionVideo.src = intermissionPlaylist[0];
             intermissionVideo.load();
@@ -1992,6 +2005,7 @@ option {
         }
 
         function stopIntermission() {
+            intermissionActive = false;
             intermissionOverlay.classList.remove('show');
             intermissionVideo.pause();
             intermissionVideo.src = '';
