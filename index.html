@@ -1974,14 +1974,20 @@ option {
         const intermissionPlaylist = ['intermission.mp4', ...mediaPlaylist];
         let intermissionIndex = 0;
 
-        function playIntermissionVideo() {
+        function onIntermissionEnded() {
+            intermissionIndex = (intermissionIndex + 1) % intermissionPlaylist.length;
             intermissionVideo.src = intermissionPlaylist[intermissionIndex];
-            intermissionVideo.play();
+            intermissionVideo.load();
+            intermissionVideo.play().catch(e => console.log('Intermission play error', e));
         }
+
+        intermissionVideo.addEventListener('ended', onIntermissionEnded);
 
         function startIntermission() {
             intermissionIndex = 0;
-            playIntermissionVideo();
+            intermissionVideo.src = intermissionPlaylist[0];
+            intermissionVideo.load();
+            intermissionVideo.play().catch(e => console.log('Intermission play error', e));
             intermissionOverlay.classList.add('show');
         }
 
@@ -1989,13 +1995,7 @@ option {
             intermissionOverlay.classList.remove('show');
             intermissionVideo.pause();
             intermissionVideo.src = '';
-            intermissionVideo.onended = null;
         }
-
-        intermissionVideo.onended = () => {
-            intermissionIndex = (intermissionIndex + 1) % intermissionPlaylist.length;
-            playIntermissionVideo();
-        };
 
         btnIntermission.addEventListener('click', startIntermission);
 
