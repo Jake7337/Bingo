@@ -424,7 +424,8 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            padding: 10px;
+            padding: 10px 16px;
+            overflow: hidden;
         }
 
         /* Top bar */
@@ -432,19 +433,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 16px;
-            margin-bottom: 10px;
+            padding: 6px 8px;
+            margin-bottom: 6px;
+            flex-shrink: 0;
         }
 
         .game-title {
             font-family: 'Impact', 'Arial Black', sans-serif;
-            font-size: 1.4rem;
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
             color: var(--gold);
             letter-spacing: 2px;
         }
 
         .round-indicator {
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 2vw, 1.4rem);
             color: var(--pattern-color);
             font-weight: 700;
         }
@@ -501,13 +503,14 @@
             background: rgba(251, 191, 36, 0.12);
             border: 1px solid rgba(251, 191, 36, 0.3);
             border-radius: var(--radius-md);
-            padding: 12px 8px;
+            padding: clamp(8px, 1.5vh, 16px) 8px;
             text-align: center;
             font-family: 'Impact', 'Arial Black', sans-serif;
-            font-size: clamp(0.8rem, 1.5vw, 1.2rem);
+            font-size: clamp(0.9rem, 2vw, 1.5rem);
             color: var(--gold);
             letter-spacing: 1px;
             text-transform: uppercase;
+            flex-shrink: 0;
         }
 
         .q-cell {
@@ -519,11 +522,11 @@
             align-items: center;
             justify-content: center;
             font-family: 'Impact', 'Arial Black', sans-serif;
-            font-size: clamp(1.2rem, 2.5vw, 2rem);
+            font-size: clamp(1.4rem, 3.5vw, 2.5rem);
             color: var(--pattern-color);
             cursor: pointer;
             transition: all 0.25s;
-            min-height: 60px;
+            min-height: 0;
         }
 
         .q-cell:hover {
@@ -549,42 +552,44 @@
         .board-wrapper {
             flex: 1;
             min-width: 0;
+            display: flex;
+            flex-direction: column;
         }
 
         .scoreboard-panel {
-            width: clamp(180px, 22vw, 220px);
+            width: clamp(200px, 24vw, 280px);
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 16px;
+            padding: clamp(12px, 2vw, 20px);
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             overflow-y: auto;
         }
 
         .scoreboard-title {
             font-family: 'Impact', 'Arial Black', sans-serif;
             color: var(--gold);
-            font-size: 1.1rem;
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
             text-align: center;
-            letter-spacing: 1px;
-            margin-bottom: 6px;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
         }
 
         .score-team {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
+            gap: 10px;
+            padding: clamp(8px, 1.2vh, 14px) 12px;
             background: var(--surface-2);
-            border-radius: 10px;
+            border-radius: 12px;
         }
 
         .score-team-name {
             flex: 1;
-            font-weight: 600;
-            font-size: 0.9rem;
+            font-weight: 700;
+            font-size: clamp(0.95rem, 1.5vw, 1.15rem);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -592,16 +597,16 @@
 
         .score-value {
             font-family: 'Impact', 'Arial Black', sans-serif;
-            font-size: 1.3rem;
+            font-size: clamp(1.4rem, 2.5vw, 2rem);
             color: var(--gold);
-            min-width: 40px;
+            min-width: 50px;
             text-align: center;
         }
 
         .score-btn {
-            width: 36px;
-            height: 36px;
-            min-width: 36px;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
             border-radius: 50%;
             border: 1px solid var(--border);
             background: var(--surface);
@@ -1586,7 +1591,7 @@
         <div class="board-wrapper">
             <div class="category-grid" id="gameBoard"></div>
         </div>
-        <div class="scoreboard-panel" id="scoreboardPanel" style="display:none;">
+        <div class="scoreboard-panel" id="scoreboardPanel">
             <div class="scoreboard-title">SCORES</div>
             <div id="scoreList"></div>
         </div>
@@ -1655,7 +1660,7 @@ let totalQuestionsInRound = 0;
 let timerInterval = null;
 let currentTimerValue = 0;
 let editingRound = 0;
-let scoreboardVisible = false;
+let scoreboardVisible = true;
 
 /* ═══════════════════════════════════════════
    SETUP SCREEN
@@ -1856,6 +1861,11 @@ function dismissRound() {
     buildGameBoard();
     updateRoundIndicator();
     buildScoreboard();
+    // Ensure scoreboard shows correctly
+    const panel = document.getElementById('scoreboardPanel');
+    const btn = document.getElementById('btnScoreboard');
+    panel.style.display = scoreboardVisible ? 'flex' : 'none';
+    btn.classList.toggle('active-btn', scoreboardVisible);
     questionsAnswered = 0;
     totalQuestionsInRound = gameData[currentRound].reduce((sum, cat) => sum + cat.questions.length, 0);
 }
