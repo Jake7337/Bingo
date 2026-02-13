@@ -908,6 +908,281 @@
             color: var(--muted);
             font-size: 1rem;
         }
+
+        /* ══════════════════════════════════
+           AI QUESTION GENERATOR
+        ══════════════════════════════════ */
+        .ai-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .ai-section h2 {
+            font-size: 1.2rem;
+            color: var(--pattern-color);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .ai-section .ai-desc {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .ai-steps {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .ai-step {
+            flex: 1;
+            min-width: 200px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: center;
+        }
+
+        .ai-step-num {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: 1.8rem;
+            color: var(--pattern-color);
+            margin-bottom: 6px;
+        }
+
+        .ai-step-label {
+            font-size: 0.9rem;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .ai-topic-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .topic-chip {
+            padding: 8px 16px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            color: var(--muted);
+        }
+
+        .topic-chip:hover { border-color: var(--pattern-color); color: var(--text); }
+
+        .topic-chip.selected {
+            background: rgba(96, 165, 250, 0.15);
+            border-color: var(--pattern-color);
+            color: var(--pattern-color);
+        }
+
+        .ai-custom-topic {
+            flex: 1;
+            min-width: 150px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            outline: none;
+            color: var(--text);
+        }
+
+        .ai-custom-topic:focus { border-color: var(--pattern-color); }
+        .ai-custom-topic::placeholder { color: var(--muted); }
+
+        .ai-difficulty-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .ai-difficulty-row label {
+            color: var(--muted);
+            font-size: 0.95rem;
+            min-width: 80px;
+        }
+
+        .diff-chip {
+            padding: 8px 18px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            color: var(--muted);
+        }
+
+        .diff-chip:hover { border-color: var(--gold); color: var(--text); }
+
+        .diff-chip.selected {
+            background: rgba(251, 191, 36, 0.15);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .btn-generate {
+            padding: 14px 36px;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+            background: var(--pattern-color);
+            color: #0b0f14;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .btn-generate:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 35px rgba(96, 165, 250, 0.6);
+        }
+
+        .ai-status {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 0.95rem;
+            color: var(--gold);
+            min-height: 1.4em;
+        }
+
+        /* ── Paste / Import Section ── */
+        .import-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .import-section h2 {
+            font-size: 1.2rem;
+            color: var(--gold);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .import-section .import-desc {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        .paste-area {
+            width: 100%;
+            min-height: 120px;
+            background: var(--surface-2);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            color: var(--text);
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .paste-area:focus {
+            border-color: var(--gold);
+        }
+
+        .paste-area::placeholder {
+            color: var(--muted);
+            font-family: inherit;
+        }
+
+        .paste-area.drag-over {
+            border-color: var(--pattern-color);
+            background: rgba(96, 165, 250, 0.08);
+        }
+
+        .import-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-load {
+            padding: 10px 28px;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            background: var(--gold);
+            color: #0b0f14;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-load:hover { transform: scale(1.04); }
+
+        .btn-file {
+            padding: 10px 24px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--muted);
+            transition: all 0.2s;
+        }
+
+        .btn-file:hover { border-color: var(--gold); color: var(--text); }
+
+        .import-status {
+            font-size: 0.9rem;
+            color: var(--gold);
+            margin-left: 8px;
+        }
+
+        .import-status.error {
+            color: var(--accent);
+        }
+
+        .or-divider {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .or-divider::before { left: 0; }
+        .or-divider::after { right: 0; }
     </style>
 </head>
 <body>
@@ -972,7 +1247,69 @@
         <button class="btn-small btn-add-team" onclick="addTeam()" style="margin-top:12px">+ Add Team</button>
     </div>
 
-    <button class="btn-start-game" onclick="goToQuestions()">ENTER QUESTIONS &#8594;</button>
+    <!-- AI Question Generator -->
+    <div class="ai-section">
+        <h2>Generate Questions with AI</h2>
+        <p class="ai-desc">Pick your topics, hit the button, and we'll open AI in a side window with the perfect prompt already copied. Paste the response back here and you're ready to play.</p>
+
+        <div class="ai-steps">
+            <div class="ai-step">
+                <div class="ai-step-num">1</div>
+                <div class="ai-step-label">Pick topics &amp; hit Generate</div>
+            </div>
+            <div class="ai-step">
+                <div class="ai-step-num">2</div>
+                <div class="ai-step-label">Paste prompt into AI chat</div>
+            </div>
+            <div class="ai-step">
+                <div class="ai-step-num">3</div>
+                <div class="ai-step-label">Copy AI response &amp; paste below</div>
+            </div>
+        </div>
+
+        <div class="ai-difficulty-row">
+            <label>Difficulty</label>
+            <button class="diff-chip selected" data-diff="easy" onclick="pickDifficulty(this)">Easy</button>
+            <button class="diff-chip" data-diff="medium" onclick="pickDifficulty(this)">Medium</button>
+            <button class="diff-chip" data-diff="hard" onclick="pickDifficulty(this)">Hard</button>
+            <button class="diff-chip" data-diff="mixed" onclick="pickDifficulty(this)">Mixed</button>
+        </div>
+
+        <div style="color:var(--muted);font-size:0.95rem;margin-bottom:10px;">Pick topics (or type your own):</div>
+        <div class="ai-topic-row" id="topicRow">
+            <button class="topic-chip" onclick="toggleTopic(this)">Sports</button>
+            <button class="topic-chip" onclick="toggleTopic(this)">History</button>
+            <button class="topic-chip" onclick="toggleTopic(this)">Pop Culture</button>
+            <button class="topic-chip" onclick="toggleTopic(this)">Science</button>
+            <button class="topic-chip" onclick="toggleTopic(this)">Geography</button>
+            <button class="topic-chip" onclick="toggleTopic(this)">Music</button>
+            <button class="topic-chip" onclick="toggleTopic(this)">Movies &amp; TV</button>
+            <button class="topic-chip" onclick="toggleTopic(this)">Food &amp; Drink</button>
+            <button class="topic-chip" onclick="toggleTopic(this)">Animals</button>
+            <button class="topic-chip" onclick="toggleTopic(this)">General Knowledge</button>
+            <input type="text" class="ai-custom-topic" id="customTopic" placeholder="Add custom topic...">
+        </div>
+
+        <button class="btn-generate" onclick="generateAndOpenAI()">GENERATE &amp; OPEN AI</button>
+        <div class="ai-status" id="aiStatus"></div>
+    </div>
+
+    <!-- Paste / Import -->
+    <div class="import-section">
+        <h2>Load Questions</h2>
+        <p class="import-desc">Paste the JSON from AI below, or drag &amp; drop a .json file onto the box.</p>
+        <textarea class="paste-area" id="pasteArea" placeholder="Paste AI-generated JSON here, or drag a .json file onto this box..."></textarea>
+        <div class="import-actions">
+            <button class="btn-load" onclick="loadPastedQuestions()">LOAD QUESTIONS</button>
+            <button class="btn-file" onclick="document.getElementById('fileInput').click()">Browse File...</button>
+            <input type="file" id="fileInput" accept=".json,.txt" style="display:none" onchange="loadFromFile(event)">
+            <span class="import-status" id="importStatus"></span>
+        </div>
+    </div>
+
+    <div class="or-divider">or enter manually</div>
+
+    <button class="btn-start-game" onclick="goToQuestions()">ENTER QUESTIONS MANUALLY &#8594;</button>
 </div>
 
 <!-- ═══════════════════════════════════
@@ -1498,6 +1835,238 @@ document.addEventListener('keydown', e => {
             }
         }
     }
+});
+
+/* ═══════════════════════════════════════════
+   AI QUESTION GENERATOR
+═══════════════════════════════════════════ */
+let selectedDifficulty = 'easy';
+
+function pickDifficulty(btn) {
+    document.querySelectorAll('.diff-chip').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedDifficulty = btn.dataset.diff;
+}
+
+function toggleTopic(btn) {
+    btn.classList.toggle('selected');
+}
+
+function getSelectedTopics() {
+    const topics = [];
+    document.querySelectorAll('.topic-chip.selected').forEach(b => {
+        topics.push(b.textContent.trim());
+    });
+    const custom = document.getElementById('customTopic').value.trim();
+    if (custom) topics.push(custom);
+    return topics;
+}
+
+function buildPrompt() {
+    const rounds = clampInt('numRounds', 1, 20);
+    const catsPerRound = clampInt('numCategories', 1, 8);
+    const qsPerCat = clampInt('numQuestions', 1, 10);
+    const topics = getSelectedTopics();
+    const topicText = topics.length > 0
+        ? `Use these topics/themes to inspire the categories: ${topics.join(', ')}.`
+        : 'Choose a fun variety of trivia categories.';
+    const diffText = selectedDifficulty === 'mixed'
+        ? 'Mix easy, medium, and hard questions within each category.'
+        : `Make the questions ${selectedDifficulty} difficulty (suitable for a casual bar/lodge trivia night).`;
+
+    return `Generate a trivia night JSON file for me. Here are the requirements:
+
+- ${rounds} rounds
+- ${catsPerRound} categories per round
+- ${qsPerCat} questions per category
+- ${topicText}
+- ${diffText}
+- Each category should have a creative/fun name
+- Questions should be clear and unambiguous
+- Answers should be short (1-4 words)
+- Do NOT repeat categories across rounds
+
+Return ONLY valid JSON in this exact format with no other text, no markdown code fences, just the raw JSON:
+
+${JSON.stringify({
+    rounds: [
+        {
+            categories: [
+                {
+                    name: "Category Name",
+                    questions: [
+                        { q: "Question text?", a: "Answer" }
+                    ]
+                }
+            ]
+        }
+    ]
+}, null, 2)}
+
+Make sure each round has exactly ${catsPerRound} categories and each category has exactly ${qsPerCat} questions. Return ONLY the JSON, nothing else.`;
+}
+
+function generateAndOpenAI() {
+    const prompt = buildPrompt();
+    const status = document.getElementById('aiStatus');
+
+    // Copy prompt to clipboard
+    navigator.clipboard.writeText(prompt).then(() => {
+        status.textContent = 'Prompt copied to clipboard! Paste it in the AI chat window.';
+
+        // Open Claude.ai in a new window, positioned to the right half of screen
+        const halfW = Math.floor(screen.availWidth / 2);
+        const fullH = screen.availHeight;
+        const leftPos = halfW;
+
+        const aiWin = window.open(
+            'https://claude.ai/new',
+            'triviaAI',
+            `width=${halfW},height=${fullH},left=${leftPos},top=0,menubar=no,toolbar=no,location=yes,status=no`
+        );
+
+        // Try to move our own window to the left half
+        try {
+            window.moveTo(0, 0);
+            window.resizeTo(halfW, fullH);
+        } catch (e) {
+            // Some browsers block this - that's fine
+        }
+
+        if (!aiWin) {
+            status.textContent = 'Prompt copied! Pop-up was blocked - open claude.ai manually and paste.';
+        }
+    }).catch(() => {
+        // Fallback: show prompt in the paste area so they can copy manually
+        document.getElementById('pasteArea').value = prompt;
+        status.textContent = 'Could not copy automatically. The prompt is in the text box below - select all and copy it.';
+    });
+}
+
+/* ═══════════════════════════════════════════
+   LOAD / IMPORT QUESTIONS
+═══════════════════════════════════════════ */
+function parseQuestionsJSON(text) {
+    // Strip markdown code fences if present
+    text = text.trim();
+    if (text.startsWith('```')) {
+        text = text.replace(/^```(?:json)?\s*\n?/, '').replace(/\n?```\s*$/, '');
+    }
+
+    const data = JSON.parse(text);
+
+    if (!data.rounds || !Array.isArray(data.rounds)) {
+        throw new Error('JSON must have a "rounds" array');
+    }
+
+    // Update config from the data
+    const numRounds = data.rounds.length;
+    const numCats = data.rounds[0].categories.length;
+    const numQs = data.rounds[0].categories[0].questions.length;
+
+    document.getElementById('numRounds').value = numRounds;
+    document.getElementById('numCategories').value = numCats;
+    document.getElementById('numQuestions').value = numQs;
+
+    config.rounds = numRounds;
+    config.categoriesPerRound = numCats;
+    config.questionsPerCategory = numQs;
+    config.pointsPerQuestion = clampInt('pointsPerQ', 1, 1000);
+    config.timerEnabled = document.getElementById('timerToggle').classList.contains('on');
+    config.timerSeconds = clampInt('timerSeconds', 5, 120);
+
+    // Read teams
+    const inputs = document.querySelectorAll('#teamList .team-entry input');
+    teams = [];
+    inputs.forEach((inp, i) => {
+        const name = inp.value.trim() || `Team ${i + 1}`;
+        teams.push({ name, score: 0 });
+    });
+    if (teams.length === 0) teams.push({ name: 'Team 1', score: 0 });
+
+    // Build gameData
+    gameData = [];
+    data.rounds.forEach(round => {
+        const cats = [];
+        round.categories.forEach(cat => {
+            const questions = cat.questions.map(q => ({
+                q: q.q || '',
+                a: q.a || '',
+                used: false
+            }));
+            cats.push({ name: cat.name || '', questions });
+        });
+        gameData.push(cats);
+    });
+
+    return { rounds: numRounds, categories: numCats, questions: numQs, total: numRounds * numCats * numQs };
+}
+
+function loadPastedQuestions() {
+    const text = document.getElementById('pasteArea').value.trim();
+    const status = document.getElementById('importStatus');
+
+    if (!text) {
+        status.textContent = 'Nothing to load - paste JSON first.';
+        status.className = 'import-status error';
+        return;
+    }
+
+    try {
+        const info = parseQuestionsJSON(text);
+        status.textContent = `Loaded! ${info.rounds} rounds, ${info.categories} categories, ${info.total} total questions.`;
+        status.className = 'import-status';
+
+        // Go straight to question entry so they can review
+        editingRound = 0;
+        buildQuestionUI();
+        show('question-screen');
+        hide('setup-screen');
+    } catch (e) {
+        status.textContent = 'Invalid JSON: ' + e.message;
+        status.className = 'import-status error';
+    }
+}
+
+function loadFromFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        document.getElementById('pasteArea').value = e.target.result;
+        loadPastedQuestions();
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+// Drag & drop on paste area
+document.addEventListener('DOMContentLoaded', () => {
+    const pa = document.getElementById('pasteArea');
+
+    pa.addEventListener('dragover', e => {
+        e.preventDefault();
+        pa.classList.add('drag-over');
+    });
+
+    pa.addEventListener('dragleave', () => {
+        pa.classList.remove('drag-over');
+    });
+
+    pa.addEventListener('drop', e => {
+        e.preventDefault();
+        pa.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = ev => {
+                pa.value = ev.target.result;
+                loadPastedQuestions();
+            };
+            reader.readAsText(file);
+        }
+    });
 });
 
 /* ═══════════════════════════════════════════
