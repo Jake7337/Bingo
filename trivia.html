@@ -519,14 +519,16 @@
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             font-family: 'Impact', 'Arial Black', sans-serif;
             font-size: clamp(1.4rem, 3.5vw, 2.5rem);
             color: var(--pattern-color);
             cursor: pointer;
-            transition: all 0.25s;
+            transition: all 0.3s;
             min-height: 0;
+            overflow: hidden;
         }
 
         .q-cell:hover {
@@ -536,9 +538,26 @@
         }
 
         .q-cell.used {
-            opacity: 0.2;
             cursor: default;
             pointer-events: none;
+            opacity: 0.9;
+        }
+
+        .q-cell.used .cell-winner {
+            font-size: clamp(0.55rem, 1.2vw, 0.85rem);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-top: 2px;
+            opacity: 0.9;
+        }
+
+        .q-cell.used .cell-points {
+            font-size: clamp(0.7rem, 1.5vw, 1rem);
+            opacity: 0.7;
+        }
+
+        .q-cell.no-winner {
+            opacity: 0.2;
         }
 
         /* Scoreboard sidebar */
@@ -2129,7 +2148,10 @@ function revealAnswer() {
     awardDiv.appendChild(noBtn);
 }
 
+let lastAwardedTeam = null; // Track who won the last question
+
 function showAwardedPopup(team, points) {
+    lastAwardedTeam = team;
     const popup = document.getElementById('awarded-popup');
     const pointsEl = document.getElementById('awardedPoints');
     const nameEl = document.getElementById('awardedTeamName');
@@ -2175,11 +2197,24 @@ function closeQuestion() {
     clearInterval(timerInterval);
     const catIdx = +document.getElementById('question-overlay').dataset.cat;
     const qIdx = +document.getElementById('question-overlay').dataset.q;
+    const points = config.pointsPerQuestion * (qIdx + 1);
 
-    // Mark used
+    // Mark used and fill with winner
     gameData[currentRound][catIdx].questions[qIdx].used = true;
     const cell = document.getElementById(`cell-${catIdx}-${qIdx}`);
-    if (cell) cell.classList.add('used');
+    if (cell) {
+        cell.classList.add('used');
+        if (lastAwardedTeam) {
+            const tc = teamColors[lastAwardedTeam.colorIdx] || teamColors[0];
+            cell.style.background = tc.bg;
+            cell.style.borderColor = tc.border;
+            cell.innerHTML = `<span class="cell-winner" style="color:${tc.color}">${escHtml(lastAwardedTeam.name)}</span><span class="cell-points" style="color:${tc.color}">${points}</span>`;
+        } else {
+            cell.classList.add('no-winner');
+            cell.innerHTML = `<span class="cell-points">${points}</span>`;
+        }
+    }
+    lastAwardedTeam = null;
 
     hide('question-overlay');
     questionsAnswered++;
