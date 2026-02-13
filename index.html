@@ -42,7 +42,7 @@
         .portal-container {
             text-align: center;
             max-width: 800px;
-            padding: 40px;
+            padding: clamp(20px, 5vw, 40px);
         }
 
         .lodge-title {
@@ -74,7 +74,7 @@
 
         .button-row {
             display: flex;
-            gap: 40px;
+            gap: clamp(20px, 5vw, 40px);
             justify-content: center;
             flex-wrap: wrap;
         }
@@ -85,8 +85,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 280px;
-            height: 200px;
+            width: clamp(220px, 40vw, 280px);
+            height: clamp(160px, 28vw, 200px);
             background: var(--surface);
             border: 2px solid var(--border);
             border-radius: var(--radius-lg);
@@ -192,11 +192,31 @@
             .button-row {
                 flex-direction: column;
                 align-items: center;
-                gap: 20px;
+                gap: 16px;
             }
             .portal-btn {
-                width: 260px;
-                height: 170px;
+                width: min(260px, 85vw);
+                height: 160px;
+            }
+            .lodge-subtitle {
+                margin-bottom: 2rem;
+            }
+            .portal-label {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .portal-btn {
+                width: min(240px, 90vw);
+                height: 150px;
+            }
+            .btn-icon {
+                font-size: 2.8rem;
+                margin-bottom: 8px;
+            }
+            .btn-label {
+                font-size: 1.3rem;
             }
         }
     </style>

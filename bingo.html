@@ -117,7 +117,7 @@
             color: var(--text);
             text-align: center;
             margin-bottom: 1.5rem;
-            width: 300px;
+            width: min(300px, 80vw);
             outline: none;
         }
 
@@ -263,8 +263,8 @@
         }
 
         .header-ball {
-            width: 90px; /* Increased size significantly */
-            height: 90px; /* Increased size significantly */
+            width: clamp(60px, 6vw, 90px);
+            height: clamp(60px, 6vw, 90px);
             border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, #f0f0f0, #ccc);
             color: #000;
@@ -391,7 +391,7 @@
 
         /* --- RIGHT SIDEBAR (Controls) --- */
         .sidebar{
-            width: 380px;
+            width: min(380px, 30vw);
             background: rgba(255,255,255,0.05);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);

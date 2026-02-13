@@ -75,7 +75,7 @@
         #setup-screen {
             max-width: 900px;
             margin: 0 auto;
-            padding: 60px 30px 40px;
+            padding: clamp(40px, 6vh, 60px) clamp(16px, 4vw, 30px) clamp(24px, 4vh, 40px);
         }
 
         .setup-header {
@@ -101,7 +101,7 @@
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 28px;
+            padding: clamp(18px, 4vw, 28px);
             margin-bottom: 24px;
         }
 
@@ -123,7 +123,7 @@
         .setup-row label {
             font-size: 1rem;
             color: var(--muted);
-            min-width: 160px;
+            min-width: clamp(100px, 28vw, 160px);
         }
 
         .setup-row input[type="number"],
@@ -135,7 +135,7 @@
             padding: 10px 16px;
             font-size: 1rem;
             color: var(--text);
-            width: 120px;
+            width: clamp(80px, 30vw, 120px);
             outline: none;
             transition: border-color 0.2s;
         }
@@ -160,6 +160,7 @@
 
         .team-entry input {
             flex: 1;
+            min-width: 0;
             background: var(--surface-2);
             border: 1px solid var(--border);
             border-radius: 10px;
@@ -193,6 +194,11 @@
         .btn-small.remove {
             color: var(--accent);
             padding: 8px 12px;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-add-team {
@@ -208,8 +214,8 @@
         }
 
         .toggle {
-            width: 50px;
-            height: 28px;
+            width: 54px;
+            height: 32px;
             background: var(--cell-off);
             border-radius: 14px;
             cursor: pointer;
@@ -267,7 +273,7 @@
         #question-screen {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 60px 30px 40px;
+            padding: clamp(40px, 6vh, 60px) clamp(16px, 4vw, 30px) clamp(24px, 4vh, 40px);
         }
 
         .q-header {
@@ -313,7 +319,7 @@
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 24px;
+            padding: clamp(16px, 3vw, 24px);
             margin-bottom: 20px;
         }
 
@@ -370,7 +376,7 @@
         .question-row input:focus { border-color: var(--pattern-color); }
 
         .question-row input.answer-input {
-            max-width: 300px;
+            max-width: clamp(150px, 40vw, 300px);
         }
 
         .question-row input.answer-input:focus { border-color: var(--gold); }
@@ -449,7 +455,8 @@
         }
 
         .btn-game {
-            padding: 8px 20px;
+            padding: 10px 20px;
+            min-height: 44px;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 10px;
@@ -545,7 +552,7 @@
         }
 
         .scoreboard-panel {
-            width: 220px;
+            width: clamp(180px, 22vw, 220px);
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
@@ -592,8 +599,9 @@
         }
 
         .score-btn {
-            width: 28px;
-            height: 28px;
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
             border-radius: 50%;
             border: 1px solid var(--border);
             background: var(--surface);
@@ -629,7 +637,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 40px;
+            padding: clamp(16px, 5vw, 40px);
             backdrop-filter: blur(10px);
         }
 
@@ -916,7 +924,7 @@
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 28px;
+            padding: clamp(18px, 4vw, 28px);
             margin-bottom: 24px;
         }
 
@@ -972,14 +980,17 @@
         }
 
         .topic-chip {
-            padding: 8px 16px;
+            padding: 10px 16px;
+            min-height: 44px;
             background: var(--surface-2);
             border: 1px solid var(--border);
-            border-radius: 20px;
+            border-radius: 22px;
             cursor: pointer;
             font-size: 0.9rem;
             transition: all 0.2s;
             color: var(--muted);
+            display: flex;
+            align-items: center;
         }
 
         .topic-chip:hover { border-color: var(--pattern-color); color: var(--text); }
@@ -1019,14 +1030,17 @@
         }
 
         .diff-chip {
-            padding: 8px 18px;
+            padding: 10px 20px;
+            min-height: 44px;
             background: var(--surface-2);
             border: 1px solid var(--border);
-            border-radius: 20px;
+            border-radius: 22px;
             cursor: pointer;
             font-size: 0.9rem;
             transition: all 0.2s;
             color: var(--muted);
+            display: flex;
+            align-items: center;
         }
 
         .diff-chip:hover { border-color: var(--gold); color: var(--text); }
@@ -1071,7 +1085,7 @@
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 28px;
+            padding: clamp(18px, 4vw, 28px);
             margin-bottom: 24px;
         }
 
@@ -1273,6 +1287,124 @@
         }
 
         .btn-ready-back:hover { color: var(--text); border-color: var(--gold); }
+
+        /* ══════════════════════════════════
+           RESPONSIVE BREAKPOINTS
+        ══════════════════════════════════ */
+
+        /* Tablets landscape and smaller desktops */
+        @media (max-width: 1024px) {
+            .game-layout {
+                gap: 8px;
+            }
+        }
+
+        /* Tablets and large phones landscape */
+        @media (max-width: 768px) {
+            .setup-row {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+            .setup-row label {
+                min-width: auto;
+                width: 100%;
+            }
+            .setup-row input[type="number"],
+            .setup-row input[type="text"],
+            .setup-row select {
+                width: 100%;
+                max-width: 200px;
+            }
+            .team-entry input {
+                max-width: none;
+            }
+            .ai-steps {
+                flex-direction: column;
+            }
+            .ai-step {
+                min-width: auto;
+            }
+            .question-row {
+                flex-wrap: wrap;
+            }
+            .question-row input.answer-input {
+                max-width: none;
+                flex: 1;
+            }
+            .overlay-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .btn-overlay {
+                padding: 12px 28px;
+                font-size: 1.1rem;
+            }
+            .award-section {
+                gap: 8px;
+            }
+            .award-btn {
+                padding: 10px 14px;
+                font-size: 0.85rem;
+            }
+            .q-nav-row {
+                flex-wrap: wrap;
+            }
+            .btn-nav {
+                padding: 12px 30px;
+                font-size: 1.1rem;
+            }
+            .game-top-bar {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+        }
+
+        /* Small phones landscape */
+        @media (max-width: 580px) {
+            .ai-topic-row {
+                gap: 6px;
+            }
+            .topic-chip {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+                min-height: 40px;
+            }
+            .diff-chip {
+                padding: 8px 14px;
+                font-size: 0.85rem;
+                min-height: 40px;
+            }
+            .ai-difficulty-row {
+                flex-wrap: wrap;
+            }
+            .btn-start-game {
+                padding: 14px 40px;
+                font-size: 1.4rem;
+            }
+            .btn-generate {
+                padding: 12px 28px;
+                font-size: 1.1rem;
+            }
+            .btn-ready-go {
+                padding: 14px 50px;
+                font-size: 1.6rem;
+            }
+            .ready-title {
+                font-size: clamp(1.5rem, 5vw, 2.5rem);
+            }
+        }
+
+        /* Very small viewports */
+        @media (max-height: 500px) {
+            #ready-screen {
+                padding-top: 50px;
+            }
+            .ready-icon {
+                font-size: 2.5rem;
+                margin-bottom: 8px;
+            }
+        }
     </style>
 </head>
 <body>
