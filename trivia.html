@@ -827,6 +827,77 @@
             box-shadow: 0 0 20px currentColor;
         }
 
+        /* ── Awarded Popup ── */
+        #awarded-popup {
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 15, 20, 0.88);
+            z-index: 700;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .awarded-card {
+            text-align: center;
+            padding: clamp(30px, 5vw, 60px);
+            animation: awarded-pop 0.4s ease-out;
+        }
+
+        @keyframes awarded-pop {
+            0% { transform: scale(0.6); opacity: 0; }
+            70% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .awarded-points {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: clamp(3rem, 10vw, 7rem);
+            letter-spacing: 4px;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .awarded-team-name {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: clamp(2rem, 6vw, 4.5rem);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .awarded-label {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            color: var(--muted);
+            margin-bottom: 30px;
+        }
+
+        .btn-awarded-continue {
+            padding: 16px 60px;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: #0b0f14;
+        }
+
+        .btn-awarded-continue:hover {
+            transform: scale(1.05);
+        }
+
+        .awarded-none-label {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: var(--muted);
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
         /* ── Game Over ── */
         #gameover-screen {
             min-height: 100vh;
@@ -1609,7 +1680,16 @@
     <div class="award-section hidden" id="awardSection"></div>
     <div class="overlay-buttons">
         <button class="btn-overlay btn-reveal" id="btnReveal" onclick="revealAnswer()">REVEAL ANSWER</button>
-        <button class="btn-overlay btn-close-q" onclick="closeQuestion()">CLOSE</button>
+    </div>
+</div>
+
+<!-- ═══ AWARDED POPUP ═══ -->
+<div id="awarded-popup" class="hidden">
+    <div class="awarded-card">
+        <div class="awarded-points" id="awardedPoints"></div>
+        <div class="awarded-team-name" id="awardedTeamName"></div>
+        <div class="awarded-label" id="awardedLabel"></div>
+        <button class="btn-awarded-continue" id="btnAwardedContinue" onclick="closeAwarded()">CONTINUE</button>
     </div>
 </div>
 
@@ -2029,21 +2109,66 @@ function revealAnswer() {
         btn.style.borderColor = tc.border;
         btn.style.background = tc.bg;
         btn.onclick = () => {
-            if (btn.classList.contains('awarded')) {
-                btn.classList.remove('awarded');
-                btn.style.background = tc.bg;
-                btn.style.boxShadow = 'none';
-                teams[i].score -= points;
-            } else {
-                btn.classList.add('awarded');
-                btn.style.background = tc.border;
-                btn.style.boxShadow = `0 0 25px ${tc.glow}`;
-                teams[i].score += points;
-            }
+            teams[i].score += points;
             buildScoreboard();
+            showAwardedPopup(team, points);
         };
         awardDiv.appendChild(btn);
     });
+
+    // "No one got it" button
+    const noBtn = document.createElement('button');
+    noBtn.className = 'award-btn';
+    noBtn.innerHTML = `<span style="display:block;font-size:0.85em;opacity:0.7;">0 pts</span>No One`;
+    noBtn.style.color = 'var(--muted)';
+    noBtn.style.borderColor = 'var(--border)';
+    noBtn.style.background = 'var(--surface)';
+    noBtn.onclick = () => {
+        showAwardedPopup(null, 0);
+    };
+    awardDiv.appendChild(noBtn);
+}
+
+function showAwardedPopup(team, points) {
+    const popup = document.getElementById('awarded-popup');
+    const pointsEl = document.getElementById('awardedPoints');
+    const nameEl = document.getElementById('awardedTeamName');
+    const labelEl = document.getElementById('awardedLabel');
+    const continueBtn = document.getElementById('btnAwardedContinue');
+
+    if (team) {
+        const tc = teamColors[team.colorIdx] || teamColors[0];
+        pointsEl.textContent = `+${points}`;
+        pointsEl.style.color = tc.color;
+        pointsEl.style.textShadow = `0 0 40px ${tc.glow}`;
+        nameEl.textContent = team.name;
+        nameEl.style.color = tc.color;
+        nameEl.style.textShadow = `0 0 30px ${tc.glow}`;
+        labelEl.textContent = `gets ${points} points!`;
+        continueBtn.style.background = tc.color;
+        continueBtn.style.boxShadow = `0 0 25px ${tc.glow}`;
+    } else {
+        pointsEl.textContent = '';
+        nameEl.textContent = '';
+        labelEl.textContent = '';
+        // Show "no one" message
+        const noneLabel = document.getElementById('awardedLabel');
+        noneLabel.textContent = '';
+        document.getElementById('awardedTeamName').textContent = 'NO ONE GOT IT';
+        document.getElementById('awardedTeamName').style.color = 'var(--muted)';
+        document.getElementById('awardedTeamName').style.textShadow = 'none';
+        document.getElementById('awardedPoints').textContent = '';
+        continueBtn.style.background = 'var(--surface-2)';
+        continueBtn.style.boxShadow = 'none';
+        continueBtn.style.color = 'var(--text)';
+    }
+
+    popup.classList.remove('hidden');
+}
+
+function closeAwarded() {
+    hide('awarded-popup');
+    closeQuestion();
 }
 
 function closeQuestion() {
@@ -2116,9 +2241,23 @@ function toggleFullscreen() {
 
 /* ── Keyboard ── */
 document.addEventListener('keydown', e => {
+    // Close awarded popup with Escape or Enter
+    if (!document.getElementById('awarded-popup').classList.contains('hidden')) {
+        if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            closeAwarded();
+        }
+        return;
+    }
     if (e.key === 'Escape') {
         if (!document.getElementById('question-overlay').classList.contains('hidden')) {
-            closeQuestion();
+            // If answer is showing, treat Escape as "no one got it"
+            const answerEl = document.getElementById('olAnswer');
+            if (answerEl.classList.contains('show')) {
+                showAwardedPopup(null, 0);
+            } else {
+                closeQuestion();
+            }
         }
     }
     if (e.key === ' ' || e.key === 'Enter') {
