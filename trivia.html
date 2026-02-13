@@ -1250,20 +1250,20 @@
     <!-- AI Question Generator -->
     <div class="ai-section">
         <h2>Generate Questions with AI</h2>
-        <p class="ai-desc">Pick your topics, hit the button, and we'll open AI in a side window with the perfect prompt already copied. Paste the response back here and you're ready to play.</p>
+        <p class="ai-desc">Let AI write all your trivia questions for you. Just pick topics, create the prompt, and paste it into Claude.</p>
 
         <div class="ai-steps">
             <div class="ai-step">
                 <div class="ai-step-num">1</div>
-                <div class="ai-step-label">Pick topics &amp; hit Generate</div>
+                <div class="ai-step-label">Pick topics &amp; create prompt</div>
             </div>
             <div class="ai-step">
                 <div class="ai-step-num">2</div>
-                <div class="ai-step-label">Paste prompt into AI chat</div>
+                <div class="ai-step-label">Copy prompt &amp; paste into Claude</div>
             </div>
             <div class="ai-step">
                 <div class="ai-step-num">3</div>
-                <div class="ai-step-label">Copy AI response &amp; paste below</div>
+                <div class="ai-step-label">Copy Claude's answer &amp; paste in Load box</div>
             </div>
         </div>
 
@@ -1290,15 +1290,33 @@
             <input type="text" class="ai-custom-topic" id="customTopic" placeholder="Add custom topic...">
         </div>
 
-        <button class="btn-generate" onclick="generateAndOpenAI()">GENERATE &amp; OPEN AI</button>
+        <button class="btn-generate" onclick="generatePrompt()">CREATE PROMPT</button>
         <div class="ai-status" id="aiStatus"></div>
+
+        <!-- Prompt output (hidden until generated) -->
+        <div id="promptOutput" class="hidden" style="margin-top:20px;">
+            <div style="color:var(--gold);font-weight:700;margin-bottom:8px;">Your prompt is ready! Here's what to do:</div>
+            <div style="color:var(--muted);font-size:0.9rem;margin-bottom:12px;line-height:1.6;">
+                1. Click <strong style="color:var(--text);">Copy Prompt</strong> below<br>
+                2. Click <strong style="color:var(--text);">Open Claude.ai</strong> (opens in a new tab)<br>
+                3. Paste the prompt into Claude (Ctrl+V)<br>
+                4. Wait for Claude to respond with the questions<br>
+                5. Select all of Claude's response (Ctrl+A), copy it (Ctrl+C)<br>
+                6. Come back here and paste it in the <strong style="color:var(--text);">Load Questions</strong> box below
+            </div>
+            <textarea class="paste-area" id="promptText" readonly style="min-height:100px;font-size:0.8rem;cursor:text;user-select:text;"></textarea>
+            <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;">
+                <button class="btn-load" onclick="copyPrompt()" id="btnCopyPrompt">COPY PROMPT</button>
+                <button class="btn-file" onclick="window.open('https://claude.ai/new','_blank')" style="border-color:var(--pattern-color);color:var(--pattern-color);">OPEN CLAUDE.AI</button>
+            </div>
+        </div>
     </div>
 
     <!-- Paste / Import -->
     <div class="import-section">
         <h2>Load Questions</h2>
-        <p class="import-desc">Paste the JSON from AI below, or drag &amp; drop a .json file onto the box.</p>
-        <textarea class="paste-area" id="pasteArea" placeholder="Paste AI-generated JSON here, or drag a .json file onto this box..."></textarea>
+        <p class="import-desc">Paste Claude's response below, or drag &amp; drop a .json file onto the box.</p>
+        <textarea class="paste-area" id="pasteArea" placeholder="Paste Claude's response here, or drag a .json file onto this box..." style="user-select:text;"></textarea>
         <div class="import-actions">
             <button class="btn-load" onclick="loadPastedQuestions()">LOAD QUESTIONS</button>
             <button class="btn-file" onclick="document.getElementById('fileInput').click()">Browse File...</button>
@@ -1906,41 +1924,49 @@ ${JSON.stringify({
 Make sure each round has exactly ${catsPerRound} categories and each category has exactly ${qsPerCat} questions. Return ONLY the JSON, nothing else.`;
 }
 
-function generateAndOpenAI() {
+function generatePrompt() {
     const prompt = buildPrompt();
-    const status = document.getElementById('aiStatus');
 
-    // Copy prompt to clipboard
-    navigator.clipboard.writeText(prompt).then(() => {
-        status.textContent = 'Prompt copied to clipboard! Paste it in the AI chat window.';
+    // Show the prompt in the output area
+    document.getElementById('promptText').value = prompt;
+    document.getElementById('promptOutput').classList.remove('hidden');
+    document.getElementById('aiStatus').textContent = '';
+    document.getElementById('btnCopyPrompt').textContent = 'COPY PROMPT';
 
-        // Open Claude.ai in a new window, positioned to the right half of screen
-        const halfW = Math.floor(screen.availWidth / 2);
-        const fullH = screen.availHeight;
-        const leftPos = halfW;
+    // Scroll to the prompt
+    document.getElementById('promptOutput').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
 
-        const aiWin = window.open(
-            'https://claude.ai/new',
-            'triviaAI',
-            `width=${halfW},height=${fullH},left=${leftPos},top=0,menubar=no,toolbar=no,location=yes,status=no`
-        );
+function copyPrompt() {
+    const textarea = document.getElementById('promptText');
+    const btn = document.getElementById('btnCopyPrompt');
 
-        // Try to move our own window to the left half
-        try {
-            window.moveTo(0, 0);
-            window.resizeTo(halfW, fullH);
-        } catch (e) {
-            // Some browsers block this - that's fine
-        }
+    // Select the text
+    textarea.select();
+    textarea.setSelectionRange(0, textarea.value.length);
 
-        if (!aiWin) {
-            status.textContent = 'Prompt copied! Pop-up was blocked - open claude.ai manually and paste.';
-        }
-    }).catch(() => {
-        // Fallback: show prompt in the paste area so they can copy manually
-        document.getElementById('pasteArea').value = prompt;
-        status.textContent = 'Could not copy automatically. The prompt is in the text box below - select all and copy it.';
-    });
+    // Try modern clipboard API first, fall back to execCommand
+    let copied = false;
+    try {
+        // execCommand works on file:// URLs
+        copied = document.execCommand('copy');
+    } catch (e) {
+        copied = false;
+    }
+
+    if (!copied) {
+        // Try the async API as backup
+        navigator.clipboard.writeText(textarea.value).then(() => {
+            btn.textContent = 'COPIED!';
+            setTimeout(() => { btn.textContent = 'COPY PROMPT'; }, 2000);
+        }).catch(() => {
+            document.getElementById('aiStatus').textContent = 'Auto-copy failed. Select the text above manually (Ctrl+A) and copy (Ctrl+C).';
+        });
+        return;
+    }
+
+    btn.textContent = 'COPIED!';
+    setTimeout(() => { btn.textContent = 'COPY PROMPT'; }, 2000);
 }
 
 /* ═══════════════════════════════════════════
