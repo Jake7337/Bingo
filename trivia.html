@@ -1183,6 +1183,96 @@
 
         .or-divider::before { left: 0; }
         .or-divider::after { right: 0; }
+
+        /* ══════════════════════════════════
+           READY TO PLAY SCREEN
+        ══════════════════════════════════ */
+        #ready-screen {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 80px 30px 40px;
+            text-align: center;
+        }
+
+        .ready-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+
+        .ready-title {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--gold);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .ready-summary {
+            font-size: 1.2rem;
+            color: var(--muted);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .ready-summary strong {
+            color: var(--text);
+        }
+
+        .ready-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .ready-cat-chip {
+            padding: 8px 16px;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--gold);
+        }
+
+        .ready-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-ready-go {
+            padding: 18px 70px;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(225, 29, 72, 0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-ready-go:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(225, 29, 72, 0.8);
+        }
+
+        .btn-ready-back {
+            padding: 10px 30px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--muted);
+            transition: all 0.2s;
+        }
+
+        .btn-ready-back:hover { color: var(--text); border-color: var(--gold); }
     </style>
 </head>
 <body>
@@ -1389,6 +1479,18 @@
     <div class="round-announce" id="roundAnnounce"></div>
     <div class="round-sub" id="roundSub"></div>
     <button class="btn-round-go" onclick="dismissRound()">LET'S GO!</button>
+</div>
+
+<!-- ═══ READY TO PLAY ═══ -->
+<div id="ready-screen" class="hidden">
+    <div class="ready-icon">&#9989;</div>
+    <div class="ready-title">QUESTIONS LOADED!</div>
+    <div class="ready-summary" id="readySummary"></div>
+    <div class="ready-categories" id="readyCategories"></div>
+    <div class="ready-actions">
+        <button class="btn-ready-go" onclick="launchFromReady()">START GAME</button>
+        <button class="btn-ready-back" onclick="backFromReady()">Back to Setup</button>
+    </div>
 </div>
 
 <!-- ═══ GAME OVER ═══ -->
@@ -2043,15 +2145,50 @@ function loadPastedQuestions() {
         status.textContent = `Loaded! ${info.rounds} rounds, ${info.categories} categories, ${info.total} total questions.`;
         status.className = 'import-status';
 
-        // Go straight to question entry so they can review
-        editingRound = 0;
-        buildQuestionUI();
-        show('question-screen');
-        hide('setup-screen');
+        // Go to ready screen (no answers visible)
+        showReadyScreen(info);
     } catch (e) {
         status.textContent = 'Invalid JSON: ' + e.message;
         status.className = 'import-status error';
     }
+}
+
+function showReadyScreen(info) {
+    // Build summary
+    document.getElementById('readySummary').innerHTML =
+        `<strong>${info.rounds}</strong> rounds &bull; <strong>${info.categories}</strong> categories per round &bull; <strong>${info.total}</strong> total questions`;
+
+    // Show all category names as chips
+    const catContainer = document.getElementById('readyCategories');
+    catContainer.innerHTML = '';
+    gameData.forEach((round, r) => {
+        round.forEach(cat => {
+            if (cat.name) {
+                const chip = document.createElement('span');
+                chip.className = 'ready-cat-chip';
+                chip.textContent = cat.name;
+                catContainer.appendChild(chip);
+            }
+        });
+    });
+
+    hide('setup-screen');
+    hide('question-screen');
+    show('ready-screen');
+}
+
+function launchFromReady() {
+    hide('ready-screen');
+    document.getElementById('backLink').classList.add('hidden');
+    currentRound = 0;
+    questionsAnswered = 0;
+    teams.forEach(t => t.score = 0);
+    showRoundTransition();
+}
+
+function backFromReady() {
+    hide('ready-screen');
+    show('setup-screen');
 }
 
 function loadFromFile(event) {
