@@ -1634,7 +1634,10 @@
     <!-- Paste / Import -->
     <div class="import-section">
         <h2>Load Questions</h2>
-        <p class="import-desc">Paste Claude's response below, or drag &amp; drop a .json file onto the box.</p>
+        <button class="btn-load" onclick="loadDemo()" style="margin-bottom:16px;background:var(--pattern-color);">LOAD DEMO ROUND</button>
+        <span style="color:var(--muted);font-size:0.9rem;margin-left:10px;">Quick demo with 1 round of easy mixed trivia</span>
+        <br><br>
+        <p class="import-desc">Or paste Claude's response below / drag &amp; drop a .json file onto the box.</p>
         <textarea class="paste-area" id="pasteArea" placeholder="Paste Claude's response here, or drag a .json file onto this box..." style="user-select:text;"></textarea>
         <div class="import-actions">
             <button class="btn-load" onclick="loadPastedQuestions()">LOAD QUESTIONS</button>
@@ -2538,6 +2541,66 @@ function launchFromReady() {
 function backFromReady() {
     hide('ready-screen');
     show('setup-screen');
+}
+
+function loadDemo() {
+    fetch('demo-trivia.json')
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById('pasteArea').value = JSON.stringify(data);
+            loadPastedQuestions();
+        })
+        .catch(() => {
+            // Fallback: embed the demo data directly for file:// usage
+            const demoData = {
+                rounds: [{
+                    categories: [
+                        {
+                            name: "Name That Snack",
+                            questions: [
+                                { q: "What chip brand uses the slogan 'Once you pop, you can't stop'?", a: "Pringles" },
+                                { q: "What candy bar is named after a baseball term for a home run?", a: "Baby Ruth" },
+                                { q: "What color is the M on a pack of plain M&M's?", a: "Brown" },
+                                { q: "What snack cake is known as the golden sponge cake with creamy filling?", a: "Twinkie" },
+                                { q: "What popular chip comes in a tube instead of a bag?", a: "Pringles" }
+                            ]
+                        },
+                        {
+                            name: "Classic TV",
+                            questions: [
+                                { q: "What was the name of the bar in the show Cheers?", a: "Cheers" },
+                                { q: "How many castaways were on Gilligan's Island?", a: "Seven" },
+                                { q: "What tool did Tim Allen always use wrong on Home Improvement?", a: "More power" },
+                                { q: "What show featured a family with the last name Bundy?", a: "Married With Children" },
+                                { q: "On Seinfeld, what was Kramer's first name?", a: "Cosmo" }
+                            ]
+                        },
+                        {
+                            name: "Sports Bar",
+                            questions: [
+                                { q: "How many players are on a baseball field for the defensive team?", a: "Nine" },
+                                { q: "What sport is played at Augusta National every April?", a: "Golf" },
+                                { q: "What NFL team has a star on their helmet?", a: "Dallas Cowboys" },
+                                { q: "In bowling, what is three strikes in a row called?", a: "Turkey" },
+                                { q: "What Pittsburgh team wears black and gold?", a: "All of them" }
+                            ]
+                        },
+                        {
+                            name: "Random Knowledge",
+                            questions: [
+                                { q: "What is the only US state that starts with the letter P?", a: "Pennsylvania" },
+                                { q: "How many stripes are on the American flag?", a: "Thirteen" },
+                                { q: "What animal is on the front of a Mustang car?", a: "Horse" },
+                                { q: "What month does Daylight Savings Time start?", a: "March" },
+                                { q: "What gas station has a shell as its logo?", a: "Shell" }
+                            ]
+                        }
+                    ]
+                }]
+            };
+            document.getElementById('pasteArea').value = JSON.stringify(demoData);
+            loadPastedQuestions();
+        });
 }
 
 function loadFromFile(event) {
