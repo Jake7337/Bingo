@@ -469,6 +469,197 @@
     color: #333;
     margin-top: 50px;
   }
+
+  /* ===== AI SECTION ===== */
+  .ai-section {
+    background: rgba(96,165,250,0.04);
+    border: 1px solid rgba(96,165,250,0.18);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 28px;
+  }
+
+  .ai-steps {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ai-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .ai-step-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(96,165,250,0.15);
+    border: 1px solid rgba(96,165,250,0.3);
+    color: var(--blue);
+    font-weight: 800;
+    font-size: 0.72rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .ai-step-arrow { color: rgba(255,255,255,0.15); font-size: 0.7rem; }
+
+  .topic-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .topic-chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: transparent;
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .topic-chip:hover { border-color: var(--blue); color: var(--text); }
+
+  .topic-chip.selected {
+    background: rgba(96,165,250,0.15);
+    border-color: rgba(96,165,250,0.5);
+    color: var(--blue);
+  }
+
+  .topic-custom {
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.82rem;
+    width: 180px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .topic-custom:focus { border-color: var(--blue); }
+  .topic-custom::placeholder { color: rgba(255,255,255,0.2); }
+
+  .ai-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .diff-select {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .prompt-output {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+  }
+
+  .prompt-instructions {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+
+  .prompt-instructions strong { color: var(--text); }
+
+  .prompt-textarea {
+    width: 100%;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    color: #aaa;
+    font-family: monospace;
+    font-size: 0.78rem;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    cursor: text;
+    user-select: text;
+  }
+
+  .paste-section {
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .paste-section h3 {
+    font-size: 0.95rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+    color: var(--accent);
+  }
+
+  .paste-hint {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .paste-textarea {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: monospace;
+    font-size: 0.8rem;
+    padding: 12px;
+    resize: vertical;
+    min-height: 100px;
+    outline: none;
+    cursor: text;
+    user-select: text;
+    transition: border-color 0.2s;
+  }
+
+  .paste-textarea:focus { border-color: var(--accent); }
+  .paste-textarea::placeholder { color: rgba(255,255,255,0.18); font-family: inherit; }
+
+  .paste-textarea.drag-over { border-color: var(--accent); background: rgba(34,197,94,0.05); }
+
+  .load-status {
+    font-size: 0.82rem;
+    margin-top: 8px;
+    min-height: 20px;
+    color: var(--accent);
+  }
+
+  .load-status.error { color: var(--red); }
+
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
@@ -488,8 +679,72 @@
   <div id="team-list"></div>
   <button class="btn btn-ghost" onclick="addTeam()" style="margin-bottom:32px;">+ Add Team</button>
 
+  <!-- AI GENERATOR -->
+  <h2 style="color:var(--blue);">Generate Questions with AI</h2>
+  <p class="section-hint">Pick topics, create a prompt, paste it into Claude, then load the result — questions fill in automatically.</p>
+
+  <div class="ai-section">
+
+    <div class="ai-steps">
+      <div class="ai-step"><div class="ai-step-num">1</div>Pick topics &amp; create prompt</div>
+      <div class="ai-step-arrow">›</div>
+      <div class="ai-step"><div class="ai-step-num">2</div>Copy &amp; paste into Claude</div>
+      <div class="ai-step-arrow">›</div>
+      <div class="ai-step"><div class="ai-step-num">3</div>Paste Claude's response below &amp; load</div>
+    </div>
+
+    <div style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Pick topics (tap to select, or type your own):</div>
+    <div class="topic-row" id="topicRow">
+      <button class="topic-chip" onclick="toggleTopic(this)">Sports</button>
+      <button class="topic-chip" onclick="toggleTopic(this)">History</button>
+      <button class="topic-chip" onclick="toggleTopic(this)">Pop Culture</button>
+      <button class="topic-chip" onclick="toggleTopic(this)">Science</button>
+      <button class="topic-chip" onclick="toggleTopic(this)">Geography</button>
+      <button class="topic-chip" onclick="toggleTopic(this)">Music</button>
+      <button class="topic-chip" onclick="toggleTopic(this)">Movies &amp; TV</button>
+      <button class="topic-chip" onclick="toggleTopic(this)">Food &amp; Drink</button>
+      <button class="topic-chip" onclick="toggleTopic(this)">Animals</button>
+      <button class="topic-chip" onclick="toggleTopic(this)">General Knowledge</button>
+      <button class="topic-chip" onclick="toggleTopic(this)">Holidays</button>
+      <button class="topic-chip" onclick="toggleTopic(this)">Pennsylvania</button>
+      <button class="topic-chip" onclick="toggleTopic(this)">80s &amp; 90s</button>
+      <input type="text" class="topic-custom" id="customTopic" placeholder="Add custom topic...">
+    </div>
+
+    <div class="ai-controls">
+      <select class="diff-select" id="diffSelect">
+        <option value="mixed">Mixed difficulty</option>
+        <option value="easy">Easy</option>
+        <option value="hard">Hard</option>
+      </select>
+      <button class="btn btn-blue" onclick="generatePrompt()">Create Prompt</button>
+    </div>
+
+    <div id="promptOutput" class="hidden prompt-output">
+      <div class="prompt-instructions">
+        <strong>Your prompt is ready.</strong> 1. Click <strong>Copy Prompt</strong> &nbsp;·&nbsp; 2. Open Claude &nbsp;·&nbsp; 3. Paste &amp; send &nbsp;·&nbsp; 4. Copy Claude's response &nbsp;·&nbsp; 5. Paste it in the Load box below
+      </div>
+      <textarea class="prompt-textarea" id="promptText" readonly rows="5"></textarea>
+      <div style="margin-top:8px;">
+        <button class="btn btn-blue" id="btnCopyPrompt" onclick="copyPrompt()">Copy Prompt</button>
+      </div>
+    </div>
+
+    <div class="paste-section">
+      <h3>Load AI Response</h3>
+      <p class="paste-hint">Paste Claude's full response here. You can also drag &amp; drop a .json file.</p>
+      <textarea class="paste-textarea" id="pasteArea" placeholder="Paste Claude's response here..." rows="5"></textarea>
+      <div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button class="btn btn-green" onclick="loadPastedQuestions()">Load Questions</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('pasteArea').value='';document.getElementById('loadStatus').textContent='';">Clear</button>
+      </div>
+      <div class="load-status" id="loadStatus"></div>
+    </div>
+
+  </div>
+
   <h2>Questions</h2>
-  <p class="section-hint">4 rounds · 5 questions each · Enter category, question, and answer for each.</p>
+  <p class="section-hint">4 rounds · 5 questions each · Enter category, question, and answer for each. These fill automatically when you load AI questions above.</p>
 
   <div id="rounds-container"></div>
 
@@ -927,6 +1182,153 @@ function showFlash(msg) {
   clearTimeout(el._t);
   el._t = setTimeout(() => { el.style.display = 'none'; }, 2000);
 }
+
+// ===== AI GENERATOR =====
+function toggleTopic(btn) {
+  btn.classList.toggle('selected');
+}
+
+function getSelectedTopics() {
+  const topics = [];
+  document.querySelectorAll('.topic-chip.selected').forEach(b => topics.push(b.textContent.trim()));
+  const custom = document.getElementById('customTopic').value.trim();
+  if (custom) topics.push(custom);
+  return topics;
+}
+
+function generatePrompt() {
+  const topics = getSelectedTopics();
+  const diff   = document.getElementById('diffSelect').value;
+
+  const topicText = topics.length > 0
+    ? 'Use these as the categories — distribute them across all 4 rounds so each round has 5 different categories: ' + topics.join(', ') + '. If you need more than ' + topics.length + ' categories to fill all 20 questions, add similar ones.'
+    : 'Choose 20 varied and interesting categories — 5 different ones per round. Good bar trivia categories work best.';
+
+  const diffText = diff === 'easy'
+    ? 'All questions should be easy — things most people at a bar trivia night would know.'
+    : diff === 'hard'
+    ? 'All questions should be challenging — for people who really studied.'
+    : 'Mix difficulty: some easy, some medium, some hard within each round.';
+
+  const prompt =
+`Generate trivia questions for a Classic Trivia Night game. Requirements:
+- 4 rounds total
+- 5 questions per round
+- Each question has its own unique category
+- ${topicText}
+- ${diffText}
+- Plain, direct questions — NOT Jeopardy-style (do not phrase as "This president..." etc.)
+- Suitable for a bar/fraternal lodge trivia night crowd
+- Return ONLY a JSON object, no explanations, no markdown, no extra text
+
+Use exactly this JSON format:
+
+{
+  "rounds": [
+    {
+      "questions": [
+        {"category": "Sports", "question": "What year did the Pittsburgh Steelers win their first Super Bowl?", "answer": "1975"},
+        {"category": "History", "question": "Who was the first U.S. president?", "answer": "George Washington"},
+        {"category": "Science", "question": "What is the chemical symbol for gold?", "answer": "Au"},
+        {"category": "Music", "question": "Which band recorded the album Rumours in 1977?", "answer": "Fleetwood Mac"},
+        {"category": "Movies & TV", "question": "What 1994 film features a character named Forrest Gump?", "answer": "Forrest Gump"}
+      ]
+    },
+    { "questions": [ ...5 questions... ] },
+    { "questions": [ ...5 questions... ] },
+    { "questions": [ ...5 questions... ] }
+  ]
+}
+
+Make sure there are exactly 4 rounds with exactly 5 questions each. Return ONLY the JSON.`;
+
+  document.getElementById('promptText').value = prompt;
+  document.getElementById('promptOutput').classList.remove('hidden');
+  document.getElementById('promptOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function copyPrompt() {
+  const ta  = document.getElementById('promptText');
+  const btn = document.getElementById('btnCopyPrompt');
+  navigator.clipboard.writeText(ta.value).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy Prompt'; }, 2000);
+  }).catch(() => {
+    ta.select();
+    document.execCommand('copy');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy Prompt'; }, 2000);
+  });
+}
+
+function loadPastedQuestions() {
+  const text   = document.getElementById('pasteArea').value.trim();
+  const status = document.getElementById('loadStatus');
+  status.className = 'load-status';
+
+  if (!text) { status.textContent = 'Nothing to load — paste Claude\'s response first.'; return; }
+
+  let data;
+  try {
+    // Strip markdown code fences if present
+    const match = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+    data = JSON.parse(match ? match[1].trim() : text);
+  } catch(e) {
+    status.className = 'load-status error';
+    status.textContent = 'Could not read that — make sure you copied Claude\'s full response. If it has ``` marks, include those too.';
+    return;
+  }
+
+  if (!data.rounds || !Array.isArray(data.rounds)) {
+    status.className = 'load-status error';
+    status.textContent = 'Wrong format — expected { "rounds": [...] }. Try generating a new prompt.';
+    return;
+  }
+
+  initQuestions();
+  let loaded = 0;
+  data.rounds.slice(0, 4).forEach((round, r) => {
+    if (!round.questions) return;
+    round.questions.slice(0, 5).forEach((q, qi) => {
+      questions[r][qi] = {
+        cat: q.category || q.cat || '',
+        q:   q.question || q.q  || '',
+        a:   q.answer   || q.a  || ''
+      };
+      if (q.question || q.q) loaded++;
+    });
+  });
+
+  renderRounds();
+
+  // Expand all round blocks so they can review what loaded
+  for (let r = 0; r < 4; r++) {
+    const block = document.getElementById('round-block-' + r);
+    if (block) block.classList.remove('collapsed');
+  }
+
+  status.textContent = loaded + ' questions loaded across ' + Math.min(data.rounds.length, 4) + ' rounds. Review below, then Start Game.';
+  document.getElementById('rounds-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Drag & drop .json file onto paste area
+(function() {
+  window.addEventListener('DOMContentLoaded', () => {
+    const pa = document.getElementById('pasteArea');
+    if (!pa) return;
+    pa.addEventListener('dragover', e => { e.preventDefault(); pa.classList.add('drag-over'); });
+    pa.addEventListener('dragleave', () => pa.classList.remove('drag-over'));
+    pa.addEventListener('drop', e => {
+      e.preventDefault();
+      pa.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => { pa.value = ev.target.result; loadPastedQuestions(); };
+      reader.readAsText(file);
+    });
+  });
+})();
 
 // ===== INIT =====
 initQuestions();
