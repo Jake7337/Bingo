@@ -793,8 +793,9 @@ let scores = [];        // [teamIdx][roundIdx] = number|null
 let gameStarted = false;
 let currentRound = 0;
 let currentQ = 0;
-let answerRevealed = false;
 let activeScoreRound = 0;
+let roundScoresSubmitted = [false, false, false, false];
+let revealedRounds = new Set();
 
 function initQuestions() {
   questions = [];
@@ -926,9 +927,10 @@ function startGame() {
   gameStarted = true;
   currentRound = 0;
   currentQ = 0;
-  answerRevealed = false;
-  initScores();
   activeScoreRound = 0;
+  roundScoresSubmitted = [false, false, false, false];
+  revealedRounds = new Set();
+  initScores();
 
   switchTab('game');
   renderGame();
@@ -979,27 +981,16 @@ function renderGame() {
       <div class="q-number-tag">Question ${currentQ + 1}</div>
       ${qData.cat ? `<div class="q-category">${escHtml(qData.cat)}</div>` : ''}
       <div class="q-text">${escHtml(qData.q || '(no question entered)')}</div>
-      <div class="q-answer ${answerRevealed ? 'revealed' : ''}" id="answer-box">
-        ${escHtml(qData.a || '(no answer entered)')}
-      </div>
     </div>
 
     <div class="game-controls">
       ${currentQ > 0 ? `<button class="btn btn-ghost" onclick="prevQuestion()">← Back</button>` : ''}
-      <button class="btn btn-gold btn-big" onclick="toggleAnswer()" id="reveal-btn">
-        ${answerRevealed ? 'Hide Answer' : 'Reveal Answer'}
-      </button>
       ${currentQ < totalQs - 1
         ? `<button class="btn btn-green btn-big" onclick="nextQuestion()">Next Question →</button>`
         : `<button class="btn btn-blue btn-big" onclick="endRound()">End Round — Enter Scores →</button>`
       }
     </div>
   `;
-}
-
-function toggleAnswer() {
-  answerRevealed = !answerRevealed;
-  renderGame();
 }
 
 function nextQuestion() {
@@ -1103,6 +1094,14 @@ function renderScoreEntry() {
           ? `<button class="btn btn-blue" onclick="advanceToNextRound()">Continue to ${currentRound < 3 ? ROUND_NAMES[currentRound+1] : 'End Game'} →</button>`
           : ''}
       </div>
+      ${roundScoresSubmitted[activeScoreRound]
+        ? `<div style="margin-top:16px;border-top:1px solid rgba(255,255,255,0.06);padding-top:16px;">
+            <button class="btn btn-gold" onclick="toggleAnswerReveal(${activeScoreRound})">
+              ${revealedRounds.has(activeScoreRound) ? 'Hide Answers' : '&#9733; Show Round Answers'}
+            </button>
+            ${revealedRounds.has(activeScoreRound) ? buildAnswerReveal(activeScoreRound) : ''}
+           </div>`
+        : ''}
     </div>
   `;
 }
@@ -1110,8 +1109,30 @@ function renderScoreEntry() {
 function submitRoundScores() {
   const allFilled = teams.every((_,i) => scores[i][activeScoreRound] !== null);
   if (!allFilled) { showFlash('Enter a score for each team first.'); return; }
+  roundScoresSubmitted[activeScoreRound] = true;
   renderScores();
   showFlash(`${ROUND_NAMES[activeScoreRound]} scores saved!`);
+}
+
+function toggleAnswerReveal(r) {
+  if (revealedRounds.has(r)) { revealedRounds.delete(r); } else { revealedRounds.add(r); }
+  renderScores();
+}
+
+function buildAnswerReveal(r) {
+  const qs = questions[r];
+  const rows = qs.map((q, i) => {
+    if (!q.q) return '';
+    return `<div style="display:flex;gap:12px;align-items:baseline;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+      <span style="font-size:0.75rem;font-weight:800;color:rgba(255,255,255,0.3);flex-shrink:0;width:20px;">${i+1}</span>
+      <div style="flex:1;">
+        ${q.cat ? `<div style="font-size:0.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:3px;">${escHtml(q.cat)}</div>` : ''}
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.7);margin-bottom:4px;">${escHtml(q.q)}</div>
+        <div style="font-size:1rem;font-weight:800;color:var(--accent);">${escHtml(q.a)}</div>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div style="margin-top:14px;background:rgba(0,0,0,0.25);border-radius:10px;padding:6px 14px;">${rows}</div>`;
 }
 
 function renderGameOver() {
@@ -1147,7 +1168,9 @@ function resetGame() {
   gameStarted = false;
   currentRound = 0;
   currentQ = 0;
-  answerRevealed = false;
+  activeScoreRound = 0;
+  roundScoresSubmitted = [false, false, false, false];
+  revealedRounds = new Set();
   initScores();
   switchTab('setup');
 }
