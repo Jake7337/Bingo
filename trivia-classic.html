@@ -1815,18 +1815,38 @@ function generatePrompt() {
     : 'Choose varied and interesting categories — 5 different ones per round, and one for the bonus. Good bar trivia categories work best.';
 
   const prompt =
-`Generate trivia questions for a Classic Trivia Night game. Requirements:
-- 4 rounds total, 5 questions per round, plus 1 bonus question
+`Generate trivia questions for a bar/lodge Classic Trivia Night. These are for real trivia players — questions must be SPECIFIC and require actual knowledge, not just common sense. The goal is that people genuinely don't know the answer off the top of their head — they have to think or actually know their stuff.
+
+WHAT MAKES A GOOD QUESTION:
+- Specific details: exact years, exact locations, exact names — not vague generalities
+- Name/fact matching: "Which actor played X in Y?", "What character did X play in Y?"
+- Precise geography: not just "what country" but "what city", "what river", "what mountain range"
+- Hidden connections: "What do X, Y, and Z all have in common?"
+- Specific records or firsts: not just "who was first" but lesser-known firsts
+- Pop culture specifics: not "what show was X on" but "what season / what year / what episode detail"
+- Numbers that matter: jersey numbers, chart positions, release years, record lengths
+- DO NOT write questions where the answer is obvious from general knowledge alone
+
+ESCALATING DIFFICULTY — this is the most important instruction:
+  Round 1 (Moderate): Trivia fans will know these but casual players may not — NOT beginner stuff. Think: "What year did X happen" or "Name the actor who played Y"
+  Round 2 (Challenging): Requires real knowledge of the topic. Specific facts, dates, names that take effort to know.
+  Round 3 (Hard): Questions where even knowledgeable players debate the answer. Niche facts, obscure records, specific details.
+  Round 4 (Very Hard): Questions that stump most people. Deep cuts — specific stats, lesser-known names, exact details.
+  Bonus: Exciting and fair — medium-hard, great for wagering. A question people feel they SHOULD know but might not.
+
+VARY THE FORMAT across rounds (don't make every question "What is X"):
+- "Which actor played [character] in [movie/show]?"
+- "What year did [specific event] happen?"
+- "Name the [city/mountain/river] where [specific thing] occurs."
+- "What do [X], [Y], and [Z] all have in common?"
+- "How many [things] does [X] have / hold / score?"
+- "What is the name of [very specific thing] in [well-known thing]?"
+
+${topicText}
+
+- Plain, direct questions — NOT Jeopardy-style phrasing
 - Each question has its own unique category
-- ${topicText}
-- ESCALATING DIFFICULTY — this is critical:
-    Round 1: Easy — things almost everyone at a bar trivia night would know
-    Round 2: Medium — requires some general knowledge, most people can get these
-    Round 3: Hard — challenging, requires real knowledge of the topic
-    Round 4: Very Hard — tough questions even knowledgeable players may miss
-    Bonus: Medium-Hard — exciting final wager question, fair but not trivial
-- Plain, direct questions — NOT Jeopardy-style (do not phrase as "This president..." etc.)
-- Suitable for a bar/fraternal lodge trivia night crowd
+- Suitable for a bar/fraternal lodge crowd — pop culture, sports, geography, history, entertainment
 - Return ONLY a JSON object, no explanations, no markdown, no extra text
 
 Use exactly this JSON format:
@@ -1835,21 +1855,21 @@ Use exactly this JSON format:
   "rounds": [
     {
       "questions": [
-        {"category": "Sports", "question": "What year did the Pittsburgh Steelers win their first Super Bowl?", "answer": "1975"},
-        {"category": "History", "question": "Who was the first U.S. president?", "answer": "George Washington"},
-        {"category": "Science", "question": "What is the chemical symbol for gold?", "answer": "Au"},
-        {"category": "Music", "question": "Which band recorded the album Rumours in 1977?", "answer": "Fleetwood Mac"},
-        {"category": "Movies & TV", "question": "What 1994 film features a character named Forrest Gump?", "answer": "Forrest Gump"}
+        {"category": "Movies", "question": "Which actor played Tony Stark / Iron Man in the Marvel Cinematic Universe?", "answer": "Robert Downey Jr."},
+        {"category": "Geography", "question": "What is the name of the only active volcano in mainland Europe?", "answer": "Mount Vesuvius"},
+        {"category": "Sports", "question": "In what year did the Pittsburgh Penguins win their first Stanley Cup?", "answer": "1991"},
+        {"category": "Music", "question": "What band's lead singer died in 1991, the same year they released their final studio album?", "answer": "Queen / Freddie Mercury"},
+        {"category": "TV", "question": "What Pennsylvania city does the TV show The Office take place in?", "answer": "Scranton"}
       ]
     },
-    { "questions": [ ...5 medium questions... ] },
+    { "questions": [ ...5 challenging questions... ] },
     { "questions": [ ...5 hard questions... ] },
     { "questions": [ ...5 very hard questions... ] }
   ],
-  "bonus": {"category": "Wild Card", "question": "What is the only country in the world whose flag is not rectangular or square?", "answer": "Nepal"}
+  "bonus": {"category": "Wild Card", "question": "What mountain sits on the equator yet has glaciers and snow year-round at its peak?", "answer": "Mount Kilimanjaro"}
 }
 
-Make sure there are exactly 4 rounds with exactly 5 questions each, plus one bonus question. Return ONLY the JSON.`;
+Make sure there are exactly 4 rounds with exactly 5 questions each, plus one bonus. Return ONLY the JSON.`;
 
   document.getElementById('promptText').value = prompt;
   document.getElementById('promptOutput').classList.remove('hidden');
