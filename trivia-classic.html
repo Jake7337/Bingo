@@ -660,6 +660,309 @@
   .load-status.error { color: var(--red); }
 
   .hidden { display: none !important; }
+
+  /* ===== TIMER BAR ===== */
+  .timer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 14px 20px;
+    background: #0d1117;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 53px;
+    z-index: 90;
+  }
+
+  .timer-display {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--accent);
+    min-width: 70px;
+    text-align: center;
+    transition: color 0.3s;
+  }
+
+  .timer-display.warn    { color: var(--gold); }
+  .timer-display.danger  { color: var(--red); animation: pulse 0.5s ease-in-out infinite alternate; }
+
+  @keyframes pulse { from { opacity: 1; } to { opacity: 0.5; } }
+
+  .timer-btns { display: flex; gap: 8px; }
+
+  .timer-btn {
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .timer-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
+  .timer-btn.running { color: var(--accent); border-color: rgba(34,197,94,0.4); }
+
+  .timer-duration {
+    font-size: 0.75rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .timer-duration select {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  /* ===== FULLSCREEN ANSWER OVERLAY ===== */
+  .answer-overlay {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 20%, rgba(34,197,94,0.15), transparent 55%),
+                radial-gradient(ellipse at 70% 80%, rgba(251,191,36,0.1), transparent 55%),
+                rgba(11,15,20,0.97);
+    z-index: 9000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    cursor: pointer;
+    animation: overlayIn 0.3s ease-out;
+    overflow-y: auto;
+  }
+
+  @keyframes overlayIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+
+  .ao-inner {
+    width: 100%;
+    max-width: 820px;
+    pointer-events: none;
+  }
+
+  .ao-round {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: clamp(1.4rem, 4vw, 2.4rem);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+    text-shadow: 0 0 30px rgba(251,191,36,0.4);
+    margin-bottom: 6px;
+  }
+
+  .ao-subtitle {
+    text-align: center;
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 28px;
+  }
+
+  .ao-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    animation: itemIn 0.4s ease-out both;
+  }
+
+  .ao-item:nth-child(1) { animation-delay: 0.05s; }
+  .ao-item:nth-child(2) { animation-delay: 0.1s; }
+  .ao-item:nth-child(3) { animation-delay: 0.15s; }
+  .ao-item:nth-child(4) { animation-delay: 0.2s; }
+  .ao-item:nth-child(5) { animation-delay: 0.25s; }
+
+  @keyframes itemIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  .ao-num {
+    font-family: 'Impact', sans-serif;
+    font-size: 1.8rem;
+    color: rgba(255,255,255,0.15);
+    min-width: 32px;
+    line-height: 1;
+    padding-top: 2px;
+  }
+
+  .ao-cat {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 5px;
+  }
+
+  .ao-q {
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .ao-a {
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    font-weight: 800;
+    color: var(--accent);
+    text-shadow: 0 0 20px rgba(34,197,94,0.3);
+  }
+
+  .ao-hint {
+    text-align: center;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+    margin-top: 24px;
+    animation: blink 1.5s ease-in-out infinite;
+  }
+
+  @keyframes blink { 0%,100% { opacity: 0.3; } 50% { opacity: 0.7; } }
+
+  /* ===== BONUS ROUND ===== */
+  .bonus-section {
+    background: rgba(251,191,36,0.04);
+    border: 2px solid rgba(251,191,36,0.25);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-top: 20px;
+  }
+
+  .bonus-title {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(251,191,36,0.3);
+    margin-bottom: 6px;
+  }
+
+  .bonus-hint { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; }
+
+  .bonus-q-display {
+    background: rgba(251,191,36,0.06);
+    border: 1px solid rgba(251,191,36,0.2);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .bonus-q-cat {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+
+  .bonus-q-text {
+    font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+    font-weight: 700;
+    line-height: 1.35;
+    margin-bottom: 12px;
+  }
+
+  .bonus-q-answer {
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    font-weight: 800;
+    color: var(--accent);
+    display: none;
+  }
+
+  .bonus-q-answer.revealed { display: block; }
+
+  .bonus-wager-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .bonus-wager-row span { flex: 1; font-weight: 600; }
+  .bonus-wager-row .team-total { font-size: 0.8rem; color: var(--muted); }
+
+  .bonus-wager-row input[type="number"] {
+    width: 100px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 800;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 8px 10px;
+    outline: none;
+    flex-shrink: 0;
+  }
+
+  .bonus-wager-row input[type="number"]:focus { border-color: var(--gold); }
+
+  .bonus-result-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .bonus-result-row span { flex: 1; font-weight: 600; }
+
+  .result-btn {
+    padding: 7px 16px;
+    border-radius: 7px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.18s;
+  }
+
+  .result-btn.correct { background: rgba(34,197,94,0.15); color: var(--accent); border: 1px solid rgba(34,197,94,0.3); }
+  .result-btn.correct.active { background: var(--accent); color: #000; }
+  .result-btn.wrong   { background: rgba(228,29,72,0.1); color: var(--red); border: 1px solid rgba(228,29,72,0.25); }
+  .result-btn.wrong.active   { background: var(--red); color: #fff; }
+
+  /* ===== BONUS QUESTION IN SETUP ===== */
+  .bonus-setup-card {
+    background: rgba(251,191,36,0.04);
+    border: 1px solid rgba(251,191,36,0.2);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-top: 16px;
+  }
+
+  .bonus-setup-label {
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gold);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 </style>
 </head>
 <body>
@@ -712,12 +1015,8 @@
     </div>
 
     <div class="ai-controls">
-      <select class="diff-select" id="diffSelect">
-        <option value="mixed">Mixed difficulty</option>
-        <option value="easy">Easy</option>
-        <option value="hard">Hard</option>
-      </select>
       <button class="btn btn-blue" onclick="generatePrompt()">Create Prompt</button>
+      <span style="font-size:0.75rem;color:var(--muted);">Difficulty auto-escalates: Easy → Medium → Hard → Very Hard</span>
     </div>
 
     <div id="promptOutput" class="hidden prompt-output">
@@ -748,8 +1047,27 @@
 
   <div id="rounds-container"></div>
 
+  <!-- BONUS QUESTION -->
+  <div class="bonus-setup-card">
+    <div class="bonus-setup-label">&#9733; Bonus Round Question <span style="font-weight:400;color:var(--muted);font-size:0.72rem;letter-spacing:0;">(auto-filled by AI, or enter manually)</span></div>
+    <div class="q-row" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="q-col">
+        <label>Category</label>
+        <input type="text" id="bonus-cat" placeholder="e.g. Wild Card" oninput="bonusQuestion.cat=this.value">
+      </div>
+      <div class="q-col">
+        <label>Question</label>
+        <input type="text" id="bonus-q" placeholder="Bonus question" oninput="bonusQuestion.q=this.value">
+      </div>
+      <div class="q-col">
+        <label>Answer</label>
+        <input type="text" id="bonus-a" placeholder="Answer" oninput="bonusQuestion.a=this.value">
+      </div>
+    </div>
+  </div>
+
   <div class="setup-actions">
-    <button class="btn btn-green btn-big" onclick="startGame()">▶ Start Game</button>
+    <button class="btn btn-green btn-big" onclick="startGame()">&#9654; Start Game</button>
     <button class="btn btn-ghost" onclick="saveSetup()">Save Questions</button>
     <button class="btn btn-ghost" onclick="loadSetup()">Load Saved</button>
     <button class="btn btn-ghost" onclick="clearSetup()">Clear All</button>
@@ -761,7 +1079,27 @@
 <!-- ===== GAME SCREEN ===== -->
 <div class="screen" id="screen-game">
 
-  <div id="game-content">
+  <div class="timer-bar">
+    <div class="timer-duration">
+      <span>Timer</span>
+      <select id="timerSelect" onchange="setTimerDuration(parseInt(this.value))">
+        <option value="15">15s</option>
+        <option value="20">20s</option>
+        <option value="30" selected>30s</option>
+        <option value="45">45s</option>
+        <option value="60">60s</option>
+        <option value="90">90s</option>
+      </select>
+    </div>
+    <div class="timer-display" id="timer-display">30</div>
+    <div class="timer-btns">
+      <button class="timer-btn" id="timer-start-btn" onclick="startTimer()">&#9654;</button>
+      <button class="timer-btn" onclick="pauseTimer()">&#9646;&#9646;</button>
+      <button class="timer-btn" onclick="resetTimer()">&#8635;</button>
+    </div>
+  </div>
+
+  <div id="game-content" style="padding:30px 20px 60px;max-width:900px;margin:0 auto;">
     <div class="no-questions">No questions loaded. Set up your game first.</div>
   </div>
 
@@ -775,6 +1113,8 @@
   <div class="leaderboard" id="leaderboard"></div>
 
   <div id="score-entry-area"></div>
+
+  <div id="bonus-area"></div>
 
   <div id="game-over-area"></div>
 
@@ -796,6 +1136,19 @@ let currentQ = 0;
 let activeScoreRound = 0;
 let roundScoresSubmitted = [false, false, false, false];
 let revealedRounds = new Set();
+
+// Timer
+let timerDuration = 30;
+let timerRemaining = 30;
+let timerRunning = false;
+let timerInterval = null;
+
+// Bonus round
+let bonusQuestion = { cat: '', q: '', a: '' };
+let bonusWagers = [];
+let bonusResults = []; // true=correct, false=wrong, null=unmarked
+let bonusPhase = 'idle'; // 'wager' | 'question' | 'reveal' | 'scored'
+let bonusAnswerVisible = false;
 
 function initQuestions() {
   questions = [];
@@ -888,7 +1241,11 @@ function toggleRoundBlock(r) {
 }
 
 function saveSetup() {
-  const data = { teams: [...teams], questions: JSON.parse(JSON.stringify(questions)) };
+  const data = {
+    teams: [...teams],
+    questions: JSON.parse(JSON.stringify(questions)),
+    bonus: { ...bonusQuestion }
+  };
   localStorage.setItem('trivia_classic_setup', JSON.stringify(data));
   showFlash('Questions saved!');
 }
@@ -900,6 +1257,15 @@ function loadSetup() {
     const data = JSON.parse(raw);
     if (data.teams)     { teams = data.teams; renderTeams(); }
     if (data.questions) { questions = data.questions; renderRounds(); }
+    if (data.bonus) {
+      bonusQuestion = { ...data.bonus };
+      const bonusCatEl = document.getElementById('bonus-cat');
+      const bonusQEl   = document.getElementById('bonus-q');
+      const bonusAEl   = document.getElementById('bonus-a');
+      if (bonusCatEl) bonusCatEl.value = bonusQuestion.cat || '';
+      if (bonusQEl)   bonusQEl.value   = bonusQuestion.q   || '';
+      if (bonusAEl)   bonusAEl.value   = bonusQuestion.a   || '';
+    }
     showFlash('Loaded!');
   } catch(e) { showFlash('Could not load saved data.'); }
 }
@@ -930,7 +1296,12 @@ function startGame() {
   activeScoreRound = 0;
   roundScoresSubmitted = [false, false, false, false];
   revealedRounds = new Set();
+  bonusPhase = 'idle';
+  bonusWagers = [];
+  bonusResults = [];
+  bonusAnswerVisible = false;
   initScores();
+  resetTimer();
 
   switchTab('game');
   renderGame();
@@ -998,7 +1369,7 @@ function nextQuestion() {
   const total = roundQs.filter(q => q.q.trim()).length;
   if (currentQ < total - 1) {
     currentQ++;
-    answerRevealed = false;
+    resetTimer();
     renderGame();
   }
 }
@@ -1006,12 +1377,13 @@ function nextQuestion() {
 function prevQuestion() {
   if (currentQ > 0) {
     currentQ--;
-    answerRevealed = false;
+    resetTimer();
     renderGame();
   }
 }
 
 function endRound() {
+  resetTimer();
   activeScoreRound = currentRound;
   switchTab('scores');
   renderScores();
@@ -1020,7 +1392,7 @@ function endRound() {
 function advanceToNextRound() {
   currentRound++;
   currentQ = 0;
-  answerRevealed = false;
+  resetTimer();
   switchTab('game');
   renderGame();
 }
@@ -1029,6 +1401,7 @@ function advanceToNextRound() {
 function renderScores() {
   renderLeaderboard();
   renderScoreEntry();
+  renderBonusArea();
   renderGameOver();
 }
 
@@ -1036,27 +1409,34 @@ function renderLeaderboard() {
   const lb = document.getElementById('leaderboard');
   if (!gameStarted || teams.length === 0) { lb.innerHTML = ''; return; }
 
-  const totals = teams.map((name, i) => ({
-    name,
-    rounds: scores[i],
-    total: scores[i].reduce((sum, s) => sum + (s || 0), 0)
-  }));
-
-  totals.sort((a,b) => b.total - a.total);
+  const useFinal = bonusPhase === 'scored';
+  const totals = useFinal
+    ? getFinalTotals().map((t, i) => ({ ...t, rounds: scores[teams.indexOf ? teams.findIndex(n => n === t.name) : i] || [] }))
+    : teams.map((name, i) => ({
+        name,
+        rounds: scores[i],
+        total: scores[i].reduce((sum, s) => sum + (s || 0), 0),
+        bonusAdj: 0
+      })).sort((a,b) => b.total - a.total);
 
   const rankClasses = ['first','second','third'];
   const rankSymbols = ['1st','2nd','3rd'];
 
-  lb.innerHTML = totals.map((t, rank) => `
-    <div class="lb-row ${rankClasses[rank] || ''}">
+  lb.innerHTML = totals.map((t, rank) => {
+    const teamIdx = teams.indexOf(t.name);
+    const roundChips = (teamIdx >= 0 ? scores[teamIdx] : []).map((s,r) =>
+      `<span class="lb-round-chip" title="${ROUND_NAMES[r]}">${s !== null ? s : '&mdash;'}</span>`
+    ).join('');
+    const bonusChip = useFinal && t.bonusAdj !== 0
+      ? `<span class="lb-round-chip" title="Bonus" style="color:${t.bonusAdj > 0 ? 'var(--accent)' : 'var(--red)'};">${t.bonusAdj > 0 ? '+' : ''}${t.bonusAdj}</span>`
+      : '';
+    return `<div class="lb-row ${rankClasses[rank] || ''}">
       <div class="lb-rank">${rankSymbols[rank] || (rank+1)}</div>
       <div class="lb-name">${escHtml(t.name)}</div>
-      <div class="lb-rounds">
-        ${t.rounds.map((s,r) => `<span class="lb-round-chip" title="${ROUND_NAMES[r]}">${s !== null ? s : '—'}</span>`).join('')}
-      </div>
+      <div class="lb-rounds">${roundChips}${bonusChip}</div>
       <div class="lb-total">${t.total}</div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function renderScoreEntry() {
@@ -1115,8 +1495,7 @@ function submitRoundScores() {
 }
 
 function toggleAnswerReveal(r) {
-  if (revealedRounds.has(r)) { revealedRounds.delete(r); } else { revealedRounds.add(r); }
-  renderScores();
+  showAnswerOverlay(r);
 }
 
 function buildAnswerReveal(r) {
@@ -1137,30 +1516,30 @@ function buildAnswerReveal(r) {
 
 function renderGameOver() {
   const area = document.getElementById('game-over-area');
-  if (!gameStarted || currentRound < 4) { area.innerHTML = ''; return; }
+  if (!gameStarted || currentRound < 4 || bonusPhase !== 'scored') { area.innerHTML = ''; return; }
 
-  const totals = teams.map((name, i) => ({
-    name,
-    total: scores[i].reduce((sum, s) => sum + (s || 0), 0)
-  }));
-  totals.sort((a,b) => b.total - a.total);
+  const totals = getFinalTotals();
 
   area.innerHTML = `
     <div class="game-over" style="padding:30px 0 0;">
-      <h2>🏆 FINAL RESULTS</h2>
+      <h2>&#127942; FINAL RESULTS</h2>
       <p class="winner-name">Winner: ${escHtml(totals[0].name)} — ${totals[0].total} pts</p>
       <button class="btn btn-ghost" onclick="resetGame()">Start New Game</button>
     </div>
   `;
 }
 
+function getFinalTotals() {
+  return teams.map((name, i) => {
+    const roundTotal = scores[i].reduce((sum, s) => sum + (s || 0), 0);
+    const bonusAdj   = bonusPhase === 'scored' ? (bonusResults[i] === true ? (bonusWagers[i] || 0) : bonusResults[i] === false ? -(bonusWagers[i] || 0) : 0) : 0;
+    return { name, total: roundTotal + bonusAdj, roundTotal, bonusAdj };
+  }).sort((a,b) => b.total - a.total);
+}
+
 function getWinnerText() {
   if (teams.length === 0) return '';
-  const totals = teams.map((name, i) => ({
-    name,
-    total: scores[i].reduce((sum, s) => sum + (s || 0), 0)
-  }));
-  totals.sort((a,b) => b.total - a.total);
+  const totals = getFinalTotals();
   return `${totals[0].name} wins!`;
 }
 
@@ -1171,6 +1550,11 @@ function resetGame() {
   activeScoreRound = 0;
   roundScoresSubmitted = [false, false, false, false];
   revealedRounds = new Set();
+  bonusPhase = 'idle';
+  bonusWagers = [];
+  bonusResults = [];
+  bonusAnswerVisible = false;
+  resetTimer();
   initScores();
   switchTab('setup');
 }
@@ -1206,6 +1590,210 @@ function showFlash(msg) {
   el._t = setTimeout(() => { el.style.display = 'none'; }, 2000);
 }
 
+// ===== TIMER =====
+function setTimerDuration(val) {
+  timerDuration = val;
+  resetTimer();
+}
+
+function startTimer() {
+  if (timerRunning || timerRemaining <= 0) return;
+  timerRunning = true;
+  document.getElementById('timer-start-btn').classList.add('running');
+  timerInterval = setInterval(tickTimer, 1000);
+}
+
+function pauseTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  const btn = document.getElementById('timer-start-btn');
+  if (btn) btn.classList.remove('running');
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerRemaining = timerDuration;
+  const btn = document.getElementById('timer-start-btn');
+  if (btn) btn.classList.remove('running');
+  updateTimerDisplay();
+}
+
+function tickTimer() {
+  timerRemaining--;
+  updateTimerDisplay();
+  if (timerRemaining <= 0) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    const btn = document.getElementById('timer-start-btn');
+    if (btn) btn.classList.remove('running');
+  }
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById('timer-display');
+  if (!el) return;
+  el.textContent = timerRemaining;
+  el.className = 'timer-display';
+  if (timerRemaining <= 5)  el.classList.add('danger');
+  else if (timerRemaining <= 10) el.classList.add('warn');
+}
+
+// ===== FULLSCREEN ANSWER OVERLAY =====
+function showAnswerOverlay(r) {
+  const qs = questions[r].filter(q => q.q);
+  const overlay = document.createElement('div');
+  overlay.className = 'answer-overlay';
+  overlay.onclick = () => document.body.removeChild(overlay);
+
+  const items = qs.map((q, i) =>
+    `<div class="ao-item">
+      <div class="ao-num">${i + 1}</div>
+      <div style="flex:1;">
+        ${q.cat ? `<div class="ao-cat">${escHtml(q.cat)}</div>` : ''}
+        <div class="ao-q">${escHtml(q.q)}</div>
+        <div class="ao-a">${escHtml(q.a)}</div>
+      </div>
+    </div>`
+  ).join('');
+
+  overlay.innerHTML =
+    `<div class="ao-inner">
+      <div class="ao-round">${ROUND_NAMES[r]} — Answers</div>
+      <div class="ao-subtitle">Tap anywhere to continue</div>
+      ${items}
+      <div class="ao-hint">tap anywhere to continue</div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+}
+
+// ===== BONUS ROUND =====
+function renderBonusArea() {
+  const area = document.getElementById('bonus-area');
+  if (!gameStarted || currentRound < 4 || !roundScoresSubmitted.every(Boolean)) {
+    area.innerHTML = '';
+    return;
+  }
+
+  const allRoundsScored = teams.every((_, i) => scores[i].every(s => s !== null));
+  if (!allRoundsScored) { area.innerHTML = ''; return; }
+
+  if (bonusPhase === 'idle') {
+    area.innerHTML =
+      `<div class="bonus-section" style="text-align:center;padding:32px;">
+        <div class="bonus-title">&#9733; Bonus Round</div>
+        <div class="bonus-hint" style="margin-bottom:20px;">One final question — teams wager points from their total. Correct = gain your wager. Wrong = lose it.</div>
+        ${!bonusQuestion.q
+          ? `<p style="color:var(--red);font-size:0.85rem;margin-bottom:16px;">No bonus question set — add one in Setup first.</p>`
+          : ''}
+        <button class="btn btn-gold btn-big" onclick="startBonusRound()" ${!bonusQuestion.q ? 'disabled' : ''}>Start Bonus Round &#9733;</button>
+      </div>`;
+    return;
+  }
+
+  const roundTotal = i => scores[i].reduce((sum, s) => sum + (s || 0), 0);
+
+  if (bonusPhase === 'wager') {
+    const wagerRows = teams.map((name, i) =>
+      `<div class="bonus-wager-row">
+        <span>${escHtml(name)} <span class="team-total">(${roundTotal(i)} pts)</span></span>
+        <input type="number" min="0" max="${roundTotal(i)}" step="1"
+          value="${bonusWagers[i] !== undefined ? bonusWagers[i] : ''}"
+          placeholder="0–${roundTotal(i)}"
+          onchange="bonusWagers[${i}]=Math.min(parseInt(this.value)||0,${roundTotal(i)});this.value=bonusWagers[${i}]">
+      </div>`
+    ).join('');
+
+    area.innerHTML =
+      `<div class="bonus-section">
+        <div class="bonus-title">&#9733; Bonus Round</div>
+        <div class="bonus-hint">Each team enters their wager. Max = their current total. When all teams are ready, reveal the question.</div>
+        ${wagerRows}
+        <div style="margin-top:16px;">
+          <button class="btn btn-gold btn-big" onclick="lockWagersShowQuestion()">Lock Wagers &amp; Show Question &#9654;</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  if (bonusPhase === 'question' || bonusPhase === 'reveal') {
+    const wagerList = teams.map((name, i) =>
+      `<span style="font-size:0.78rem;color:var(--muted);">${escHtml(name)}: <strong style="color:var(--gold);">${bonusWagers[i] || 0}</strong></span>`
+    ).join(' &nbsp;|&nbsp; ');
+
+    const resultRows = bonusPhase === 'reveal'
+      ? teams.map((name, i) =>
+          `<div class="bonus-result-row">
+            <span>${escHtml(name)}</span>
+            <button class="result-btn correct ${bonusResults[i]===true?'active':''}" onclick="setBonusResult(${i},true)">&#10003; Correct</button>
+            <button class="result-btn wrong ${bonusResults[i]===false?'active':''}" onclick="setBonusResult(${i},false)">&#10005; Wrong</button>
+          </div>`
+        ).join('')
+      : '';
+
+    area.innerHTML =
+      `<div class="bonus-section">
+        <div class="bonus-title">&#9733; Bonus Round</div>
+        <div style="margin-bottom:14px;display:flex;flex-wrap:wrap;gap:8px;">${wagerList}</div>
+        <div class="bonus-q-display">
+          ${bonusQuestion.cat ? `<div class="bonus-q-cat">${escHtml(bonusQuestion.cat)}</div>` : ''}
+          <div class="bonus-q-text">${escHtml(bonusQuestion.q)}</div>
+          <div class="bonus-q-answer ${bonusAnswerVisible ? 'revealed' : ''}" id="bonus-answer">${escHtml(bonusQuestion.a)}</div>
+        </div>
+        ${bonusPhase === 'question'
+          ? `<div style="text-align:center;margin-top:14px;">
+               <button class="btn btn-gold btn-big" onclick="revealBonusAnswer()">&#9733; Reveal Answer</button>
+             </div>`
+          : `<div style="margin-top:14px;">
+               <div style="font-size:0.85rem;font-weight:700;margin-bottom:10px;color:var(--muted);">Mark each team:</div>
+               ${resultRows}
+               <div style="margin-top:16px;">
+                 <button class="btn btn-green btn-big" onclick="scoreBonusRound()">Apply Scores &amp; Final Results</button>
+               </div>
+             </div>`
+        }
+      </div>`;
+    return;
+  }
+
+  if (bonusPhase === 'scored') {
+    area.innerHTML = '';
+  }
+}
+
+function startBonusRound() {
+  bonusPhase = 'wager';
+  bonusWagers = teams.map(() => 0);
+  bonusResults = teams.map(() => null);
+  renderScores();
+}
+
+function lockWagersShowQuestion() {
+  bonusPhase = 'question';
+  bonusAnswerVisible = false;
+  resetTimer();
+  renderScores();
+}
+
+function revealBonusAnswer() {
+  bonusPhase = 'reveal';
+  bonusAnswerVisible = true;
+  renderScores();
+}
+
+function setBonusResult(teamIdx, correct) {
+  bonusResults[teamIdx] = correct;
+  renderBonusArea();
+}
+
+function scoreBonusRound() {
+  const allMarked = bonusResults.every(r => r !== null);
+  if (!allMarked) { showFlash('Mark each team correct or wrong first.'); return; }
+  bonusPhase = 'scored';
+  renderScores();
+}
+
 // ===== AI GENERATOR =====
 function toggleTopic(btn) {
   btn.classList.toggle('selected');
@@ -1221,25 +1809,22 @@ function getSelectedTopics() {
 
 function generatePrompt() {
   const topics = getSelectedTopics();
-  const diff   = document.getElementById('diffSelect').value;
 
   const topicText = topics.length > 0
-    ? 'Use these as the categories — distribute them across all 4 rounds so each round has 5 different categories: ' + topics.join(', ') + '. If you need more than ' + topics.length + ' categories to fill all 20 questions, add similar ones.'
-    : 'Choose 20 varied and interesting categories — 5 different ones per round. Good bar trivia categories work best.';
-
-  const diffText = diff === 'easy'
-    ? 'All questions should be easy — things most people at a bar trivia night would know.'
-    : diff === 'hard'
-    ? 'All questions should be challenging — for people who really studied.'
-    : 'Mix difficulty: some easy, some medium, some hard within each round.';
+    ? 'Use these as the categories — distribute them across all 4 rounds and the bonus so each round has 5 different categories: ' + topics.join(', ') + '. If you need more than ' + topics.length + ' categories to fill all 20 questions + bonus, add similar ones.'
+    : 'Choose varied and interesting categories — 5 different ones per round, and one for the bonus. Good bar trivia categories work best.';
 
   const prompt =
 `Generate trivia questions for a Classic Trivia Night game. Requirements:
-- 4 rounds total
-- 5 questions per round
+- 4 rounds total, 5 questions per round, plus 1 bonus question
 - Each question has its own unique category
 - ${topicText}
-- ${diffText}
+- ESCALATING DIFFICULTY — this is critical:
+    Round 1: Easy — things almost everyone at a bar trivia night would know
+    Round 2: Medium — requires some general knowledge, most people can get these
+    Round 3: Hard — challenging, requires real knowledge of the topic
+    Round 4: Very Hard — tough questions even knowledgeable players may miss
+    Bonus: Medium-Hard — exciting final wager question, fair but not trivial
 - Plain, direct questions — NOT Jeopardy-style (do not phrase as "This president..." etc.)
 - Suitable for a bar/fraternal lodge trivia night crowd
 - Return ONLY a JSON object, no explanations, no markdown, no extra text
@@ -1257,13 +1842,14 @@ Use exactly this JSON format:
         {"category": "Movies & TV", "question": "What 1994 film features a character named Forrest Gump?", "answer": "Forrest Gump"}
       ]
     },
-    { "questions": [ ...5 questions... ] },
-    { "questions": [ ...5 questions... ] },
-    { "questions": [ ...5 questions... ] }
-  ]
+    { "questions": [ ...5 medium questions... ] },
+    { "questions": [ ...5 hard questions... ] },
+    { "questions": [ ...5 very hard questions... ] }
+  ],
+  "bonus": {"category": "Wild Card", "question": "What is the only country in the world whose flag is not rectangular or square?", "answer": "Nepal"}
 }
 
-Make sure there are exactly 4 rounds with exactly 5 questions each. Return ONLY the JSON.`;
+Make sure there are exactly 4 rounds with exactly 5 questions each, plus one bonus question. Return ONLY the JSON.`;
 
   document.getElementById('promptText').value = prompt;
   document.getElementById('promptOutput').classList.remove('hidden');
@@ -1330,7 +1916,25 @@ function loadPastedQuestions() {
     if (block) block.classList.remove('collapsed');
   }
 
-  status.textContent = loaded + ' questions loaded across ' + Math.min(data.rounds.length, 4) + ' rounds. Review below, then Start Game.';
+  // Load bonus question if present
+  let bonusLoaded = false;
+  if (data.bonus) {
+    bonusQuestion = {
+      cat: data.bonus.category || data.bonus.cat || '',
+      q:   data.bonus.question || data.bonus.q   || '',
+      a:   data.bonus.answer   || data.bonus.a   || ''
+    };
+    const bonusCatEl = document.getElementById('bonus-cat');
+    const bonusQEl   = document.getElementById('bonus-q');
+    const bonusAEl   = document.getElementById('bonus-a');
+    if (bonusCatEl) bonusCatEl.value = bonusQuestion.cat;
+    if (bonusQEl)   bonusQEl.value   = bonusQuestion.q;
+    if (bonusAEl)   bonusAEl.value   = bonusQuestion.a;
+    bonusLoaded = !!bonusQuestion.q;
+  }
+
+  const bonusMsg = bonusLoaded ? ' + bonus question' : '';
+  status.textContent = loaded + ' questions loaded across ' + Math.min(data.rounds.length, 4) + ' rounds' + bonusMsg + '. Review below, then Start Game.';
   document.getElementById('rounds-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
