@@ -14,6 +14,7 @@
             --muted: rgba(255,255,255,0.62);
             --accent: #e11d48;
             --gold: #fbbf24;
+            --green: #22c55e;
             --pattern-color: #60a5fa;
             --radius-lg: 20px;
             --radius-md: 14px;
@@ -41,7 +42,7 @@
 
         .portal-container {
             text-align: center;
-            max-width: 800px;
+            max-width: 900px;
             padding: clamp(20px, 5vw, 40px);
         }
 
@@ -74,7 +75,7 @@
 
         .button-row {
             display: flex;
-            gap: clamp(20px, 5vw, 40px);
+            gap: clamp(16px, 3vw, 30px);
             justify-content: center;
             flex-wrap: wrap;
         }
@@ -85,7 +86,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: clamp(220px, 40vw, 280px);
+            width: clamp(200px, 28vw, 260px);
             height: clamp(160px, 28vw, 200px);
             background: var(--surface);
             border: 2px solid var(--border);
@@ -111,8 +112,12 @@
             background: radial-gradient(circle at center, rgba(225, 29, 72, 0.15), transparent 70%);
         }
 
-        .portal-btn.trivia::before {
+        .portal-btn.trivia-jeopardy::before {
             background: radial-gradient(circle at center, rgba(251, 191, 36, 0.15), transparent 70%);
+        }
+
+        .portal-btn.trivia-classic::before {
+            background: radial-gradient(circle at center, rgba(34, 197, 94, 0.15), transparent 70%);
         }
 
         .portal-btn:hover {
@@ -141,26 +146,38 @@
             text-shadow: 0 0 25px rgba(225, 29, 72, 0.5);
         }
 
-        .portal-btn.trivia .btn-icon {
+        .portal-btn.trivia-jeopardy .btn-icon {
             color: var(--gold);
             text-shadow: 0 0 25px rgba(251, 191, 36, 0.5);
         }
 
+        .portal-btn.trivia-classic .btn-icon {
+            color: var(--green);
+            text-shadow: 0 0 25px rgba(34, 197, 94, 0.5);
+        }
+
         .btn-label {
             font-family: 'Impact', 'Arial Black', sans-serif;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             letter-spacing: 2px;
             text-transform: uppercase;
             position: relative;
             z-index: 1;
+            line-height: 1.2;
+            text-align: center;
+            padding: 0 8px;
         }
 
         .portal-btn.bingo .btn-label {
             color: var(--accent);
         }
 
-        .portal-btn.trivia .btn-label {
+        .portal-btn.trivia-jeopardy .btn-label {
             color: var(--gold);
+        }
+
+        .portal-btn.trivia-classic .btn-label {
+            color: var(--green);
         }
 
         .btn-desc {
@@ -216,7 +233,7 @@
                 margin-bottom: 8px;
             }
             .btn-label {
-                font-size: 1.3rem;
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -234,10 +251,16 @@
                 <div class="btn-desc">Run a bingo game</div>
             </a>
 
-            <a href="trivia.html" class="portal-btn trivia">
+            <a href="trivia.html" class="portal-btn trivia-jeopardy">
                 <div class="btn-icon">&#129504;</div>
-                <div class="btn-label">Trivia Caller</div>
-                <div class="btn-desc">Host trivia night</div>
+                <div class="btn-label">Trivia Jeopardy Style</div>
+                <div class="btn-desc">Answer in the form of a question</div>
+            </a>
+
+            <a href="trivia-classic.html" class="portal-btn trivia-classic">
+                <div class="btn-icon">&#10067;</div>
+                <div class="btn-label">Trivia Classic</div>
+                <div class="btn-desc">Classic Q&amp;A trivia night</div>
             </a>
         </div>
 

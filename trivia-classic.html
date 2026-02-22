@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trivia Classic — Bellwood FOE 1859</title>
+<style>
+  :root {
+    --bg: #0b0f14;
+    --surface: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.12);
+    --text: rgba(255,255,255,0.92);
+    --muted: rgba(255,255,255,0.45);
+    --accent: #22c55e;
+    --gold: #fbbf24;
+    --red: #e11d48;
+    --blue: #60a5fa;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ===== NAV TABS ===== */
+  .tabs {
+    display: flex;
+    background: #0d1117;
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .tab {
+    padding: 16px 22px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .screen { display: none; padding: 30px 20px 60px; max-width: 900px; margin: 0 auto; }
+  .screen.active { display: block; }
+
+  /* ===== SHARED STYLES ===== */
+  h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; }
+  .section-hint { color: var(--muted); font-size: 0.83rem; margin-bottom: 22px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+
+  input[type="text"], textarea, select {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    padding: 9px 12px;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  input[type="text"]:focus, textarea:focus { border-color: var(--accent); }
+  input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.2); }
+  textarea { resize: vertical; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+
+  .btn-green  { background: var(--accent); color: #000; }
+  .btn-green:hover { background: #16a34a; }
+  .btn-gold   { background: var(--gold); color: #000; }
+  .btn-gold:hover { background: #d97706; }
+  .btn-ghost  { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
+  .btn-red    { background: var(--red); color: #fff; }
+  .btn-red:hover { background: #be123c; }
+  .btn-blue   { background: var(--blue); color: #000; }
+  .btn-blue:hover { background: #3b82f6; }
+  .btn-big    { padding: 16px 36px; font-size: 1.1rem; border-radius: 10px; }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); display: block; margin-bottom: 5px; }
+
+  /* ===== SETUP SCREEN ===== */
+  .team-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .team-row input { flex: 1; }
+
+  .round-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .round-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+    background: rgba(255,255,255,0.03);
+  }
+
+  .round-header:hover { background: rgba(255,255,255,0.05); }
+
+  .round-label {
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .round-arrow { color: var(--muted); font-size: 0.7rem; margin-left: auto; transition: transform 0.2s; }
+  .round-block.collapsed .round-arrow { transform: rotate(-90deg); }
+  .round-block.collapsed .round-body { display: none; }
+
+  .round-body { padding: 0 18px 18px; }
+
+  .q-row {
+    display: grid;
+    grid-template-columns: 36px 1fr 1fr 1fr;
+    gap: 8px;
+    align-items: start;
+    margin-top: 12px;
+  }
+
+  .q-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+    font-weight: 900;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 24px;
+  }
+
+  .q-col { display: flex; flex-direction: column; gap: 4px; }
+
+  .setup-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+
+  /* ===== GAME SCREEN ===== */
+  .game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .round-badge {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    padding: 8px 18px;
+    background: rgba(34,197,94,0.12);
+    border: 1px solid rgba(34,197,94,0.3);
+    border-radius: 8px;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .q-progress {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .q-display {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 40px;
+    text-align: center;
+    min-height: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    position: relative;
+  }
+
+  .q-category {
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: rgba(251,191,36,0.1);
+    border: 1px solid rgba(251,191,36,0.25);
+    border-radius: 30px;
+    padding: 5px 16px;
+  }
+
+  .q-number-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .q-text {
+    font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.35;
+    max-width: 680px;
+  }
+
+  .q-answer {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    font-weight: 800;
+    color: var(--accent);
+    padding: 14px 28px;
+    background: rgba(34,197,94,0.1);
+    border: 2px solid rgba(34,197,94,0.3);
+    border-radius: 10px;
+    display: none;
+    max-width: 680px;
+    text-align: center;
+  }
+
+  .q-answer.revealed { display: block; }
+
+  .game-controls {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .point-reminder {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .point-chip {
+    padding: 4px 12px;
+    background: rgba(251,191,36,0.08);
+    border: 1px solid rgba(251,191,36,0.2);
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+
+  .no-questions {
+    text-align: center;
+    color: var(--muted);
+    padding: 60px 20px;
+    font-size: 1rem;
+  }
+
+  /* ===== SCORE SCREEN ===== */
+  .leaderboard {
+    margin-bottom: 28px;
+  }
+
+  .lb-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+
+  .lb-row.first  { background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.25); }
+  .lb-row.second { background: rgba(192,192,192,0.06); border-color: rgba(192,192,192,0.2); }
+  .lb-row.third  { background: rgba(180,120,60,0.08); border-color: rgba(180,120,60,0.25); }
+
+  .lb-rank {
+    font-family: 'Impact', sans-serif;
+    font-size: 1.5rem;
+    width: 36px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .lb-row.first  .lb-rank { color: var(--gold); }
+  .lb-row.second .lb-rank { color: #c0c0c0; }
+  .lb-row.third  .lb-rank { color: #b4783c; }
+
+  .lb-name { flex: 1; font-weight: 700; font-size: 1.05rem; }
+  .lb-total {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: 1.8rem;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  .lb-rounds {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .lb-round-chip {
+    padding: 2px 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 5px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .score-entry-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 20px;
+  }
+
+  .score-entry-title {
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .score-entry-hint {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .score-input-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .score-input-row span { flex: 1; font-weight: 600; }
+
+  .score-input-row input[type="number"] {
+    width: 90px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 8px 10px;
+    outline: none;
+  }
+
+  .score-input-row input[type="number"]:focus { border-color: var(--accent); }
+
+  .round-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .round-tab {
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+
+  .round-tab.active { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.35); color: var(--accent); }
+  .round-tab.scored { color: var(--muted); background: rgba(255,255,255,0.03); }
+  .round-tab.scored::after { content: ' ✓'; }
+
+  /* ===== GAME OVER ===== */
+  .game-over {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .game-over h2 {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: clamp(2rem, 6vw, 4rem);
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-shadow: 0 0 30px rgba(251,191,36,0.4);
+    margin-bottom: 8px;
+  }
+
+  .game-over .winner-name {
+    font-size: clamp(1.2rem, 4vw, 2rem);
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 30px;
+  }
+
+  /* ===== FOOTER ===== */
+  .vf-footer {
+    text-align: center;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #333;
+    margin-top: 50px;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('setup')" id="tab-setup">Setup</div>
+  <div class="tab" onclick="switchTab('game')" id="tab-game">Game</div>
+  <div class="tab" onclick="switchTab('scores')" id="tab-scores">Scores</div>
+</div>
+
+<!-- ===== SETUP SCREEN ===== -->
+<div class="screen active" id="screen-setup">
+
+  <h2>Teams</h2>
+  <p class="section-hint">Enter team names. Add as many as you need.</p>
+  <div id="team-list"></div>
+  <button class="btn btn-ghost" onclick="addTeam()" style="margin-bottom:32px;">+ Add Team</button>
+
+  <h2>Questions</h2>
+  <p class="section-hint">4 rounds · 5 questions each · Enter category, question, and answer for each.</p>
+
+  <div id="rounds-container"></div>
+
+  <div class="setup-actions">
+    <button class="btn btn-green btn-big" onclick="startGame()">▶ Start Game</button>
+    <button class="btn btn-ghost" onclick="saveSetup()">Save Questions</button>
+    <button class="btn btn-ghost" onclick="loadSetup()">Load Saved</button>
+    <button class="btn btn-ghost" onclick="clearSetup()">Clear All</button>
+  </div>
+
+  <p class="vf-footer" style="margin-top:30px;">a vision forge tool</p>
+</div>
+
+<!-- ===== GAME SCREEN ===== -->
+<div class="screen" id="screen-game">
+
+  <div id="game-content">
+    <div class="no-questions">No questions loaded. Set up your game first.</div>
+  </div>
+
+</div>
+
+<!-- ===== SCORES SCREEN ===== -->
+<div class="screen" id="screen-scores">
+
+  <h2>Leaderboard</h2>
+  <p class="section-hint">Running totals — updated after each round.</p>
+  <div class="leaderboard" id="leaderboard"></div>
+
+  <div id="score-entry-area"></div>
+
+  <div id="game-over-area"></div>
+
+  <p class="vf-footer">a vision forge tool</p>
+</div>
+
+
+<script>
+// ===== STATE =====
+const ROUND_COLORS = ['#60a5fa','#f97316','#a78bfa','#f43f5e'];
+const ROUND_NAMES  = ['Round 1','Round 2','Round 3','Round 4'];
+
+let teams = ['',''];
+let questions = [];     // [round][question] = {cat, q, a}
+let scores = [];        // [teamIdx][roundIdx] = number|null
+let gameStarted = false;
+let currentRound = 0;
+let currentQ = 0;
+let answerRevealed = false;
+let activeScoreRound = 0;
+
+function initQuestions() {
+  questions = [];
+  for (let r = 0; r < 4; r++) {
+    questions.push([]);
+    for (let q = 0; q < 5; q++) {
+      questions[r].push({ cat: '', q: '', a: '' });
+    }
+  }
+}
+
+function initScores() {
+  scores = teams.map(() => Array(4).fill(null));
+}
+
+// ===== SETUP SCREEN =====
+function renderTeams() {
+  const list = document.getElementById('team-list');
+  list.innerHTML = '';
+  teams.forEach((name, i) => {
+    const row = document.createElement('div');
+    row.className = 'team-row';
+    row.innerHTML = `
+      <input type="text" value="${escHtml(name)}" placeholder="Team ${i+1} name"
+        oninput="teams[${i}]=this.value">
+      ${teams.length > 2 ? `<button class="btn btn-ghost" style="padding:8px 12px;" onclick="removeTeam(${i})">✕</button>` : ''}
+    `;
+    list.appendChild(row);
+  });
+}
+
+function addTeam() {
+  teams.push('');
+  renderTeams();
+}
+
+function removeTeam(i) {
+  teams.splice(i, 1);
+  renderTeams();
+}
+
+function renderRounds() {
+  const container = document.getElementById('rounds-container');
+  container.innerHTML = '';
+  for (let r = 0; r < 4; r++) {
+    const block = document.createElement('div');
+    block.className = 'round-block' + (r > 0 ? ' collapsed' : '');
+    block.id = `round-block-${r}`;
+    const color = ROUND_COLORS[r];
+
+    let qRows = '';
+    for (let q = 0; q < 5; q++) {
+      const d = questions[r][q];
+      qRows += `
+        <div class="q-row">
+          <div class="q-num">${q+1}</div>
+          <div class="q-col">
+            <label>Category</label>
+            <input type="text" value="${escHtml(d.cat)}" placeholder="e.g. Sports"
+              oninput="questions[${r}][${q}].cat=this.value">
+          </div>
+          <div class="q-col">
+            <label>Question</label>
+            <input type="text" value="${escHtml(d.q)}" placeholder="Question text"
+              oninput="questions[${r}][${q}].q=this.value">
+          </div>
+          <div class="q-col">
+            <label>Answer</label>
+            <input type="text" value="${escHtml(d.a)}" placeholder="Answer"
+              oninput="questions[${r}][${q}].a=this.value">
+          </div>
+        </div>
+      `;
+    }
+
+    block.innerHTML = `
+      <div class="round-header" onclick="toggleRoundBlock(${r})">
+        <span class="round-label" style="color:${color};">${ROUND_NAMES[r]}</span>
+        <span style="font-size:0.78rem;color:rgba(255,255,255,0.3);">5 questions</span>
+        <span class="round-arrow">▼</span>
+      </div>
+      <div class="round-body">${qRows}</div>
+    `;
+    container.appendChild(block);
+  }
+}
+
+function toggleRoundBlock(r) {
+  document.getElementById(`round-block-${r}`).classList.toggle('collapsed');
+}
+
+function saveSetup() {
+  const data = { teams: [...teams], questions: JSON.parse(JSON.stringify(questions)) };
+  localStorage.setItem('trivia_classic_setup', JSON.stringify(data));
+  showFlash('Questions saved!');
+}
+
+function loadSetup() {
+  const raw = localStorage.getItem('trivia_classic_setup');
+  if (!raw) { showFlash('No saved questions found.'); return; }
+  try {
+    const data = JSON.parse(raw);
+    if (data.teams)     { teams = data.teams; renderTeams(); }
+    if (data.questions) { questions = data.questions; renderRounds(); }
+    showFlash('Loaded!');
+  } catch(e) { showFlash('Could not load saved data.'); }
+}
+
+function clearSetup() {
+  if (!confirm('Clear all questions and team names?')) return;
+  teams = ['',''];
+  initQuestions();
+  renderTeams();
+  renderRounds();
+}
+
+// ===== START GAME =====
+function startGame() {
+  // Validate teams
+  const validTeams = teams.map(t => t.trim()).filter(t => t.length > 0);
+  if (validTeams.length < 2) { showFlash('Enter at least 2 team names.'); return; }
+  teams = validTeams;
+
+  // Check at least round 1 has questions
+  const r1 = questions[0];
+  const hasQ = r1.some(q => q.q.trim().length > 0);
+  if (!hasQ) { showFlash('Enter at least the Round 1 questions.'); return; }
+
+  gameStarted = true;
+  currentRound = 0;
+  currentQ = 0;
+  answerRevealed = false;
+  initScores();
+  activeScoreRound = 0;
+
+  switchTab('game');
+  renderGame();
+  renderScores();
+}
+
+// ===== GAME SCREEN =====
+function renderGame() {
+  const container = document.getElementById('game-content');
+
+  if (currentRound >= 4) {
+    container.innerHTML = `
+      <div class="game-over">
+        <h2>GAME OVER</h2>
+        <p class="winner-name">${getWinnerText()}</p>
+        <button class="btn btn-green btn-big" onclick="switchTab('scores')">View Final Scores</button>
+      </div>`;
+    return;
+  }
+
+  const roundQs = questions[currentRound];
+  const totalQs  = roundQs.filter(q => q.q.trim()).length;
+
+  if (totalQs === 0) {
+    container.innerHTML = `<div class="no-questions">No questions found for ${ROUND_NAMES[currentRound]}.</div>`;
+    return;
+  }
+
+  const qData = roundQs[currentQ] || { cat:'', q:'', a:'' };
+  const color  = ROUND_COLORS[currentRound];
+
+  container.innerHTML = `
+    <div class="game-header">
+      <div class="round-badge" style="color:${color};background:${color}18;border-color:${color}44;">${ROUND_NAMES[currentRound]}</div>
+      <div class="q-progress">Question ${currentQ + 1} of ${totalQs}</div>
+    </div>
+
+    <div class="point-reminder">
+      <span style="font-size:0.75rem;color:rgba(255,255,255,0.25);letter-spacing:1px;text-transform:uppercase;align-self:center;">Points to assign this round:</span>
+      <span class="point-chip">5</span>
+      <span class="point-chip">4</span>
+      <span class="point-chip">3</span>
+      <span class="point-chip">2</span>
+      <span class="point-chip">1</span>
+    </div>
+
+    <div class="q-display" style="margin-top:16px;">
+      <div class="q-number-tag">Question ${currentQ + 1}</div>
+      ${qData.cat ? `<div class="q-category">${escHtml(qData.cat)}</div>` : ''}
+      <div class="q-text">${escHtml(qData.q || '(no question entered)')}</div>
+      <div class="q-answer ${answerRevealed ? 'revealed' : ''}" id="answer-box">
+        ${escHtml(qData.a || '(no answer entered)')}
+      </div>
+    </div>
+
+    <div class="game-controls">
+      ${currentQ > 0 ? `<button class="btn btn-ghost" onclick="prevQuestion()">← Back</button>` : ''}
+      <button class="btn btn-gold btn-big" onclick="toggleAnswer()" id="reveal-btn">
+        ${answerRevealed ? 'Hide Answer' : 'Reveal Answer'}
+      </button>
+      ${currentQ < totalQs - 1
+        ? `<button class="btn btn-green btn-big" onclick="nextQuestion()">Next Question →</button>`
+        : `<button class="btn btn-blue btn-big" onclick="endRound()">End Round — Enter Scores →</button>`
+      }
+    </div>
+  `;
+}
+
+function toggleAnswer() {
+  answerRevealed = !answerRevealed;
+  renderGame();
+}
+
+function nextQuestion() {
+  const roundQs = questions[currentRound];
+  const total = roundQs.filter(q => q.q.trim()).length;
+  if (currentQ < total - 1) {
+    currentQ++;
+    answerRevealed = false;
+    renderGame();
+  }
+}
+
+function prevQuestion() {
+  if (currentQ > 0) {
+    currentQ--;
+    answerRevealed = false;
+    renderGame();
+  }
+}
+
+function endRound() {
+  activeScoreRound = currentRound;
+  switchTab('scores');
+  renderScores();
+}
+
+function advanceToNextRound() {
+  currentRound++;
+  currentQ = 0;
+  answerRevealed = false;
+  switchTab('game');
+  renderGame();
+}
+
+// ===== SCORES SCREEN =====
+function renderScores() {
+  renderLeaderboard();
+  renderScoreEntry();
+  renderGameOver();
+}
+
+function renderLeaderboard() {
+  const lb = document.getElementById('leaderboard');
+  if (!gameStarted || teams.length === 0) { lb.innerHTML = ''; return; }
+
+  const totals = teams.map((name, i) => ({
+    name,
+    rounds: scores[i],
+    total: scores[i].reduce((sum, s) => sum + (s || 0), 0)
+  }));
+
+  totals.sort((a,b) => b.total - a.total);
+
+  const rankClasses = ['first','second','third'];
+  const rankSymbols = ['1st','2nd','3rd'];
+
+  lb.innerHTML = totals.map((t, rank) => `
+    <div class="lb-row ${rankClasses[rank] || ''}">
+      <div class="lb-rank">${rankSymbols[rank] || (rank+1)}</div>
+      <div class="lb-name">${escHtml(t.name)}</div>
+      <div class="lb-rounds">
+        ${t.rounds.map((s,r) => `<span class="lb-round-chip" title="${ROUND_NAMES[r]}">${s !== null ? s : '—'}</span>`).join('')}
+      </div>
+      <div class="lb-total">${t.total}</div>
+    </div>
+  `).join('');
+}
+
+function renderScoreEntry() {
+  const area = document.getElementById('score-entry-area');
+
+  if (!gameStarted || currentRound >= 4) { area.innerHTML = ''; return; }
+
+  // Round selector tabs
+  const roundTabs = Array.from({length: 4}, (_,r) => {
+    const isScored = teams.every((_,i) => scores[i][r] !== null);
+    const isActive = r === activeScoreRound;
+    return `<button class="round-tab ${isActive?'active':''} ${isScored?'scored':''}"
+      onclick="activeScoreRound=${r};renderScores()">${ROUND_NAMES[r]}</button>`;
+  }).join('');
+
+  const inputRows = teams.map((name, i) => `
+    <div class="score-input-row">
+      <span>${escHtml(name)}</span>
+      <input type="number" min="0" max="15" step="1"
+        value="${scores[i][activeScoreRound] !== null ? scores[i][activeScoreRound] : ''}"
+        placeholder="0–15"
+        onchange="scores[${i}][${activeScoreRound}]=parseInt(this.value)||0;renderLeaderboard()">
+    </div>
+  `).join('');
+
+  area.innerHTML = `
+    <div class="score-entry-section">
+      <div class="score-entry-title">Enter Round Scores</div>
+      <div class="score-entry-hint">Max 15 points per team per round (5+4+3+2+1). Enter each team's total for the round.</div>
+      <div class="round-tabs">${roundTabs}</div>
+      ${inputRows}
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+        <button class="btn btn-green" onclick="submitRoundScores()">Submit ${ROUND_NAMES[activeScoreRound]} Scores</button>
+        ${activeScoreRound === currentRound
+          ? `<button class="btn btn-blue" onclick="advanceToNextRound()">Continue to ${currentRound < 3 ? ROUND_NAMES[currentRound+1] : 'End Game'} →</button>`
+          : ''}
+      </div>
+    </div>
+  `;
+}
+
+function submitRoundScores() {
+  const allFilled = teams.every((_,i) => scores[i][activeScoreRound] !== null);
+  if (!allFilled) { showFlash('Enter a score for each team first.'); return; }
+  renderScores();
+  showFlash(`${ROUND_NAMES[activeScoreRound]} scores saved!`);
+}
+
+function renderGameOver() {
+  const area = document.getElementById('game-over-area');
+  if (!gameStarted || currentRound < 4) { area.innerHTML = ''; return; }
+
+  const totals = teams.map((name, i) => ({
+    name,
+    total: scores[i].reduce((sum, s) => sum + (s || 0), 0)
+  }));
+  totals.sort((a,b) => b.total - a.total);
+
+  area.innerHTML = `
+    <div class="game-over" style="padding:30px 0 0;">
+      <h2>🏆 FINAL RESULTS</h2>
+      <p class="winner-name">Winner: ${escHtml(totals[0].name)} — ${totals[0].total} pts</p>
+      <button class="btn btn-ghost" onclick="resetGame()">Start New Game</button>
+    </div>
+  `;
+}
+
+function getWinnerText() {
+  if (teams.length === 0) return '';
+  const totals = teams.map((name, i) => ({
+    name,
+    total: scores[i].reduce((sum, s) => sum + (s || 0), 0)
+  }));
+  totals.sort((a,b) => b.total - a.total);
+  return `${totals[0].name} wins!`;
+}
+
+function resetGame() {
+  gameStarted = false;
+  currentRound = 0;
+  currentQ = 0;
+  answerRevealed = false;
+  initScores();
+  switchTab('setup');
+}
+
+// ===== TAB SWITCHING =====
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+// ===== UTILS =====
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function showFlash(msg) {
+  let el = document.getElementById('flash-msg');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'flash-msg';
+    el.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#22c55e;color:#000;font-weight:800;padding:10px 22px;border-radius:8px;font-size:0.9rem;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.4);';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.display = 'block';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.display = 'none'; }, 2000);
+}
+
+// ===== INIT =====
+initQuestions();
+renderTeams();
+renderRounds();
+</script>
+</body>
+</html>
