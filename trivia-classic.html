@@ -1899,9 +1899,19 @@ function loadPastedQuestions() {
 
   let data;
   try {
-    // Strip markdown code fences if present
-    const match = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-    data = JSON.parse(match ? match[1].trim() : text);
+    let jsonStr = text;
+    // Try code fences first
+    const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (fenceMatch) {
+      jsonStr = fenceMatch[1].trim();
+    } else {
+      // Fall back to extracting outermost { ... }
+      const objMatch = text.match(/\{[\s\S]*\}/);
+      if (objMatch) jsonStr = objMatch[0];
+    }
+    // Normalize smart/curly quotes to straight quotes
+    jsonStr = jsonStr.replace(/[\u201C\u201D]/g, '"').replace(/[\u2018\u2019]/g, "'");
+    data = JSON.parse(jsonStr);
   } catch(e) {
     status.className = 'load-status error';
     status.textContent = 'Could not read that — make sure you copied Claude\'s full response. If it has ``` marks, include those too.';
