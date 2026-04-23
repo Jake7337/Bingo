@@ -471,7 +471,8 @@
             background: rgba(0,0,0,0.35);
             color: #60a5fa;
             width: 100%;
-            height: 26vh;
+            flex: 1;
+            min-height: 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -642,7 +643,7 @@
             font-size: 1.5rem;
             padding: 20px;
         }
-        #btn-winner{
+        #btn-shake{
             background: rgba(251,191,36,0.18);
             border-color: rgba(251,191,36,0.38);
         }
@@ -650,48 +651,54 @@
             background: rgba(255,255,255,0.06);
         }
 
-        #btn-winner.active{
-            background: rgba(251,191,36,0.26);
-            border-color: rgba(251,191,36,0.60);
-            animation: pulse 1.1s ease-in-out infinite;
+        #btn-shake.active{
+            background: rgba(251,191,36,0.30);
+            border-color: rgba(251,191,36,0.70);
+            color: #fbbf24;
+            animation: pulse 0.3s ease-in-out infinite;
         }
+
+        /* --- SHAKE EFFECT --- */
+        @keyframes shake-balls {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            10%  { transform: translate(-10px, -5px) rotate(-0.3deg); }
+            20%  { transform: translate(10px, 5px) rotate(0.3deg); }
+            30%  { transform: translate(-10px, 5px) rotate(0deg); }
+            40%  { transform: translate(10px, -5px) rotate(0.3deg); }
+            50%  { transform: translate(-8px, 8px) rotate(-0.3deg); }
+            60%  { transform: translate(8px, -5px) rotate(0deg); }
+            70%  { transform: translate(-10px, 5px) rotate(-0.3deg); }
+            80%  { transform: translate(10px, 5px) rotate(0.3deg); }
+            90%  { transform: translate(-5px, -5px) rotate(0deg); }
+        }
+        body.shaking {
+            animation: shake-balls 0.3s infinite;
+        }
+        #shake-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: clamp(48px, 9vw, 140px);
+            font-weight: 900;
+            color: #fbbf24;
+            text-shadow: 0 0 60px rgba(251,191,36,0.9), 4px 4px 0 rgba(0,0,0,0.7);
+            z-index: 500;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            text-align: center;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        #shake-overlay.show { opacity: 1; }
 
         @keyframes pulse{
             0%{ transform: scale(1); }
             50%{ transform: scale(1.02); }
             100%{ transform: scale(1); }
-        }
-
-        /* --- VISUAL EFFECTS --- */
-        #confetti-canvas{
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 50;
-        }
-
-        #winner-overlay{
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.98);
-            font-size: clamp(120px, 16vw, 280px);
-            font-weight: 950;
-            color: rgba(255,255,255,0.92);
-            text-shadow: 0 30px 80px rgba(0,0,0,0.65);
-            z-index: 100;
-            pointer-events: none;
-            transition: opacity 0.25s ease, transform 0.2s ease;
-            opacity: 0;
-            white-space: nowrap;
-        }
-
-        #winner-overlay.show{
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
         }
 
         /* Fun Call Popup */
@@ -732,29 +739,6 @@
         #fun-popup .fun-emoji {
             font-size: clamp(40px, 6vw, 80px);
             margin-top: 15px;
-        }
-
-        #winner-video-overlay{
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: calc(100% - 380px);
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 150;
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #winner-video-overlay.show{
-            display: flex;
-        }
-
-        #winner-video{
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
         }
 
         /* Intermission Overlay */
@@ -1031,30 +1015,20 @@ option {
         <!-- HEADER ROW (3 Columns) -->
         <div class="header-row">
             
-            <!-- 1. MEDIA ROTATOR (Left) -->
+            <!-- 1. WELCOME LOGO VIDEO (Left) -->
             <div class="header-media" id="media-header">
-                <!-- Persistent players for stability -->
-                <img id="banner-img" style="display:none; width:100%; height:100%; object-fit:contain; position:absolute; top:0; left:0;">
-                <!-- Added 'controls' so you can manually play if autoplay is blocked -->
-                <video id="banner-vid" style="display:none; width:100%; height:100%; object-fit:contain; position:absolute; top:0; left:0;" muted playsinline></video>
-                
-                <div class="header-placeholder" id="banner-placeholder">
-                    UNDER CONSTRUCTION<br>
-                    <span style="font-size: 1rem; font-weight: 400;">(Coming Soon)</span>
-                </div>
-                
-                <!-- Error Message Container (Hidden by default) -->
-                <div id="media-error" class="media-error-msg"></div>
-            </div>
-
-            <!-- 2. WELCOME LOGO VIDEO (Middle) -->
-            <div class="header-welcome">
                 <video id="welcome-video" autoplay muted loop playsinline>
                     <source src="welcomelogo.mp4" type="video/mp4">
                 </video>
-                <div id="welcome-fallback" style="display:none; color:var(--muted); font-weight:900; font-size:1.5rem; text-align:center; position:absolute;">
+                <div id="welcome-fallback" style="display:none; color:var(--muted); font-weight:900; font-size:1.5rem; text-align:center; position:absolute; z-index:1;">
                     BELLWOOD FOE 1859
                 </div>
+            </div>
+
+            <!-- 2. BIG CALL DISPLAY (Center) -->
+            <div class="header-welcome">
+                <div id="current-call">--</div>
+                <div id="call-count" style="text-align:center; font-weight:900; font-size:1.1rem; color:var(--muted); padding-bottom:6px;">0 / 75 Called</div>
             </div>
 
             <!-- 3. CALLER INFO & LAST 5 BALLS (Right) -->
@@ -1078,10 +1052,6 @@ option {
 
     <!-- Right Sidebar (Controls) -->
     <div class="sidebar">
-        <!-- Big Number -->
-        <div id="current-call">--</div>
-        <div id="call-count" style="text-align:center; font-weight:900; font-size:1.1rem; color:var(--muted); margin-top:-12px;">0 / 75 Called</div>
-
         <!-- Pattern Controls -->
         <div class="pattern-container">
             <select id="pattern-select" style="display:none;">
@@ -1124,7 +1094,7 @@ option {
             </label>
 
             <button id="btn-call">CALL NUMBER</button>
-<button id="btn-winner">WINNER!</button>
+            <button id="btn-shake">SHAKE YOUR BALLS</button>
             <div class="split-buttons">
                 <button id="btn-reset">RESET</button>
                 <button id="btn-intermission">INTERMISSION</button>
@@ -1133,15 +1103,13 @@ option {
         </div>
     </div>
 
-    <!-- Visuals -->
-    <div id="winner-overlay">BINGO!</div>
+    <!-- Shake Overlay -->
+    <div id="shake-overlay">NOW SHAKING BALLS</div>
+
     <div id="fun-popup">
         <div class="fun-title"></div>
         <div class="fun-message"></div>
         <div class="fun-emoji"></div>
-    </div>
-    <div id="winner-video-overlay" onclick="stopWinnerEffect()">
-        <video id="winner-video" playsinline loop muted></video>
     </div>
     <div id="intermission-overlay" onclick="stopIntermission()">
         <video id="intermission-video" playsinline muted></video>
@@ -1180,15 +1148,12 @@ option {
             <button id="btn-pattern-cancel">CANCEL</button>
         </div>
     </div>
-    <canvas id="confetti-canvas"></canvas>
-
     <script>
         // --- Game State ---
         const totalNumbers = 75;
         let availableNumbers = [];
         let calledNumbers = [];
         let calledNumbersSet = new Set();
-        let winnerMode = false;
         let rowAnnounced = [false, false, false, false, false]; // Tracks if we announced row completion
         let callDelay = 5;
         let isCooldown = false;
@@ -1207,11 +1172,9 @@ option {
         const headerHistoryListEl = document.getElementById('header-history-list');
         const btnCall = document.getElementById('btn-call');
         const btnReset = document.getElementById('btn-reset');
-        const btnWinner = document.getElementById('btn-winner');
-        const winnerOverlay = document.getElementById('winner-overlay');
+        const btnShake = document.getElementById('btn-shake');
+        const shakeOverlay = document.getElementById('shake-overlay');
         const flashMessageEl = document.getElementById('flash-message');
-        const canvas = document.getElementById('confetti-canvas');
-        const ctx = canvas.getContext('2d');
         const delaySlider = document.getElementById('delay-slider');
         const delayDisplay = document.getElementById('delay-display');
         const mediaContainer = document.getElementById('media-header');
@@ -1356,7 +1319,6 @@ option {
 
             currentCallEl.textContent = "--";
             updateHistory();
-            stopWinnerEffect();
             renderBoard();
 
             patternSelect.value = "fullcard";
@@ -1379,8 +1341,6 @@ option {
                 welcomeVid.style.display = 'none';
                 if (welcomeFallback) welcomeFallback.style.display = 'flex';
             }, { once: true });
-
-            resizeCanvas();
         }
         
         // --- WAKE LOCK (Prevent Screen Sleep) ---
@@ -1610,7 +1570,6 @@ option {
 
         // --- Call Number Logic ---
         function callNumber() {
-            if (winnerMode) return;
             if (isCooldown) return;
 
             // First call - show Let's Play popup
@@ -1815,135 +1774,28 @@ option {
             }, 5000);
         }
 
-        // --- Winner Effect ---
-        const winnerVideos = ['winner1.mp4', 'winner2.mp4', 'winner3.mp4', 'winner4.mp4', 'winner5.mp4', 'winner6.mp4'];
-        const winnerVideoOverlay = document.getElementById('winner-video-overlay');
-        const winnerVideoEl = document.getElementById('winner-video');
+        // --- Shake Effect ---
+        let shakeTimeout = null;
 
-        function toggleWinner() {
-            if (!winnerMode) {
-                startWinnerEffect();
-            } else {
-                stopWinnerEffect();
-            }
-        }
+        function shakeScreen() {
+            if (shakeTimeout) return;
+            document.body.classList.add('shaking');
+            btnShake.classList.add('active');
+            shakeOverlay.classList.add('show');
 
-        function startWinnerEffect() {
-            winnerMode = true;
-            btnWinner.innerText = "Check Card";
-            btnWinner.classList.add('active');
-
-            // Randomly pick one of the 6 winner videos
-            const randomIndex = Math.floor(Math.random() * winnerVideos.length);
-            const selectedVideo = winnerVideos[randomIndex];
-
-            // Set up and play the video
-            winnerVideoEl.src = selectedVideo;
-            winnerVideoEl.currentTime = 0;
-            winnerVideoOverlay.classList.add('show');
-            winnerVideoEl.play().catch(e => console.log("Video play error:", e));
-
-            // When video ends, keep showing but allow closing
-            winnerVideoEl.onended = () => {
-                // Video finished, user can click "Check Card" to close
-            };
-
-            speak("We have a winner!");
-            startConfetti();
-        }
-
-        function stopWinnerEffect() {
-            winnerMode = false;
-            btnWinner.innerText = "WINNER!";
-            btnWinner.classList.remove('active');
-
-            // Stop and hide the video
-            winnerVideoEl.pause();
-            winnerVideoEl.currentTime = 0;
-            winnerVideoOverlay.classList.remove('show');
-
-            stopConfetti();
-        }
-
-        // --- Confetti Engine (Enhanced) ---
-        let particles = [];
-        let animationId = null;
-        const confettiColors = ['#e11d48','#fbbf24','#60a5fa','#4ade80','#f472b6','#a78bfa','#fb923c','#fff'];
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-
-        function startConfetti() {
-            particles = [];
-            for(let i=0; i<250; i++) particles.push(createParticle());
-            if(!animationId) loopConfetti();
-        }
-
-        function stopConfetti() {
-            cancelAnimationFrame(animationId);
-            animationId = null;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function createParticle() {
-            const shapes = ['rect','circle','strip'];
-            return {
-                x: Math.random() * canvas.width,
-                y: Math.random() * -canvas.height,
-                color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
-                size: Math.random() * 8 + 4,
-                shape: shapes[Math.floor(Math.random() * shapes.length)],
-                speedY: Math.random() * 3 + 1.5,
-                speedX: Math.random() * 2 - 1,
-                wind: Math.random() * 0.02 - 0.01,
-                rotation: Math.random() * Math.PI * 2,
-                rotSpeed: (Math.random() - 0.5) * 0.12,
-                wobble: Math.random() * Math.PI * 2,
-                wobbleSpeed: Math.random() * 0.08 + 0.03
-            };
-        }
-
-        function loopConfetti() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.y += p.speedY;
-                p.wobble += p.wobbleSpeed;
-                p.speedX += p.wind;
-                p.x += p.speedX + Math.sin(p.wobble) * 0.8;
-                p.rotation += p.rotSpeed;
-
-                ctx.save();
-                ctx.translate(p.x, p.y);
-                ctx.rotate(p.rotation);
-                ctx.fillStyle = p.color;
-                ctx.beginPath();
-
-                if (p.shape === 'circle') {
-                    ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
-                } else if (p.shape === 'strip') {
-                    ctx.fillRect(-p.size / 2, -p.size * 1.5, p.size, p.size * 3);
-                } else {
-                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-                }
-
-                ctx.fill();
-                ctx.restore();
-
-                if(p.y > canvas.height + 20) {
-                    p.y = Math.random() * -60;
-                    p.x = Math.random() * canvas.width;
-                    p.speedX = Math.random() * 2 - 1;
-                }
-            });
-            animationId = requestAnimationFrame(loopConfetti);
+            shakeTimeout = setTimeout(() => {
+                document.body.classList.remove('shaking');
+                btnShake.classList.remove('active');
+                shakeOverlay.classList.remove('show');
+                shakeTimeout = null;
+                autoScale();
+            }, 5000);
         }
 
         // --- Event Listeners ---
         btnCall.addEventListener('click', callNumber);
         btnReset.addEventListener('click', initGame);
+        btnShake.addEventListener('click', shakeScreen);
 
         // --- Keyboard Shortcuts ---
         document.addEventListener('keydown', (e) => {
@@ -1963,8 +1815,6 @@ option {
                     startGame();
                 } else if (intermissionOverlay.classList.contains('show')) {
                     stopIntermission();
-                } else if (winnerMode) {
-                    stopWinnerEffect();
                 }
             }
         });
@@ -2092,8 +1942,6 @@ option {
         document.addEventListener('fullscreenchange', syncFsLabel);
         syncFsLabel();
 
-    btnWinner.addEventListener('click', toggleWinner);
-        
         patternSelect.addEventListener('change', (e) => {
             if (e.target.value === 'custom') {
                 openPatternModal();
