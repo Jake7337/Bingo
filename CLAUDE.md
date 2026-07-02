@@ -6,51 +6,44 @@
 - **Creator:** Jake - creates all art/videos/ideas with AI tools
 
 ## Current State
-- Single HTML file (`index.html`) with embedded CSS/JS
-- Uses GIF files for media rotator (1.gif - 6.gif, welcomelogo.gif)
+- Single file: `index.html` (embedded CSS/JS, no dependencies, no build step)
+- This is the whole repo — no portal page, no trivia apps, no media manager, no video/image assets
 - Built for Bellwood FOE 1859 Aerie (Fraternal Order of Eagles)
-- Designed for TV display at club
+- Designed for TV display at club (same screen doubles as the caller's control panel)
 
 ## Features
-- 75-ball bingo board (horizontal B/I/N/G/O rows)
-- Random number calling with text-to-speech
-- Pattern selector (full card, X, T, L, corners, custom, etc.)
-- Media rotator in header for club promotions
-- Winner mode with confetti
-- Pace delay control
-- Row dimming (click letter to dim/enable)
-- Fullscreen mode
-- Last 5 calls display
+- Full-screen 75-ball board (horizontal B/I/N/G/O rows) — takes up most of the screen
+- Slim right sidebar: Last Call (large), Now Playing (pattern name + mini grid), Choose Game,
+  Rotate toggle, Pace Delay slider, Call/Reset/Full Screen buttons
+- "Choose Game" opens a pattern picker modal (presets + custom cell-by-cell editor)
+- Confirming a pattern shows a full-screen "Let's Play" reveal (name + big grid) before
+  dropping back into the board
+- Voice announces every call via the Web Speech API (always on, no toggle)
+- Pace delay control (0-15s) between calls
+- Wake Lock keeps the screen from sleeping
+- Fullscreen toggle
 
-## Ideas to Add
-- [ ] Intermission button - fullscreen overlay with video playback
-- [ ] Convert GIFs to MP4 (smaller files, better quality)
-- [ ] Multiple intermission videos to choose from
+### Pattern animation
+Many patterns can legally be played in more than one orientation/position. The ROTATE
+ON/OFF sidebar button controls whether the "Now Playing" preview (and the Let's Play
+reveal) cycles through those variants, or freezes on one static frame:
+- **Standard shapes** (T, L, X, Corners, Heart, Kite, Field Goal, etc.) rotate through
+  every distinct 90° orientation via `getOrientations()`.
+- **Missing Link** — full outside border, cycles through each single edge cell being
+  the "missing" one.
+- **Postage Stamp** — 2x2 corner blocks. Choose 1-4 stamps in the modal ("How Many
+  Stamps?" buttons); count 4 is static (any corner counts), 1-3 cycles through every
+  combination of that many corners.
+- **Block of 6** — a 2x3 rectangle, cycles through all 24 valid positions, alternating
+  3-wide/2-high and 2-wide/3-high every frame (interleaved, not grouped) so both
+  orientations show up fast.
+- **Block of 9** — a 3x3 square, cycles through its 9 valid positions.
+- All of the above naturally light up the center free space when a placement covers it.
 
-## Media Manager
-- **Secret access**: Type "7337" on the start screen (not in the name field) to open
-- **File**: `media-manager.html` — standalone page with dark theme
-- **Manifest**: `media-manifest.json` — inventory of all media files with roles
-- **Roles**: `rotator`, `winner`, `welcome`, `intermission`
-- **Drop folder**: `C:\Users\jrsrl\OneDrive\Desktop\media-drop` — Jake puts new files here
-- Jake uses the manager to browse/preview files, mark deletions, and stage additions
-- The action queue generates instructions for Claude Code to process
-
-### Claude Code Media Workflow
-When Jake asks to process media changes:
-1. **Always compress new video files** before adding to the project:
-   - ffmpeg: `-c:v libx264 -crf 28 -preset slow -c:a aac -b:a 128k -movflags +faststart`
-   - If the source has no audio, use `-an` instead of audio codec flags
-   - ffmpeg is installed at: `C:\Users\jrsrl\ffmpeg\ffmpeg-8.0.1-essentials_build\bin\ffmpeg.exe`
-2. Use `git rm` for deletions, `git add` for additions
-3. **Always regenerate `media-manifest.json`** as the final step — scan for all MP4 files and assign roles based on filename conventions:
-   - `winner*.mp4` → role: `winner`
-   - `welcomelogo.mp4` → role: `welcome`
-   - `intermission*.mp4` → role: `intermission`
-   - Everything else → role: `rotator`
-4. Also update any references in `index.html` if filenames changed (rotator array, winner array, etc.)
+Symmetric patterns (Full Card, X, Corners, Plus, Inside/Outside Box) collapse to a
+single frame automatically since rotating them looks identical — no wasted animation.
 
 ## Notes
-- GIFs were used because video autoplay had permission issues on different PCs
-- Now hosted online, videos should work fine (user clicks "Start" which unlocks autoplay)
 - Jake likes to share code openly to help others
+- No video/image assets of any kind — removed 2026-07-01 after 6 months of testing
+  showed they weren't used. Don't re-add media features without Jake asking.
