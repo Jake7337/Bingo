@@ -109,6 +109,11 @@
             align-items: center;
         }
 
+        .board-row.disabled{
+            opacity: 0.28;
+            filter: grayscale(100%);
+        }
+
         .row-header{
             font-weight: 950;
             font-size: clamp(34px, 5.2vh, 64px);
@@ -121,6 +126,12 @@
             margin-right: 10px;
             border-radius: 10px;
             width: 9vh;
+            cursor: pointer;
+            transition: transform 0.15s ease, filter 0.2s ease;
+        }
+        .row-header:hover{
+            filter: brightness(1.2);
+            transform: translateY(-1px);
         }
 
         #row-group-0 .row-header { background: var(--row-b); }
@@ -803,6 +814,8 @@
                 const letterHeader = document.createElement('div');
                 letterHeader.className = 'row-header';
                 letterHeader.innerText = letter;
+                letterHeader.title = 'Click to close/open this row';
+                letterHeader.onclick = () => rowGroup.classList.toggle('disabled');
                 rowGroup.appendChild(letterHeader);
 
                 const start = i * 15 + 1;
@@ -867,6 +880,14 @@
             return 'O';
         }
 
+        function getRowIndex(num) {
+            if (num <= 15) return 0;
+            if (num <= 30) return 1;
+            if (num <= 45) return 2;
+            if (num <= 60) return 3;
+            return 4;
+        }
+
         function speak(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -890,13 +911,28 @@
                 return;
             }
 
+            let validIndex = -1;
+            for (let i = availableNumbers.length - 1; i >= 0; i--) {
+                const rowIdx = getRowIndex(availableNumbers[i]);
+                const rowGroup = document.getElementById(`row-group-${rowIdx}`);
+                if (!rowGroup || !rowGroup.classList.contains('disabled')) {
+                    validIndex = i;
+                    break;
+                }
+            }
+
+            if (validIndex === -1) {
+                alert("No numbers left in the active rows.");
+                return;
+            }
+
             if (calledNumbers.length > 0) {
                 const prevNum = calledNumbers[calledNumbers.length - 1];
                 const prevCell = document.getElementById(`num-${prevNum}`);
                 if (prevCell) prevCell.classList.remove('last-called');
             }
 
-            const num = availableNumbers.pop();
+            const num = availableNumbers.splice(validIndex, 1)[0];
             calledNumbers.push(num);
 
             const letter = getLetter(num);
