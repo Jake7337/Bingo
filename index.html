@@ -99,7 +99,11 @@ body{
   -webkit-font-smoothing: antialiased;
 }
 
-.wrap{ width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
+/* Horizontal padding ONLY, as longhand. If this used the `padding` shorthand it
+   would also force top/bottom to 0 on every .wrap element, and because .wrap
+   (a class) outranks `section` (a type selector), the sections would lose their
+   vertical padding and every card would sit flush against the next one. */
+.wrap{ width: 100%; max-width: var(--maxw); margin: 0 auto; padding-left: 20px; padding-right: 20px; }
 
 a{ color: var(--blue); }
 
@@ -396,7 +400,7 @@ footer p{ margin: 0 auto 12px; color: var(--faint); font-size: 0.94rem; max-widt
 
 @media (max-width: 520px){
   body{ font-size: 16px; }
-  .wrap{ padding: 0 16px; }
+  .wrap{ padding-left: 16px; padding-right: 16px; }
   .hero{ padding-top: 38px; padding-bottom: 32px; }
   section{ padding-top: 16px; padding-bottom: 16px; }
   ol.steps > li{ padding-left: 54px; }
