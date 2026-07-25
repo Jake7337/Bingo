@@ -345,6 +345,34 @@ ol.steps p{ margin-bottom: 0; font-size: 0.98rem; }
 }
 .plain li b{ color: var(--text); }
 
+/* Quotes from real people (the "proof" section) */
+.quotes{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+  list-style: none;
+}
+.quote{
+  background: rgba(0,0,0,0.24);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--gold);
+  border-radius: 14px;
+  padding: 20px 22px;
+}
+.quote p{
+  font-size: 1rem;
+  color: var(--text);
+  margin-bottom: 12px;
+  max-width: none;
+}
+.quote cite{
+  font-style: normal;
+  font-size: 0.86rem;
+  color: var(--faint);
+  letter-spacing: 1px;
+}
+
 /* Say something */
 .contact-row{
   display: flex; flex-wrap: wrap; gap: 14px;
@@ -451,6 +479,40 @@ footer p{ margin: 0 auto 12px; color: var(--faint); font-size: 0.94rem; max-widt
 </header>
 
 <main id="main">
+
+  <!--
+  ============================================================================
+  PROOF SECTION  ::  NOT LIVE YET  ::  waiting on real comments
+  ============================================================================
+  Nothing here renders. Turn it on once you have two or three good comments
+  off the Facebook page.
+
+  TO ADD A QUOTE: copy one <li> block, paste it, swap the words. That's it.
+  Two or three is plenty. Only use real ones people actually wrote.
+
+  TO TURN THE SECTION ON: delete this opening marker and the END marker below.
+
+  <section class="wrap" id="proof">
+    <div class="card">
+      <h2>What people are saying</h2>
+      <ul class="quotes">
+
+        <li class="quote">
+          <p>Paste what they actually wrote, word for word.</p>
+          <cite>Their name, their group</cite>
+        </li>
+
+        <li class="quote">
+          <p>Second comment goes here.</p>
+          <cite>Name, group</cite>
+        </li>
+
+      </ul>
+    </div>
+  </section>
+
+  ========================= END OF PROOF SECTION ============================
+  -->
 
   <section class="wrap">
     <div class="card">
@@ -613,9 +675,12 @@ footer p{ margin: 0 auto 12px; color: var(--faint); font-size: 0.94rem; max-widt
        one; any address printed on a public page eventually gets scraped.
     2. Delete this opening comment marker and the END marker at the bottom.
 
-  A Google Form link works here too, and is friendlier for anyone who doesn't
-  have email set up on their phone. Swap the mailto for the form URL and
-  change the button label to something like LEAVE A COMMENT.
+  PLAN: point people at the Facebook page. They comment there, where they
+  already have an account and already are. Replace FACEBOOK_PAGE_URL below
+  with the real page address.
+
+  The mailto button is here as a second option. Use it, lose it, or swap the
+  address; a public address does eventually get scraped by spam bots.
 
   <section class="wrap" id="say-something">
     <div class="card">
@@ -626,11 +691,14 @@ footer p{ margin: 0 auto 12px; color: var(--faint); font-size: 0.94rem; max-widt
         rather hear it from you than have the next hall run into it.
       </p>
       <p>
-        No sign-ups, no account, no comment box to wrestle with. Just send a note.
+        Nothing to sign up for. Leave a comment on the Facebook page, or send a note.
       </p>
 
       <div class="contact-row">
-        <a class="contact" href="mailto:SOMEBODY@SOMEWHERE.COM?subject=Bingo%20Caller">
+        <a class="contact" href="FACEBOOK_PAGE_URL" target="_blank" rel="noopener noreferrer">
+          FIND US ON FACEBOOK
+        </a>
+        <a class="contact ghost" href="mailto:SOMEBODY@SOMEWHERE.COM?subject=Bingo%20Caller">
           SEND A NOTE
         </a>
       </div>
