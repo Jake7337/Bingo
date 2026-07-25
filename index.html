@@ -120,7 +120,10 @@ summary:focus-visible{
 .skip:focus{ left: 0; }
 
 /* ---------- HERO ---------- */
-.hero{ padding: 56px 0 44px; text-align: center; }
+/* NOTE: vertical padding only, as longhand. Using the `padding` shorthand here
+   would also reset the left/right padding that .wrap supplies, and the hero
+   would run flat against the edges of a phone screen. Same for section/footer. */
+.hero{ padding-top: 56px; padding-bottom: 44px; text-align: center; }
 
 .balls{
   display: flex; justify-content: center; flex-wrap: wrap;
@@ -218,7 +221,7 @@ h1{
 .device-note b{ color: var(--gold); font-weight: 800; display: block; margin-bottom: 3px; }
 
 /* ---------- SECTIONS ---------- */
-section{ padding: 40px 0; }
+section{ padding-top: 24px; padding-bottom: 24px; }
 
 h2{
   font-family: var(--display);
@@ -369,7 +372,8 @@ ol.steps p{ margin-bottom: 0; font-size: 0.98rem; }
 
 /* Footer */
 footer{
-  padding: 44px 0 60px;
+  padding-top: 44px;
+  padding-bottom: 60px;
   border-top: 1px solid var(--border);
   margin-top: 24px;
   text-align: center;
@@ -393,8 +397,8 @@ footer p{ margin: 0 auto 12px; color: var(--faint); font-size: 0.94rem; max-widt
 @media (max-width: 520px){
   body{ font-size: 16px; }
   .wrap{ padding: 0 16px; }
-  .hero{ padding: 38px 0 32px; }
-  section{ padding: 30px 0; }
+  .hero{ padding-top: 38px; padding-bottom: 32px; }
+  section{ padding-top: 16px; padding-bottom: 16px; }
   ol.steps > li{ padding-left: 54px; }
   ol.steps > li::before{ width: 38px; height: 38px; font-size: 1.2rem; }
   .launch{ display: block; }
