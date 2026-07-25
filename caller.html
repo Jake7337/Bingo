@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bingo Caller &mdash; Bellwood FOE 1859 Aerie</title>
+    <meta name="description" content="Free 75-ball bingo caller. Full master board, 17 patterns, fullscreen for TV display.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0f14'/%3E%3Ccircle cx='32' cy='33' r='21' fill='%23e11d48'/%3E%3Ccircle cx='25' cy='26' r='7' fill='%23f472b6' opacity='.55'/%3E%3Ctext x='32' y='43' font-family='Arial Black,Arial,sans-serif' font-size='26' font-weight='900' fill='%23ffffff' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E">
+    <style>
+        :root{
+            --bg: #0b0f14;
+            --border: rgba(255,255,255,0.14);
+            --text: rgba(255,255,255,0.92);
+            --muted: rgba(255,255,255,0.62);
+            --accent: #e11d48;
+            --gold: #fbbf24;
+            --pattern-color: #60a5fa;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.55);
+            --shadow-md: 0 10px 30px rgba(0,0,0,0.35);
+
+            /* Row colors */
+            --row-b: #e11d48;
+            --row-i: #f59e0b;
+            --row-n: #10b981;
+            --row-g: #3b82f6;
+            --row-o: #a855f7;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body { width: 100%; height: 100%; overflow: hidden; }
+
+        body{
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+            background:
+                radial-gradient(1000px 700px at 20% 20%, rgba(225, 29, 72, 0.14), transparent 55%),
+                radial-gradient(900px 650px at 80% 30%, rgba(96, 165, 250, 0.12), transparent 55%),
+                var(--bg);
+            color: var(--text);
+            display: flex;
+            user-select: none;
+            font-size: 18px;
+        }
+
+        /* --- START SCREEN OVERLAY --- */
+        #start-screen {
+            position: fixed;
+            inset: 0;
+            background-color: #0b0f14;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #start-screen h1 {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: 5rem;
+            color: #60a5fa;
+            margin-bottom: 2rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(96, 165, 250, 0.3);
+        }
+
+        #btn-start-app {
+            padding: 20px 60px;
+            font-size: 2rem;
+            font-weight: 900;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(225, 29, 72, 0.5);
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            letter-spacing: 1px;
+        }
+        #btn-start-app:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(225, 29, 72, 0.8);
+        }
+
+        /* --- BOARD --- */
+        .board-container{
+            flex-grow: 1;
+            height: 100vh;
+            padding: 22px;
+            display: flex;
+        }
+
+        .board{
+            display: grid;
+            grid-template-rows: repeat(5, 1fr);
+            gap: 14px;
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            padding: 22px;
+            cursor: pointer;
+        }
+
+        .board-row{
+            display: grid;
+            grid-template-columns: 9vh repeat(15, 1fr);
+            gap: 0.8vw;
+            align-items: center;
+        }
+
+        .board-row.disabled{
+            opacity: 0.28;
+            filter: grayscale(100%);
+        }
+
+        .row-header{
+            font-weight: 950;
+            font-size: clamp(34px, 5.2vh, 64px);
+            text-align: center;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            margin-right: 10px;
+            border-radius: 10px;
+            width: 9vh;
+            cursor: pointer;
+            transition: transform 0.15s ease, filter 0.2s ease;
+        }
+        .row-header:hover{
+            filter: brightness(1.2);
+            transform: translateY(-1px);
+        }
+
+        #row-group-0 .row-header { background: var(--row-b); }
+        #row-group-1 .row-header { background: var(--row-i); }
+        #row-group-2 .row-header { background: var(--row-n); }
+        #row-group-3 .row-header { background: var(--row-g); }
+        #row-group-4 .row-header { background: var(--row-o); }
+
+        .number-cell{
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.45);
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            font-weight: 900;
+            font-size: clamp(24px, 3.5vh, 42px);
+            line-height: 1;
+            transition: transform 0.2s ease, background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid rgba(255,255,255,0.08);
+            position: relative;
+        }
+
+        .number-cell span {
+            font-size: clamp(10px, 1.2vh, 16px);
+            color: rgba(255,255,255,0.3);
+            margin-bottom: -3px;
+        }
+
+        .number-cell.active{
+            color: #fff;
+            border: 3px solid rgba(255,255,255,0.5);
+            font-weight: 950;
+            transform: scale(1.08);
+            z-index: 5;
+        }
+        .number-cell.active span { color: rgba(255,255,255,0.85); }
+
+        #row-group-0 .number-cell.active {
+            background: radial-gradient(circle at 35% 35%, #f472b6, var(--row-b));
+            box-shadow: 0 4px 12px rgba(225,29,72,0.6), 0 0 20px rgba(225,29,72,0.3);
+        }
+        #row-group-1 .number-cell.active {
+            background: radial-gradient(circle at 35% 35%, #fcd34d, var(--row-i));
+            box-shadow: 0 4px 12px rgba(245,158,11,0.6), 0 0 20px rgba(245,158,11,0.3);
+        }
+        #row-group-2 .number-cell.active {
+            background: radial-gradient(circle at 35% 35%, #6ee7b7, var(--row-n));
+            box-shadow: 0 4px 12px rgba(16,185,129,0.6), 0 0 20px rgba(16,185,129,0.3);
+        }
+        #row-group-3 .number-cell.active {
+            background: radial-gradient(circle at 35% 35%, #93c5fd, var(--row-g));
+            box-shadow: 0 4px 12px rgba(59,130,246,0.6), 0 0 20px rgba(59,130,246,0.3);
+        }
+        #row-group-4 .number-cell.active {
+            background: radial-gradient(circle at 35% 35%, #c4b5fd, var(--row-o));
+            box-shadow: 0 4px 12px rgba(168,85,247,0.6), 0 0 20px rgba(168,85,247,0.3);
+        }
+
+        @keyframes ping-ring {
+            0%   { transform: scale(1); opacity: 0.7; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+
+        .number-cell.last-called{
+            z-index: 100;
+            transform: scale(1.15);
+        }
+
+        .number-cell.last-called::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 3px solid currentColor;
+            animation: ping-ring 1.2s ease-out infinite;
+            pointer-events: none;
+        }
+
+        #row-group-0 .number-cell.last-called::after { border-color: var(--row-b); }
+        #row-group-1 .number-cell.last-called::after { border-color: var(--row-i); }
+        #row-group-2 .number-cell.last-called::after { border-color: var(--row-n); }
+        #row-group-3 .number-cell.last-called::after { border-color: var(--row-g); }
+        #row-group-4 .number-cell.last-called::after { border-color: var(--row-o); }
+
+        /* --- RIGHT SIDEBAR (Controls) --- */
+        .sidebar{
+            width: min(340px, 26vw);
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-left: 1px solid var(--border);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: var(--shadow-md);
+            z-index: 20;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+
+        .panel{
+            background: rgba(0,0,0,0.22);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            padding: 14px;
+            text-align: center;
+        }
+
+        .panel-title{
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            color: var(--muted);
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .panel-last-call{
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px 8px;
+        }
+
+        #last-call{
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-weight: 900;
+            font-size: clamp(56px, 9vh, 130px);
+            line-height: 1;
+            color: #60a5fa;
+            letter-spacing: 0.03em;
+        }
+
+        #pattern-name{
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            color: var(--gold);
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        #pattern-grid{
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            width: 100%;
+            max-width: 180px;
+            aspect-ratio: 1;
+            margin: 0 auto;
+            padding: 10px;
+            background: rgba(0,0,0,0.35);
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.12);
+        }
+
+        .pattern-grid-cell{
+            background: rgba(255,255,255,0.08);
+            border-radius: 6px;
+            aspect-ratio: 1;
+            transition: background 0.4s ease, box-shadow 0.4s ease;
+        }
+        .pattern-grid-cell.target{
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+        }
+        .pattern-grid-cell.free-space{
+            background: linear-gradient(135deg, #fcd34d, #f59e0b);
+        }
+
+        select{
+            padding: 14px 14px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            width: 100%;
+            background-color: rgba(20, 24, 32, 0.95);
+            border: 2px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.95);
+            font-weight: 800;
+            outline: none;
+        }
+        option {
+            background-color: rgb(20, 24, 32);
+            color: rgba(255,255,255,0.95);
+        }
+
+        .delay-control{
+            background: rgba(0,0,0,0.22);
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .delay-label{
+            font-weight: 900;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"]{ accent-color: var(--accent); }
+
+        button{
+            padding: 14px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.12);
+            border-radius: 14px;
+            font-weight: 950;
+            transition: transform 0.08s, filter 0.2s, background 0.2s ease;
+            text-transform: uppercase;
+            background: rgba(255,255,255,0.08);
+            color: var(--text);
+        }
+        button:hover{ filter: brightness(1.06); }
+        button:active{ transform: scale(0.98); }
+        button:disabled{
+            background-color: rgba(255,255,255,0.06) !important;
+            color: rgba(255,255,255,0.35) !important;
+            cursor: not-allowed;
+            transform: none;
+            filter: none;
+        }
+
+        #btn-choose-game{
+            background: rgba(96, 165, 250, 0.18);
+            border-color: rgba(96, 165, 250, 0.35);
+            width: 100%;
+        }
+
+        #btn-rotate-toggle{
+            width: 100%;
+            font-size: 0.95rem;
+            padding: 12px;
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.14);
+            color: var(--muted);
+        }
+        #btn-rotate-toggle.active{
+            background: rgba(74, 222, 128, 0.18);
+            border-color: rgba(74, 222, 128, 0.4);
+            color: #4ade80;
+        }
+        #btn-call{
+            background: rgba(225,29,72,0.22);
+            border-color: rgba(225,29,72,0.40);
+            font-size: 1.3rem;
+            padding: 18px;
+            margin-top: auto;
+        }
+        #btn-reset{ background: rgba(255,255,255,0.06); }
+        #btn-fullscreen{
+            background: rgba(96, 165, 250, 0.18);
+            border-color: rgba(96, 165, 250, 0.35);
+        }
+
+        /* --- Let's Play Overlay (full-screen pattern reveal) --- */
+        #letsplay-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(ellipse at center, rgba(20, 30, 48, 0.98), rgba(5, 10, 20, 0.99));
+            z-index: 400;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        #letsplay-overlay.show { display: flex; }
+        .letsplay-content {
+            text-align: center;
+            animation: letsplay-appear 0.5s ease-out;
+        }
+        @keyframes letsplay-appear {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .letsplay-title {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: clamp(2rem, 5vw, 4rem);
+            color: var(--muted);
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+        }
+        .letsplay-pattern-name {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: clamp(4rem, 10vw, 8rem);
+            color: var(--gold);
+            text-shadow: 0 0 40px rgba(251, 191, 36, 0.5);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+        #letsplay-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            width: min(50vh, 400px);
+            height: min(50vh, 400px);
+            margin: 0 auto 40px;
+            padding: 20px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 20px;
+            border: 3px solid rgba(255,255,255,0.15);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        #letsplay-grid .pattern-grid-cell {
+            border-radius: 10px;
+        }
+        #letsplay-grid .pattern-grid-cell.target {
+            box-shadow: 0 0 25px rgba(96, 165, 250, 0.6);
+        }
+        #letsplay-grid .pattern-grid-cell.free-space {
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+        }
+        #btn-letsplay {
+            padding: 25px 80px;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #e11d48, #be123c);
+            color: white;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            letter-spacing: 3px;
+            box-shadow: 0 10px 40px rgba(225, 29, 72, 0.5);
+        }
+        #btn-letsplay:hover {
+            transform: scale(1.05);
+        }
+
+        /* --- Pattern Editor Modal --- */
+        #pattern-modal{
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 250;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+        #pattern-modal.show{ display: flex; }
+        #pattern-modal h2{
+            color: #fff;
+            font-size: clamp(24px, 4vw, 40px);
+            margin: 0;
+        }
+        #modal-pattern-grid{
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            width: min(400px, 80vw);
+            height: min(400px, 80vw);
+            padding: 20px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 20px;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+        .modal-pattern-cell{
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.15s;
+        }
+        .modal-pattern-cell:hover{ transform: scale(1.05); }
+        .modal-pattern-cell.target{
+            background-color: var(--pattern-color);
+            box-shadow: 0 0 20px rgba(96,165,250,0.5);
+        }
+        .modal-pattern-cell.free-space{
+            background: rgba(250, 204, 21, 0.7);
+            box-shadow: 0 0 14px rgba(250, 204, 21, 0.4);
+        }
+        #pattern-modal-buttons{ display: flex; gap: 15px; }
+        #pattern-modal-buttons button{
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 2px solid;
+        }
+        #btn-pattern-confirm{
+            background: rgba(74, 222, 128, 0.2);
+            border-color: rgba(74, 222, 128, 0.5);
+            color: #4ade80;
+        }
+        #btn-pattern-cancel{
+            background: rgba(248, 113, 113, 0.2);
+            border-color: rgba(248, 113, 113, 0.5);
+            color: #f87171;
+        }
+        #modal-pattern-select{
+            padding: 14px 20px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: #fff;
+            width: min(400px, 80vw);
+            cursor: pointer;
+        }
+
+        #stamp-count-control{
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        #stamp-count-control.show{ display: flex; }
+        .stamp-count-label{
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+        .stamp-count-buttons{
+            display: flex;
+            gap: 10px;
+        }
+        .stamp-count-btn{
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: 900;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: #fff;
+            cursor: pointer;
+        }
+        .stamp-count-btn.active{
+            background: rgba(96,165,250,0.3);
+            border-color: rgba(96,165,250,0.7);
+            color: #60a5fa;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- START SCREEN (Click to unlock audio) -->
+    <div id="start-screen">
+        <h1>BINGO CALLER V4</h1>
+        <button id="btn-start-app">CLICK TO START</button>
+        <div style="margin-top:18px;font-size:13px;color:#6c7079;font-family:sans-serif;letter-spacing:.05em;">OFFLINE EDITION &nbsp;&middot;&nbsp; SILENT &mdash; YOU'RE THE CALLER</div>
+        <!-- Way back to the intro page for anyone who lands here directly.
+             Only on the start screen, so it can't get in the way mid-game. -->
+        <a href="index.html" style="margin-top:26px;font-size:13px;color:#6c7079;font-family:sans-serif;letter-spacing:.05em;text-decoration:none;border-bottom:1px solid #2a2f37;padding-bottom:2px;">&larr; What is this?</a>
+    </div>
+
+    <!-- Board -->
+    <div class="board-container">
+        <div class="board" id="board"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="panel panel-last-call">
+            <div class="panel-title">LAST CALL</div>
+            <div id="last-call">--</div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">NOW PLAYING</div>
+            <div id="pattern-name">Full Card</div>
+            <div id="pattern-grid"></div>
+        </div>
+
+        <button id="btn-choose-game">CHOOSE GAME</button>
+        <button id="btn-rotate-toggle" class="active">ROTATE: ON</button>
+
+        <div class="delay-control">
+            <div class="delay-label">
+                Pace Delay: <span id="delay-display">5s</span>
+            </div>
+            <input type="range" id="delay-slider" min="0" max="15" value="5" step="1" style="width: 100%; cursor: pointer;">
+        </div>
+
+        <button id="btn-call">START</button>
+        <button id="btn-reset">RESET</button>
+        <button id="btn-fullscreen">FULL SCREEN</button>
+    </div>
+
+    <!-- Let's Play Overlay (full-screen pattern reveal) -->
+    <div id="letsplay-overlay">
+        <div class="letsplay-content">
+            <div class="letsplay-title">NOW PLAYING</div>
+            <div class="letsplay-pattern-name" id="letsplay-pattern-name">Full Card</div>
+            <div id="letsplay-grid"></div>
+            <button id="btn-letsplay">LET'S PLAY!</button>
+        </div>
+    </div>
+
+    <!-- Pattern Editor Modal -->
+    <div id="pattern-modal">
+        <h2>Choose Game</h2>
+        <select id="modal-pattern-select">
+            <option value="fullcard">Full Card</option>
+            <option value="x">X Pattern</option>
+            <option value="t">T Pattern</option>
+            <option value="l">L Pattern</option>
+            <option value="corners">4 Corners</option>
+            <option value="outsidebox">Outside Box</option>
+            <option value="insidebox">Inside Box</option>
+            <option value="plus">Plus Sign</option>
+            <option value="a">Letter A</option>
+            <option value="fieldgoal">Field Goal</option>
+            <option value="stripes">Stripes</option>
+            <option value="kite">Kite</option>
+            <option value="heart">Heart</option>
+            <option value="missinglink">Missing Link</option>
+            <option value="postagestamp">Postage Stamp</option>
+            <option value="blocksix">Block of 6</option>
+            <option value="blocknine">Block of 9</option>
+            <option value="custom">Custom...</option>
+        </select>
+        <div id="stamp-count-control">
+            <div class="stamp-count-label">How Many Stamps?</div>
+            <div class="stamp-count-buttons">
+                <button type="button" class="stamp-count-btn" data-count="1">1</button>
+                <button type="button" class="stamp-count-btn" data-count="2">2</button>
+                <button type="button" class="stamp-count-btn" data-count="3">3</button>
+                <button type="button" class="stamp-count-btn" data-count="4">4</button>
+            </div>
+        </div>
+        <div id="modal-pattern-grid"></div>
+        <div id="pattern-modal-buttons">
+            <button id="btn-pattern-confirm">CONFIRM</button>
+            <button id="btn-pattern-cancel">CANCEL</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Game State ---
+        const totalNumbers = 75;
+        let availableNumbers = [];
+        let calledNumbers = [];
+        let callDelay = 5;
+        let isCooldown = false;
+        let gameStarted = false;
+        let activePatternIndices = new Set();
+
+        // --- DOM Elements ---
+        const startScreen = document.getElementById('start-screen');
+        const btnStartApp = document.getElementById('btn-start-app');
+        const boardEl = document.getElementById('board');
+        const lastCallEl = document.getElementById('last-call');
+        const btnCall = document.getElementById('btn-call');
+        const btnReset = document.getElementById('btn-reset');
+        const delaySlider = document.getElementById('delay-slider');
+        const delayDisplay = document.getElementById('delay-display');
+
+        // --- Pattern Definitions ---
+        const patterns = {
+            'fullcard': Array.from({length: 25}, (_, i) => i),
+            'x': [0, 4, 6, 8, 12, 16, 18, 20, 24],
+            't': [0,1,2,3,4, 7,12,17,22],
+            'l': [0,5,10,15,20, 21,22,23,24],
+            'a': [1,2,3, 5,9, 10,11,12,13,14, 15,19, 20,24],
+            'corners': [0, 4, 20, 24],
+            'outsidebox': [0,1,2,3,4, 5,9, 10,14, 15,19, 20,21,22,23,24],
+            'insidebox': [6,7,8, 11,12,13, 16,17,18],
+            'fieldgoal': [0,2,4, 5,9, 10,11,12,13,14, 17,22],
+            'stripes': [0,1,2,3,4, 10,11,12,13,14, 20,21,22,23,24],
+            'kite': [3,4, 8,9, 12, 16, 20],
+            'heart': [1,3, 5,6,7,8,9, 10,11,12,13,14, 16,17,18, 22],
+            'plus': [2,7, 10,11,12,13,14, 17,22],
+            'missinglink': [0,1,2,3,4, 5,9, 10,14, 15,19, 20,21,22,23,24],
+            'postagestamp': [0,1,5,6, 3,4,8,9, 15,16,20,21, 18,19,23,24],
+            'blocksix': [0,1,2, 5,6,7],
+            'blocknine': [0,1,2, 5,6,7, 10,11,12],
+            'custom': []
+        };
+
+        const patternNames = {
+            'fullcard': 'Full Card',
+            'x': 'X Pattern',
+            't': 'T Pattern',
+            'l': 'L Pattern',
+            'corners': '4 Corners',
+            'outsidebox': 'Outside Box',
+            'insidebox': 'Inside Box',
+            'plus': 'Plus Sign',
+            'a': 'Letter A',
+            'fieldgoal': 'Field Goal',
+            'stripes': 'Stripes',
+            'kite': 'Kite',
+            'heart': 'Heart',
+            'missinglink': 'Missing Link',
+            'postagestamp': 'Postage Stamp',
+            'blocksix': 'Block of 6',
+            'blocknine': 'Block of 9',
+            'custom': 'Custom'
+        };
+
+        // Corners used by the Postage Stamp pattern (top-left, top-right, bottom-left, bottom-right)
+        const stampCorners = [
+            [0,1,5,6],
+            [3,4,8,9],
+            [15,16,20,21],
+            [18,19,23,24]
+        ];
+        let postageStampCount = 4;
+
+        function combinations(arr, k) {
+            if (k === 0) return [[]];
+            if (arr.length < k) return [];
+            const [first, ...rest] = arr;
+            const withFirst = combinations(rest, k - 1).map(c => [first, ...c]);
+            const withoutFirst = combinations(rest, k);
+            return withFirst.concat(withoutFirst);
+        }
+
+        function getPostageStampFrames(count) {
+            const combos = combinations([0, 1, 2, 3], count);
+            return combos.map(combo => combo.flatMap(i => stampCorners[i]));
+        }
+
+        function getMissingLinkFrames() {
+            const border = patterns.missinglink;
+            const frames = [border.slice()];
+            border.forEach((cell, i) => {
+                frames.push(border.filter((_, idx) => idx !== i));
+            });
+            return frames;
+        }
+
+        function getBlockPlacements(h, w) {
+            const frames = [];
+            for (let r = 0; r <= 5 - h; r++) {
+                for (let c = 0; c <= 5 - w; c++) {
+                    const cells = [];
+                    for (let dr = 0; dr < h; dr++) {
+                        for (let dc = 0; dc < w; dc++) {
+                            cells.push((r + dr) * 5 + (c + dc));
+                        }
+                    }
+                    frames.push(cells);
+                }
+            }
+            return frames;
+        }
+
+        function interleave(a, b) {
+            const result = [];
+            const len = Math.max(a.length, b.length);
+            for (let i = 0; i < len; i++) {
+                if (i < a.length) result.push(a[i]);
+                if (i < b.length) result.push(b[i]);
+            }
+            return result;
+        }
+
+        function getFramesForKey(key) {
+            if (key === 'custom') return [Array.from(activePatternIndices)];
+            if (key === 'missinglink') return getMissingLinkFrames();
+            if (key === 'postagestamp') return getPostageStampFrames(postageStampCount);
+            if (key === 'blocksix') return interleave(getBlockPlacements(2, 3), getBlockPlacements(3, 2));
+            if (key === 'blocknine') return getBlockPlacements(3, 3);
+            return getOrientations(patterns[key] || []);
+        }
+
+        let currentPatternKey = 'fullcard';
+
+        // --- Render Board ---
+        function renderBoard() {
+            boardEl.innerHTML = '';
+            const letters = ['B', 'I', 'N', 'G', 'O'];
+
+            letters.forEach((letter, i) => {
+                const rowGroup = document.createElement('div');
+                rowGroup.className = 'board-row';
+                rowGroup.id = `row-group-${i}`;
+
+                const letterHeader = document.createElement('div');
+                letterHeader.className = 'row-header';
+                letterHeader.innerText = letter;
+                letterHeader.title = 'Click to close/open this row';
+                letterHeader.onclick = () => rowGroup.classList.toggle('disabled');
+                rowGroup.appendChild(letterHeader);
+
+                const start = i * 15 + 1;
+                const end = start + 15;
+
+                for (let num = start; num < end; num++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'number-cell';
+                    cell.id = `num-${num}`;
+                    cell.innerHTML = `<span>${letter}</span>${num}`;
+                    rowGroup.appendChild(cell);
+                }
+
+                boardEl.appendChild(rowGroup);
+            });
+        }
+
+        function initGame() {
+            availableNumbers = Array.from({length: totalNumbers}, (_, i) => i + 1);
+            calledNumbers = [];
+            isCooldown = false;
+            gameStarted = false;
+
+            for (let i = availableNumbers.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [availableNumbers[i], availableNumbers[j]] = [availableNumbers[j], availableNumbers[i]];
+            }
+
+            lastCallEl.textContent = "--";
+            renderBoard();
+
+            btnCall.disabled = false;
+            btnCall.innerText = "START";
+        }
+
+        // --- WAKE LOCK ---
+        let wakeLock = null;
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                }
+            } catch (err) {
+                console.log('Wake Lock failed:', err);
+            }
+        }
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && !wakeLock) requestWakeLock();
+        });
+
+        btnStartApp.addEventListener('click', () => {
+            startScreen.style.display = 'none';
+            requestWakeLock();
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        });
+
+        function getLetter(num) {
+            if (num <= 15) return 'B';
+            if (num <= 30) return 'I';
+            if (num <= 45) return 'N';
+            if (num <= 60) return 'G';
+            return 'O';
+        }
+
+        function getRowIndex(num) {
+            if (num <= 15) return 0;
+            if (num <= 30) return 1;
+            if (num <= 45) return 2;
+            if (num <= 60) return 3;
+            return 4;
+        }
+
+        // ==================================================================
+        //  VOICE / SILENT MODE
+        //  ------------------------------------------------------------------
+        //  Currently OFF. A human calls the numbers; the screen just tracks.
+        //
+        //  The whole speech system below is intact and wired up — it is only
+        //  held back by this one flag. When the built-in browser voices get
+        //  good enough to be worth using, flip this to true and it works
+        //  immediately. Nothing else needs to change.
+        //
+        //      const SPEECH_ENABLED = true;   <-- the only edit needed
+        //
+        //  pickOfflineVoice() below forces a LOCAL (on-device) voice, so
+        //  re-enabling it will still work with no internet connection.
+        //  If you later want a specific voice, change the name pattern in
+        //  the first .find() — e.g. /david|zira|mark/i to whatever you like.
+        // ==================================================================
+        const SPEECH_ENABLED = false;
+
+        let offlineVoice = null;
+        function pickOfflineVoice() {
+            if (!('speechSynthesis' in window)) return null;
+            const all = window.speechSynthesis.getVoices() || [];
+            if (!all.length) return null;
+            const local = all.filter(v => v.localService);
+            const pool = local.length ? local : all;
+            offlineVoice =
+                  pool.find(v => /^en[-_]US/i.test(v.lang) && /david|zira|mark/i.test(v.name))
+               || pool.find(v => /^en[-_]US/i.test(v.lang))
+               || pool.find(v => /^en/i.test(v.lang))
+               || pool[0];
+            return offlineVoice;
+        }
+        if (SPEECH_ENABLED && 'speechSynthesis' in window) {
+            pickOfflineVoice();
+            window.speechSynthesis.onvoiceschanged = pickOfflineVoice;
+        }
+
+        function speak(text) {
+            if (!SPEECH_ENABLED) return;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9;
+                if (!offlineVoice) pickOfflineVoice();
+                if (offlineVoice) {
+                    utterance.voice = offlineVoice;
+                    utterance.lang = offlineVoice.lang;
+                }
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // --- Call Number Logic ---
+        function callNumber() {
+            if (isCooldown) return;
+
+            if (!gameStarted) {
+                gameStarted = true;
+                btnCall.innerText = "CALL NUMBER (SPACEBAR)";
+            }
+
+            if (availableNumbers.length === 0) {
+                alert("Game Over! All numbers called.");
+                return;
+            }
+
+            let validIndex = -1;
+            for (let i = availableNumbers.length - 1; i >= 0; i--) {
+                const rowIdx = getRowIndex(availableNumbers[i]);
+                const rowGroup = document.getElementById(`row-group-${rowIdx}`);
+                if (!rowGroup || !rowGroup.classList.contains('disabled')) {
+                    validIndex = i;
+                    break;
+                }
+            }
+
+            if (validIndex === -1) {
+                alert("No numbers left in the active rows.");
+                return;
+            }
+
+            if (calledNumbers.length > 0) {
+                const prevNum = calledNumbers[calledNumbers.length - 1];
+                const prevCell = document.getElementById(`num-${prevNum}`);
+                if (prevCell) prevCell.classList.remove('last-called');
+            }
+
+            const num = availableNumbers.splice(validIndex, 1)[0];
+            calledNumbers.push(num);
+
+            const letter = getLetter(num);
+            lastCallEl.textContent = `${letter} ${num}`;
+
+            const cell = document.getElementById(`num-${num}`);
+            if (cell) {
+                cell.classList.add('active');
+                cell.classList.add('last-called');
+            }
+
+            speak(`${letter} ${num}`);
+
+            if (callDelay > 0 && availableNumbers.length > 0) {
+                handleCooldown();
+            }
+        }
+
+        function handleCooldown() {
+            isCooldown = true;
+            btnCall.disabled = true;
+            let remaining = callDelay;
+            const originalText = "CALL NUMBER (SPACEBAR)";
+            btnCall.innerText = `WAIT ${remaining}...`;
+
+            const interval = setInterval(() => {
+                remaining--;
+                if (remaining > 0) {
+                    btnCall.innerText = `WAIT ${remaining}...`;
+                } else {
+                    clearInterval(interval);
+                    btnCall.innerText = originalText;
+                    btnCall.disabled = false;
+                    isCooldown = false;
+                }
+            }, 1000);
+        }
+
+        delaySlider.addEventListener('input', (e) => {
+            callDelay = parseInt(e.target.value);
+            delayDisplay.innerText = callDelay + "s";
+        });
+
+        btnCall.addEventListener('click', callNumber);
+        btnReset.addEventListener('click', initGame);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (startScreen.style.display !== 'none') return;
+                callNumber();
+            } else if (e.code === 'Escape') {
+                if (patternModal.classList.contains('show')) {
+                    btnPatternCancel.click();
+                } else if (letsplayOverlay.classList.contains('show')) {
+                    hideLetsPlay();
+                }
+            }
+        });
+
+        // --- Pattern Display (sidebar "Now Playing") ---
+        const patternNameEl = document.getElementById('pattern-name');
+        const patternGridEl = document.getElementById('pattern-grid');
+        const letsplayOverlay = document.getElementById('letsplay-overlay');
+        const letsplayPatternNameEl = document.getElementById('letsplay-pattern-name');
+        const letsplayGridEl = document.getElementById('letsplay-grid');
+        const btnLetsPlay = document.getElementById('btn-letsplay');
+
+        // Patterns like T and L can be played in any rotation (upside down, left, right)
+        // as long as the shape itself isn't changed. We cycle the preview through every
+        // distinct 90-degree rotation so players know all of those count.
+        let patternOrientations = [];
+        let orientationIndex = 0;
+        let orientationTimer = null;
+        let rotationEnabled = true;
+
+        function rotateIndices(indices) {
+            return indices.map(i => {
+                const r = Math.floor(i / 5), c = i % 5;
+                return c * 5 + (4 - r);
+            });
+        }
+
+        function getOrientations(baseIndices) {
+            const seen = new Set();
+            const orientations = [];
+            let current = baseIndices.slice();
+            for (let n = 0; n < 4; n++) {
+                const key = current.slice().sort((a, b) => a - b).join(',');
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    orientations.push(current.slice());
+                }
+                current = rotateIndices(current);
+            }
+            return orientations;
+        }
+
+        function renderGridInto(container, indicesSet) {
+            container.innerHTML = '';
+            for (let i = 0; i < 25; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'pattern-grid-cell';
+                if (i === 12) {
+                    cell.classList.add('free-space');
+                } else if (indicesSet.has(i)) {
+                    cell.classList.add('target');
+                }
+                container.appendChild(cell);
+            }
+        }
+
+        function renderPatternFrame(indicesArray) {
+            const indicesSet = new Set(indicesArray);
+            renderGridInto(patternGridEl, indicesSet);
+            renderGridInto(letsplayGridEl, indicesSet);
+        }
+
+        function showLetsPlay() {
+            letsplayPatternNameEl.textContent = patternNames[currentPatternKey] || 'Custom';
+            letsplayOverlay.classList.add('show');
+        }
+
+        function hideLetsPlay() {
+            letsplayOverlay.classList.remove('show');
+        }
+
+        btnLetsPlay.addEventListener('click', hideLetsPlay);
+        letsplayOverlay.addEventListener('click', hideLetsPlay);
+
+        function startPatternAnimation(key) {
+            if (orientationTimer) {
+                clearInterval(orientationTimer);
+                orientationTimer = null;
+            }
+
+            patternOrientations = getFramesForKey(key);
+
+            orientationIndex = 0;
+            renderPatternFrame(patternOrientations[0] || []);
+
+            if (rotationEnabled && patternOrientations.length > 1) {
+                orientationTimer = setInterval(() => {
+                    orientationIndex = (orientationIndex + 1) % patternOrientations.length;
+                    renderPatternFrame(patternOrientations[orientationIndex]);
+                }, 1800);
+            }
+        }
+
+        const btnRotateToggle = document.getElementById('btn-rotate-toggle');
+        btnRotateToggle.addEventListener('click', () => {
+            rotationEnabled = !rotationEnabled;
+            btnRotateToggle.textContent = rotationEnabled ? 'ROTATE: ON' : 'ROTATE: OFF';
+            btnRotateToggle.classList.toggle('active', rotationEnabled);
+            startPatternAnimation(currentPatternKey);
+        });
+
+        function renderPatternDisplay() {
+            patternNameEl.textContent = patternNames[currentPatternKey] || 'Custom';
+            startPatternAnimation(currentPatternKey);
+        }
+
+        function loadPattern(key) {
+            currentPatternKey = key;
+            activePatternIndices.clear();
+            if (patterns[key]) {
+                patterns[key].forEach(idx => activePatternIndices.add(idx));
+            }
+            renderPatternDisplay();
+        }
+
+        // --- Pattern Editor Modal ---
+        const patternModal = document.getElementById('pattern-modal');
+        const modalPatternGrid = document.getElementById('modal-pattern-grid');
+        const modalPatternSelect = document.getElementById('modal-pattern-select');
+        const btnChooseGame = document.getElementById('btn-choose-game');
+        const btnPatternConfirm = document.getElementById('btn-pattern-confirm');
+        const btnPatternCancel = document.getElementById('btn-pattern-cancel');
+        let savedPatternIndices = new Set();
+        let savedPatternKey = 'fullcard';
+        let savedStampCount = 4;
+
+        const stampCountControl = document.getElementById('stamp-count-control');
+        const stampCountButtons = document.querySelectorAll('.stamp-count-btn');
+
+        function updateStampCountButtons() {
+            stampCountButtons.forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.count, 10) === postageStampCount);
+            });
+        }
+
+        function applyStampCountPreview() {
+            const combos = getPostageStampFrames(postageStampCount);
+            activePatternIndices = new Set(combos[0] || []);
+            renderModalPatternGrid();
+        }
+
+        stampCountButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                postageStampCount = parseInt(btn.dataset.count, 10);
+                updateStampCountButtons();
+                applyStampCountPreview();
+            });
+        });
+
+        function openPatternModal() {
+            savedPatternIndices = new Set(activePatternIndices);
+            savedPatternKey = currentPatternKey;
+            savedStampCount = postageStampCount;
+            modalPatternSelect.value = currentPatternKey;
+            stampCountControl.classList.toggle('show', currentPatternKey === 'postagestamp');
+            if (currentPatternKey === 'postagestamp') updateStampCountButtons();
+            renderModalPatternGrid();
+            patternModal.classList.add('show');
+        }
+
+        function closePatternModal() {
+            patternModal.classList.remove('show');
+        }
+
+        function renderModalPatternGrid() {
+            modalPatternGrid.innerHTML = '';
+            for (let i = 0; i < 25; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'modal-pattern-cell';
+                if (i === 12) {
+                    cell.classList.add('free-space');
+                } else {
+                    if (activePatternIndices.has(i)) cell.classList.add('target');
+                    cell.onclick = () => {
+                        if (activePatternIndices.has(i)) {
+                            activePatternIndices.delete(i);
+                        } else {
+                            activePatternIndices.add(i);
+                        }
+                        modalPatternSelect.value = "custom";
+                        stampCountControl.classList.remove('show');
+                        renderModalPatternGrid();
+                    };
+                }
+                modalPatternGrid.appendChild(cell);
+            }
+        }
+
+        modalPatternSelect.addEventListener('change', (e) => {
+            const key = e.target.value;
+            stampCountControl.classList.toggle('show', key === 'postagestamp');
+            if (key === 'postagestamp') {
+                updateStampCountButtons();
+                applyStampCountPreview();
+                return;
+            }
+            activePatternIndices.clear();
+            if (patterns[key]) patterns[key].forEach(idx => activePatternIndices.add(idx));
+            renderModalPatternGrid();
+        });
+
+        btnChooseGame.addEventListener('click', openPatternModal);
+
+        btnPatternConfirm.onclick = () => {
+            currentPatternKey = modalPatternSelect.value;
+            renderPatternDisplay();
+            closePatternModal();
+            showLetsPlay();
+        };
+
+        btnPatternCancel.onclick = () => {
+            activePatternIndices = new Set(savedPatternIndices);
+            currentPatternKey = savedPatternKey;
+            postageStampCount = savedStampCount;
+            renderPatternDisplay();
+            closePatternModal();
+        };
+
+        // --- Fullscreen Toggle ---
+        const btnFullscreen = document.getElementById('btn-fullscreen');
+        const syncFsLabel = () => {
+            btnFullscreen.textContent = document.fullscreenElement ? "EXIT FULL" : "FULL SCREEN";
+        };
+        btnFullscreen.addEventListener('click', async () => {
+            try {
+                if (!document.fullscreenElement) {
+                    await document.documentElement.requestFullscreen();
+                } else {
+                    await document.exitFullscreen();
+                }
+            } catch (e) {
+                console.warn("Fullscreen failed:", e);
+            }
+            syncFsLabel();
+        });
+        document.addEventListener('fullscreenchange', syncFsLabel);
+        syncFsLabel();
+
+        loadPattern('fullcard');
+        initGame();
+    </script>
+</body>
+</html>
