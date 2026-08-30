@@ -1,49 +1,53 @@
-# Bingo Caller App
+# Free Apps That Help
 
 ## Project Info
-- **Live URL:** https://jake7337.github.io/Bingo/
-- **GitHub:** https://github.com/Jake7337/Bingo
-- **Creator:** Jake - creates all art/videos/ideas with AI tools
+- **Live URL:** https://jake7337.github.io/Bingo/  (GitHub Pages, `main` branch, repo root)
+- **GitHub:** https://github.com/Jake7337/Bingo  (repo name is still `Bingo`; URLs stay stable — don't rename without Jake asking)
+- **Creator:** Jake — makes all art/ideas with AI tools; gives the code away to help others
+- **The point:** free tools that actually help someone — a group raising money on bingo night, or a person needing to put something heavy down. "Maybe it saves one life." Keep the tone honest and unslick, never markety.
 
-## Current State
-- Single file: `index.html` (embedded CSS/JS, no dependencies, no build step)
-- This is the whole repo — no portal page, no trivia apps, no media manager, no video/image assets
-- Built for Bellwood FOE 1859 Aerie (Fraternal Order of Eagles)
-- Designed for TV display at club (same screen doubles as the caller's control panel)
+## Structure (site became a multi-app hub 2026-08-29)
+Was a single bingo caller, then Jake's own landing page (July), now a hub of apps.
 
-## Features
-- Full-screen 75-ball board (horizontal B/I/N/G/O rows) — takes up most of the screen
-- Slim right sidebar: Last Call (large), Now Playing (pattern name + mini grid), Choose Game,
-  Rotate toggle, Pace Delay slider, Call/Reset/Full Screen buttons
-- "Choose Game" opens a pattern picker modal (presets + custom cell-by-cell editor)
-- Confirming a pattern shows a full-screen "Let's Play" reveal (name + big grid) before
-  dropping back into the board
-- Voice announces every call via the Web Speech API (always on, no toggle)
-- Pace delay control (0-15s) between calls
-- Wake Lock keeps the screen from sleeping
-- Fullscreen toggle
+```
+index.html            <- the hub ("Free apps that help") — front door, links each app
+bingo/index.html      <- Bingo Caller app  (Jake's July "caller.html", SILENT edition)
+bingo/info.html       <- Bingo Caller showcase  (Jake's July landing page, moved + relinked)
+burn-book/index.html  <- Burn Book app  (mirrors C:\Users\jrsrl\OneDrive\Desktop\burnbook.html)
+burn-book/info.html   <- Burn Book showcase
+burn-book/cover.jpg   <- cover art (the app has its own embedded copy)
+og-preview.png        <- link-preview image for the bingo info page (abs URL in its meta)
+og-hub.png            <- link-preview image for the hub
+```
 
-### Pattern animation
-Many patterns can legally be played in more than one orientation/position. The ROTATE
-ON/OFF sidebar button controls whether the "Now Playing" preview (and the Let's Play
-reveal) cycles through those variants, or freezes on one static frame:
-- **Standard shapes** (T, L, X, Corners, Heart, Kite, Field Goal, etc.) rotate through
-  every distinct 90° orientation via `getOrientations()`.
-- **Missing Link** — full outside border, cycles through each single edge cell being
-  the "missing" one.
-- **Postage Stamp** — 2x2 corner blocks. Choose 1-4 stamps in the modal ("How Many
-  Stamps?" buttons); count 4 is static (any corner counts), 1-3 cycles through every
-  combination of that many corners.
-- **Block of 6** — a 2x3 rectangle, cycles through all 24 valid positions, alternating
-  3-wide/2-high and 2-wide/3-high every frame (interleaved, not grouped) so both
-  orientations show up fast.
-- **Block of 9** — a 3x3 square, cycles through its 9 valid positions.
-- All of the above naturally light up the center free space when a placement covers it.
+- Every app is ONE self-contained HTML file: embedded CSS/JS/assets, no build step, no dependencies, works offline.
+- Hub cards: **Open** (new tab) · **Download** (`download` attr, forced filename) · **Info** (the showcase page).
+- Adding an app = `app-name/index.html` (+ optional `info.html`) + an `<article class="card">` in `index.html` + a row in `README.md`.
 
-Symmetric patterns (Full Card, X, Corners, Plus, Inside/Outside Box) collapse to a
-single frame automatically since rotating them looks identical — no wasted animation.
+### The hub (`index.html`)
+- Theme-aware (light base; `prefers-color-scheme: dark` + `[data-theme]` token overrides).
+- Fonts: Fraunces + IBM Plex Sans via Google Fonts (the only page here that uses a CDN — the info pages and apps are fully self-contained). Revisit if Jake wants everything CDN-free.
+- Warm near-black / off-white, single ember accent. Inline-SVG icons, no emoji.
+
+### Bingo Caller (`bingo/index.html`) — Jake's, mostly hands-off
+- Live at https://jake7337.github.io/Bingo/bingo/ (was the bare `/Bingo/`).
+- Originally built for one club's fundraiser bingo night (hence the TV-first, silent design). As of 2026-08-29 Jake has **disassociated it from that club** — they run their own copy now, and the public copy is a general free tool. Don't name any specific club/org in public-facing copy.
+- Full-screen 75-ball board, colour-coded B/I/N/G/O rows, right sidebar (Last Call, Now Playing + mini grid, Choose Game, Rotate, Pace 0–15s, Call/Reset/Fullscreen), pattern picker modal (17 presets + custom painter), "Let's Play" reveal, Wake Lock, fullscreen.
+- **SILENT by design.** Voice code is intact but gated behind `const SPEECH_ENABLED = false` (forces a local/offline voice when re-enabled). Don't describe it as "speaking" or "spoken calls" anywhere.
+- Start screen has a "← What is this?" link → `info.html`.
+- No video/image assets — removed 2026-07-01, don't re-add without Jake asking.
+
+### Bingo info (`bingo/info.html`) — Jake's July landing page
+- Self-contained (no CDN, no JS). Impact/system display font, same palette as the caller.
+- Full copy: what it is, who it's for, "about the free part", how to use it, what's in it, "straight talk about what it doesn't do".
+- Commented-out but ready: a "What people are saying" quotes block, and an "Anything you want to say" block with a Facebook button (`FACEBOOK_PAGE_URL`) + mailto (`SOMEBODY@SOMEWHERE.COM`), and a PayPal donate block (`YOUR_PAYPAL_LINK_HERE`). Jake turns these on when he has real content / addresses.
+- START THE CALLER → `index.html` (same folder). "All free apps" → `../`.
+
+### Burn Book (`burn-book/index.html` + `info.html`)
+- App: cover screen (tap the embedded cover image) → dark leather writing page → hold "burn" → canvas fire eats the text, ~3s, wiped. Nothing persisted, ever. iOS: cover opens on click/touchend/pointerup, img is `pointer-events:none`. Master copy on Jake's Desktop — keep in sync.
+- Info page: deliberately darker than the bingo page (near-black, hot pink, embers canvas), Permanent Marker + IBM Plex Sans. Steps 1-2-3, "where it goes: nowhere" privacy section.
 
 ## Notes
-- Jake likes to share code openly to help others
-- No video/image assets of any kind — removed 2026-07-01 after 6 months of testing
-  showed they weren't used. Don't re-add media features without Jake asking.
+- Jake builds in sections — validate each before the next. Ask what's next, don't assume.
+- Jake works across several AI tools that don't share memory — the July landing page was built with another tool and pushed straight to the repo. **Always `git fetch` and check the remote before restructuring this repo.**
+- Keep every app a single file, no dependencies, no trackers/ads/accounts — it's the whole pitch.

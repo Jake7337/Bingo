@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Burn Book</title>
+<meta name="description" content="Write out what's eating at you, hold the button, and watch it burn. Nothing is saved. Nothing ever leaves your device." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Staatliches&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#070505;
+    --panel:#130d0b;
+    --panel-2:#1a1210;
+    --text:#ece2e2;
+    --muted:rgba(236,226,226,.52);
+    --hair:rgba(255,110,130,.14);
+    --pink:#ff2f7e;
+    --pink-soft:#ff6aa2;
+    --ember:#ff6a1e;
+    color-scheme:dark;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    line-height:1.68;
+    overflow-x:hidden;
+  }
+  /* smouldering base glow + heavy vignette (darker than the bingo page) */
+  body::before{
+    content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(90% 55% at 50% 116%, rgba(255,90,25,.30), transparent 60%),
+      radial-gradient(120% 90% at 50% 0%, rgba(255,47,126,.06), transparent 55%),
+      radial-gradient(140% 100% at 50% 50%, transparent 40%, rgba(0,0,0,.66) 100%);
+  }
+  #embers{ position:fixed; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+  .wrap{ position:relative; z-index:1; max-width:860px; margin-inline:auto; padding:clamp(30px,7vw,64px) 22px 80px; }
+
+  /* ---------- hero ---------- */
+  .hero{
+    display:grid;
+    grid-template-columns:minmax(0,300px) 1fr;
+    gap:clamp(28px,6vw,56px);
+    align-items:center;
+  }
+  .hero figure{ position:relative; }
+  .hero img{
+    display:block; width:100%; height:auto;
+    border-radius:10px;
+    box-shadow:0 40px 90px -20px #000, 0 0 60px -10px rgba(255,90,25,.35);
+    animation:smoulder 5s ease-in-out infinite;
+  }
+  @keyframes smoulder{
+    0%,100%{ box-shadow:0 40px 90px -20px #000, 0 0 46px -12px rgba(255,90,25,.30); }
+    50%{ box-shadow:0 40px 90px -20px #000, 0 0 74px -6px rgba(255,120,40,.5); }
+  }
+  .kicker{
+    font-family:'Staatliches', sans-serif;
+    letter-spacing:.22em; text-transform:uppercase;
+    font-size:.8rem; color:var(--ember);
+    margin-bottom:14px;
+  }
+  .hero h1{
+    font-family:'Permanent Marker', cursive;
+    font-weight:400;
+    font-size:clamp(2.1rem,6vw,3.2rem);
+    line-height:1.05;
+    color:var(--pink);
+    text-shadow:0 0 26px rgba(255,47,126,.45);
+    margin-bottom:16px;
+  }
+  .hero p.lead{
+    font-size:clamp(1.05rem,2.5vw,1.25rem);
+    color:var(--text);
+    max-width:40ch;
+  }
+  .cta{ display:flex; flex-wrap:wrap; gap:12px; margin-top:28px; }
+  .btn{
+    font:inherit; font-weight:600; font-size:1rem;
+    text-decoration:none;
+    padding:14px 26px; border-radius:12px;
+    display:inline-flex; align-items:center; gap:9px;
+    border:1px solid transparent;
+    transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease, color .12s ease;
+  }
+  .btn.primary{
+    color:#fff;
+    background:linear-gradient(100deg,#ff2f7e,#ff6a1e);
+    box-shadow:0 0 26px -6px rgba(255,80,60,.7);
+  }
+  .btn.primary:hover{ transform:scale(1.04); box-shadow:0 0 44px -4px rgba(255,110,40,.9); }
+  .btn.ghost{ border-color:var(--hair); color:var(--text); }
+  .btn.ghost:hover{ transform:scale(1.04); border-color:var(--ember); color:var(--pink-soft); }
+  .btn svg{ width:17px; height:17px; }
+  a:focus-visible, .btn:focus-visible{ outline:2px solid var(--ember); outline-offset:3px; }
+
+  /* ---------- sections ---------- */
+  section{ margin-top:clamp(60px,11vw,100px); }
+  h2{
+    font-family:'Permanent Marker', cursive; font-weight:400;
+    font-size:clamp(1.4rem,3.6vw,1.9rem);
+    color:var(--text);
+    margin-bottom:26px;
+    display:flex; align-items:center; gap:14px;
+  }
+  h2::after{ content:""; flex:1; height:1px; background:var(--hair); }
+
+  .steps{ display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:16px; counter-reset:s; }
+  .step{
+    background:var(--panel);
+    border:1px solid var(--hair);
+    border-radius:14px;
+    padding:22px 20px;
+  }
+  .step::before{
+    counter-increment:s; content:counter(s);
+    font-weight:700;
+    font-size:1.6rem; line-height:1; color:var(--ember);
+    display:block; margin-bottom:10px;
+    font-variant-numeric:tabular-nums;
+  }
+  .step h3{ font-size:1.05rem; margin-bottom:5px; }
+  .step p{ color:var(--muted); font-size:.95rem; }
+
+  .privacy{
+    background:linear-gradient(180deg, var(--panel-2), var(--panel));
+    border:1px solid var(--hair);
+    border-radius:16px;
+    padding:clamp(24px,5vw,34px);
+  }
+  .privacy p{ color:var(--text); max-width:60ch; }
+  .privacy ul{ list-style:none; margin-top:18px; display:flex; flex-wrap:wrap; gap:10px; }
+  .privacy li{
+    font-family:'Staatliches', sans-serif;
+    letter-spacing:.09em; text-transform:uppercase;
+    font-size:.78rem; color:var(--muted);
+    border:1px solid var(--hair); border-radius:999px;
+    padding:6px 13px;
+  }
+
+  .foot{
+    margin-top:76px; padding-top:24px;
+    border-top:1px solid var(--hair);
+    font-size:.9rem; color:var(--muted);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+  .foot a{ color:var(--muted); text-decoration:none; border-bottom:1px solid var(--hair); }
+  .foot a:hover{ color:var(--pink-soft); border-color:var(--ember); }
+
+  @media (max-width:620px){
+    .hero{ grid-template-columns:1fr; text-align:center; }
+    .hero figure{ max-width:260px; margin-inline:auto; }
+    .hero p.lead{ margin-inline:auto; }
+    .cta{ justify-content:center; }
+    h2{ justify-content:center; }
+    h2::after{ display:none; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .hero img{ animation:none; }
+    #embers{ display:none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="embers" aria-hidden="true"></canvas>
+<div class="wrap">
+
+  <header class="hero">
+    <figure>
+      <img src="cover.jpg" alt="The Burn Book — a black leather journal with a dripping pink heart, its edge on fire" />
+    </figure>
+    <div>
+      <p class="kicker">Write it. Burn it. Let it go.</p>
+      <h1>Burn Book</h1>
+      <p class="lead">Write down whatever is eating at you, hold the button, and watch the page go up in flames. Then it&rsquo;s gone &mdash; really gone.</p>
+      <div class="cta">
+        <a class="btn primary" href="./">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h7v7M13 3 3 13"/></svg>
+          Open Burn Book
+        </a>
+        <a class="btn ghost" href="./index.html" download="burn-book.html">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8m0 0 3-3m-3 3L5 7M3 13h10"/></svg>
+          Download the file
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <h3>Write it down</h3>
+        <p>Open the book and type whatever you need to say. No one else ever sees it.</p>
+      </div>
+      <div class="step">
+        <h3>Hold to burn</h3>
+        <p>Press and hold the button. The page catches, curls, and burns away in front of you.</p>
+      </div>
+      <div class="step">
+        <h3>It&rsquo;s gone</h3>
+        <p>The words are wiped the moment the fire reaches the top. There is no undo, and that&rsquo;s the point.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Where it goes: nowhere</h2>
+    <div class="privacy">
+      <p>Everything you type stays in your browser, on your device, for as long as that one page is open. It is never sent anywhere, never written to a file, never backed up. Close the tab and there is nothing left to find. It works with your wi-fi switched off.</p>
+      <ul>
+        <li>No account</li>
+        <li>No cloud</li>
+        <li>No analytics</li>
+        <li>No undo</li>
+        <li>Works offline</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <a href="../">&larr; All free apps</a>
+    <a href="https://github.com/Jake7337/Bingo" target="_blank" rel="noopener">Source on GitHub</a>
+  </footer>
+
+</div>
+
+<script>
+(() => {
+  const c = document.getElementById('embers');
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){ c.remove(); return; }
+  const x = c.getContext('2d');
+  const DPR = Math.min(devicePixelRatio || 1, 2);
+  let w, h, parts, raf;
+  const COLS = ['255,106,30','255,61,61','201,42,42','255,150,60'];
+  function size(){ w = c.width = innerWidth * DPR; h = c.height = innerHeight * DPR; }
+  function spawn(){
+    return {
+      x: Math.random() * w,
+      y: h + Math.random() * h * 0.3,
+      r: (0.7 + Math.random() * 2.2) * DPR,
+      vy: -(4 + Math.random() * 12) * DPR / 60,
+      drift: (Math.random() - 0.5) * 0.35 * DPR,
+      life: 0, max: 240 + Math.random() * 360,
+      col: COLS[(Math.random() * COLS.length) | 0],
+      flick: Math.random() * Math.PI * 2
+    };
+  }
+  function make(){
+    const n = Math.max(24, Math.min(60, Math.round(innerWidth / 26)));
+    parts = Array.from({length:n}, () => { const p = spawn(); p.y = Math.random()*h; p.life = Math.random()*p.max; return p; });
+  }
+  function frame(){
+    x.clearRect(0,0,w,h);
+    x.globalCompositeOperation = 'lighter';
+    for (const p of parts){
+      p.life++;
+      p.y += p.vy;
+      p.x += p.drift + Math.sin(p.flick + p.life * 0.05) * 0.3 * DPR;
+      const t = p.life / p.max;
+      if (t >= 1 || p.y < -10){ Object.assign(p, spawn()); continue; }
+      const a = Math.sin(t * Math.PI) * (0.5 + 0.5 * Math.sin(p.flick + p.life * 0.3));
+      x.beginPath();
+      x.arc(p.x, p.y, p.r, 0, 7);
+      x.fillStyle = `rgba(${p.col},${a * 0.9})`;
+      x.fill();
+    }
+    x.globalCompositeOperation = 'source-over';
+    raf = requestAnimationFrame(frame);
+  }
+  function boot(){ size(); make(); cancelAnimationFrame(raf); frame(); }
+  addEventListener('resize', boot);
+  boot();
+})();
+</script>
+</body>
+</html>

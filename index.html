@@ -1,767 +1,300 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Free Apps That Help</title>
+<meta name="description" content="Small, single-file web apps that each do one useful thing. Made with AI and given away — no sign-up, no tracking, nothing to install." />
+<meta name="author" content="Jake" />
+<meta name="theme-color" content="#141110" />
+<meta name="color-scheme" content="light dark" />
 
-<!--
-  ============================================================================
-  BINGO CALLER  —  LANDING PAGE
-  ============================================================================
+<!-- Link previews (Facebook / iMessage / etc). Absolute URLs on purpose. -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Free Apps That Help" />
+<meta property="og:url" content="https://jake7337.github.io/Bingo/" />
+<meta property="og:title" content="Free apps that help" />
+<meta property="og:description" content="Small tools made with AI and given away. No sign-up, no tracking, nothing to install." />
+<meta property="og:image" content="https://jake7337.github.io/Bingo/og-hub.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://jake7337.github.io/Bingo/og-hub.png" />
 
-  THE TWO FILES
-  -------------
-  index.html   <- this page. The front door.
-  caller.html  <- the actual bingo caller app.
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141110'/%3E%3Ccircle cx='32' cy='34' r='13' fill='%23f0a03c'/%3E%3Ccircle cx='32' cy='34' r='13' fill='none' stroke='%23ff7a1e' stroke-width='3'/%3E%3C/svg%3E" />
 
-  In the repo (github.com/Jake7337/Bingo) the caller is currently named
-  index.html. It has to be renamed to caller.html so this page can take
-  the index.html spot. Both files sit side by side in the same folder.
-
-  If you ever rename the caller to something else, there are exactly TWO
-  hrefs to update in this file — search for: caller.html
-
-  ONE THING LEFT TO FILL IN
-  -------------------------
-  The email button in the "Anything you want to say" section is commented
-  out because it needs a real address. Search for: EMAIL BUTTON
-
-  Everything else is self-contained: no CDN, no fonts to download, no JS.
-  ============================================================================
--->
-
-<title>Free Bingo Caller — display your bingo game on a TV</title>
-<meta name="description" content="A free 75-ball bingo caller you run on a laptop and put on your TV. Full master board, 17 patterns, no account, no paywall. Built for fundraisers, churches, fire halls, lodges, senior centers and families.">
-<meta name="author" content="Jake">
-<meta name="theme-color" content="#0b0f14">
-<meta name="color-scheme" content="dark">
-
-<!-- Open Graph / Facebook / iMessage previews.
-     These use absolute URLs on purpose — link previews need them.
-     If this ever moves to a different address, update the two URLs below. -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Free Bingo Caller">
-<meta property="og:url" content="https://jake7337.github.io/Bingo/">
-<meta property="og:title" content="Free Bingo Caller — put your bingo game on the TV">
-<meta property="og:description" content="A free 75-ball bingo caller for fundraisers, churches, fire halls, lodges and family game nights. No account, no paywall, no catch.">
-<meta property="og:image" content="https://jake7337.github.io/Bingo/og-preview.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Bingo Caller — free for anyone who needs it.">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Free Bingo Caller — put your bingo game on the TV">
-<meta name="twitter:description" content="A free 75-ball bingo caller for fundraisers, churches, fire halls, lodges and family game nights. No account, no paywall, no catch.">
-<meta name="twitter:image" content="https://jake7337.github.io/Bingo/og-preview.png">
-
-<!-- Favicon: inline SVG, no extra file needed. Rose bingo ball on dark. -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0f14'/%3E%3Ccircle cx='32' cy='33' r='21' fill='%23e11d48'/%3E%3Ccircle cx='25' cy='26' r='7' fill='%23f472b6' opacity='.55'/%3E%3Ctext x='32' y='43' font-family='Arial Black,Arial,sans-serif' font-size='26' font-weight='900' fill='%23ffffff' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E">
-
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
-:root{
-  /* Pulled straight from the caller app so the two feel like one thing. */
-  --bg:      #0b0f14;
-  --panel:   rgba(255,255,255,0.045);
-  --border:  rgba(255,255,255,0.14);
-  --text:    rgba(255,255,255,0.94);
-  --muted:   rgba(255,255,255,0.72);
-  --faint:   rgba(255,255,255,0.55);
-  --accent:  #e11d48;
-  --gold:    #fbbf24;
-  --blue:    #60a5fa;
+  /* ---------- tokens: light is the base, dark + explicit themes override ---------- */
+  :root{
+    --bg:        #f6f2ec;
+    --surface:   #ffffff;
+    --surface-2: #f0e9df;
+    --ink:       #211d18;
+    --ink-soft:  #5c554b;
+    --ink-faint: #8a8175;
+    --hair:      rgba(60,45,25,.14);
+    --hair-soft: rgba(60,45,25,.08);
+    --ember:     #c76a1c;
+    --ember-ink: #9a4e12;
+    --focus:     #c76a1c;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:        #14110f;
+      --surface:   #1d1916;
+      --surface-2: #241f1b;
+      --ink:       #ece5dc;
+      --ink-soft:  #b3a99c;
+      --ink-faint: #7d7364;
+      --hair:      rgba(240,190,130,.16);
+      --hair-soft: rgba(240,190,130,.08);
+      --ember:     #f0a03c;
+      --ember-ink: #f6b866;
+      --focus:     #f0a03c;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:        #14110f;
+    --surface:   #1d1916;
+    --surface-2: #241f1b;
+    --ink:       #ece5dc;
+    --ink-soft:  #b3a99c;
+    --ink-faint: #7d7364;
+    --hair:      rgba(240,190,130,.16);
+    --hair-soft: rgba(240,190,130,.08);
+    --ember:     #f0a03c;
+    --ember-ink: #f6b866;
+    --focus:     #f0a03c;
+    color-scheme: dark;
+  }
 
-  --row-b: #e11d48;
-  --row-i: #f59e0b;
-  --row-n: #10b981;
-  --row-g: #3b82f6;
-  --row-o: #a855f7;
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    padding:clamp(28px, 7vw, 72px) 22px calc(64px + env(safe-area-inset-bottom));
+  }
+  .wrap{ max-width:640px; margin-inline:auto; }
 
-  --display: 'Impact', 'Haettenschweiler', 'Arial Narrow Bold', 'Arial Black', sans-serif;
-  --body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* ---------- masthead ---------- */
+  .masthead{ margin-bottom:44px; }
+  .mark{
+    font-family:'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight:600;
+    font-size:clamp(2rem, 6.5vw, 2.9rem);
+    line-height:1.1;
+    letter-spacing:-.015em;
+    text-wrap:balance;
+  }
+  .mark .amp{ color:var(--ember); font-style:italic; }
+  .lede{
+    margin-top:16px;
+    font-size:1.075rem;
+    color:var(--ink-soft);
+    max-width:52ch;
+  }
+  .promise{
+    margin-top:20px;
+    display:flex; flex-wrap:wrap; gap:8px;
+    list-style:none;
+  }
+  .promise li{
+    font-size:.74rem;
+    text-transform:uppercase;
+    letter-spacing:.11em;
+    font-weight:600;
+    color:var(--ink-faint);
+    border:1px solid var(--hair);
+    border-radius:999px;
+    padding:5px 12px;
+  }
 
-  --radius: 18px;
-  --maxw: 1080px;
-}
+  /* ---------- section label ---------- */
+  .eyebrow{
+    font-size:.74rem;
+    text-transform:uppercase;
+    letter-spacing:.16em;
+    font-weight:600;
+    color:var(--ink-faint);
+    padding-bottom:12px;
+    border-bottom:1px solid var(--hair);
+    margin-bottom:22px;
+  }
 
-*{ box-sizing: border-box; margin: 0; padding: 0; }
+  /* ---------- app cards ---------- */
+  .apps{ display:flex; flex-direction:column; gap:18px; }
+  .card{
+    display:grid;
+    grid-template-columns:64px 1fr;
+    gap:18px;
+    background:var(--surface);
+    border:1px solid var(--hair);
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 1px 2px var(--hair-soft), 0 14px 34px -22px var(--hair);
+  }
+  .card__icon{
+    width:64px; height:64px;
+    border-radius:12px;
+    background:var(--surface-2);
+    border:1px solid var(--hair-soft);
+    display:grid; place-items:center;
+  }
+  .card__icon svg{ width:38px; height:38px; display:block; }
+  .card__body h2{
+    font-family:'Fraunces', Georgia, serif;
+    font-weight:600;
+    font-size:1.3rem;
+    letter-spacing:-.01em;
+    margin-bottom:4px;
+  }
+  .card__body p{
+    color:var(--ink-soft);
+    font-size:.965rem;
+    margin-bottom:16px;
+  }
+  .actions{ display:flex; flex-wrap:wrap; gap:10px; }
+  .btn{
+    font:inherit;
+    font-size:.9rem;
+    font-weight:600;
+    text-decoration:none;
+    border-radius:9px;
+    padding:9px 16px;
+    display:inline-flex; align-items:center; gap:7px;
+    border:1px solid transparent;
+    transition:transform .12s ease, background-color .12s ease, border-color .12s ease;
+  }
+  .btn--open{ background:var(--ember); color:#fff; }
+  .btn--open:hover{ transform:translateY(-1px); background:var(--ember-ink); }
+  .btn--dl,
+  .btn--info{ background:transparent; color:var(--ink); border-color:var(--hair); }
+  .btn--dl:hover,
+  .btn--info:hover{ transform:translateY(-1px); border-color:var(--ember); color:var(--ember-ink); }
+  .btn svg{ width:15px; height:15px; }
+  .btn:focus-visible, a:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
 
-html{ -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  /* ---------- footer ---------- */
+  .foot{
+    margin-top:48px;
+    padding-top:22px;
+    border-top:1px solid var(--hair);
+    font-size:.85rem;
+    color:var(--ink-faint);
+    display:flex; flex-wrap:wrap; gap:6px 18px;
+  }
+  .foot a{ color:var(--ink-soft); text-decoration:none; border-bottom:1px solid var(--hair); }
+  .foot a:hover{ color:var(--ember-ink); border-color:var(--ember); }
 
-body{
-  font-family: var(--body);
-  background:
-    radial-gradient(1000px 700px at 15% 0%, rgba(225,29,72,0.16), transparent 55%),
-    radial-gradient(900px 650px at 85% 12%, rgba(96,165,250,0.14), transparent 55%),
-    var(--bg);
-  background-attachment: fixed;
-  color: var(--text);
-  font-size: 17px;
-  line-height: 1.65;
-  -webkit-font-smoothing: antialiased;
-}
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{ opacity:0; transform:translateY(10px); animation:rise .55s ease forwards; }
+    .reveal:nth-child(2){ animation-delay:.06s; }
+    .reveal:nth-child(3){ animation-delay:.12s; }
+    @keyframes rise{ to{ opacity:1; transform:none; } }
+  }
 
-/* Horizontal padding ONLY, as longhand. If this used the `padding` shorthand it
-   would also force top/bottom to 0 on every .wrap element, and because .wrap
-   (a class) outranks `section` (a type selector), the sections would lose their
-   vertical padding and every card would sit flush against the next one. */
-.wrap{ width: 100%; max-width: var(--maxw); margin: 0 auto; padding-left: 20px; padding-right: 20px; }
-
-a{ color: var(--blue); }
-
-/* Keyboard focus — visible on every interactive thing. */
-a:focus-visible,
-summary:focus-visible{
-  outline: 3px solid var(--gold);
-  outline-offset: 3px;
-  border-radius: 6px;
-}
-
-.skip{
-  position: absolute; left: -9999px; top: 0;
-  background: var(--gold); color: #1a1200;
-  padding: 12px 20px; font-weight: 800; z-index: 999;
-  border-radius: 0 0 10px 0;
-}
-.skip:focus{ left: 0; }
-
-/* ---------- HERO ---------- */
-/* NOTE: vertical padding only, as longhand. Using the `padding` shorthand here
-   would also reset the left/right padding that .wrap supplies, and the hero
-   would run flat against the edges of a phone screen. Same for section/footer. */
-.hero{ padding-top: 56px; padding-bottom: 44px; text-align: center; }
-
-.balls{
-  display: flex; justify-content: center; flex-wrap: wrap;
-  gap: clamp(8px, 2.2vw, 16px);
-  margin-bottom: 26px;
-  max-width: none;   /* these are <p> elements — don't inherit the reading-width cap below */
-}
-.ball{
-  width:  clamp(46px, 12vw, 74px);
-  height: clamp(46px, 12vw, 74px);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--display);
-  font-size: clamp(24px, 6.2vw, 40px);
-  color: #fff;
-  letter-spacing: 1px;
-  border: 3px solid rgba(255,255,255,0.35);
-  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
-}
-.ball.b{ background: radial-gradient(circle at 35% 32%, #f472b6, var(--row-b)); box-shadow: 0 6px 18px rgba(225,29,72,0.45); }
-.ball.i{ background: radial-gradient(circle at 35% 32%, #fcd34d, var(--row-i)); box-shadow: 0 6px 18px rgba(245,158,11,0.45); }
-.ball.n{ background: radial-gradient(circle at 35% 32%, #6ee7b7, var(--row-n)); box-shadow: 0 6px 18px rgba(16,185,129,0.45); }
-.ball.g{ background: radial-gradient(circle at 35% 32%, #93c5fd, var(--row-g)); box-shadow: 0 6px 18px rgba(59,130,246,0.45); }
-.ball.o{ background: radial-gradient(circle at 35% 32%, #c4b5fd, var(--row-o)); box-shadow: 0 6px 18px rgba(168,85,247,0.45); }
-
-h1{
-  font-family: var(--display);
-  font-weight: 400;
-  font-size: clamp(2.6rem, 10.5vw, 5rem);
-  line-height: 1.02;
-  letter-spacing: 1px;
-  color: var(--blue);
-  text-shadow: 0 0 40px rgba(96,165,250,0.28);
-  margin-bottom: 18px;
-}
-
-.lede{
-  font-size: clamp(1.08rem, 3.6vw, 1.4rem);
-  color: var(--muted);
-  max-width: 44ch;
-  margin: 0 auto 14px;
-  text-wrap: balance;
-}
-.lede strong{ color: var(--text); font-weight: 700; }
-
-.freeline{
-  font-family: var(--display);
-  font-size: clamp(1.05rem, 4vw, 1.5rem);
-  letter-spacing: 2px;
-  color: var(--gold);
-  margin-bottom: 30px;
-  max-width: none;
-}
-
-/* ---------- LAUNCH BUTTON ---------- */
-.launch{
-  display: inline-block;
-  font-family: var(--display);
-  font-size: clamp(1.4rem, 6vw, 2.1rem);
-  letter-spacing: 2px;
-  color: #fff;
-  text-decoration: none;
-  background: linear-gradient(135deg, #e11d48, #be123c);
-  padding: clamp(16px, 4vw, 22px) clamp(30px, 9vw, 62px);
-  border-radius: 60px;
-  border: 2px solid rgba(255,255,255,0.18);
-  box-shadow: 0 10px 34px rgba(225,29,72,0.42);
-  transition: transform .12s ease, box-shadow .2s ease;
-  max-width: 100%;
-}
-.launch:hover{ transform: scale(1.03); box-shadow: 0 12px 46px rgba(225,29,72,0.62); }
-.launch:active{ transform: scale(0.985); }
-
-.launch-note{
-  margin: 18px auto 0;
-  max-width: 46ch;
-  font-size: 0.95rem;
-  color: var(--faint);
-  line-height: 1.55;
-}
-
-/* Honest heads-up about phones. Shown at every width — it's true everywhere. */
-.device-note{
-  margin: 26px auto 0;
-  max-width: 52ch;
-  background: rgba(251,191,36,0.09);
-  border: 1px solid rgba(251,191,36,0.34);
-  border-left: 5px solid var(--gold);
-  border-radius: 14px;
-  padding: 16px 20px;
-  text-align: left;
-  font-size: 0.97rem;
-  color: var(--muted);
-}
-.device-note b{ color: var(--gold); font-weight: 800; display: block; margin-bottom: 3px; }
-
-/* ---------- SECTIONS ---------- */
-section{ padding-top: 24px; padding-bottom: 24px; }
-
-h2{
-  font-family: var(--display);
-  font-weight: 400;
-  font-size: clamp(1.6rem, 6vw, 2.4rem);
-  letter-spacing: 1px;
-  margin-bottom: 16px;
-  color: var(--text);
-}
-h3{
-  font-size: 1.05rem;
-  font-weight: 800;
-  margin-bottom: 5px;
-  color: var(--text);
-}
-
-p{ color: var(--muted); margin-bottom: 15px; max-width: 66ch; }
-p:last-child{ margin-bottom: 0; }
-
-.card{
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: clamp(22px, 5vw, 34px);
-}
-
-/* Who it's for */
-.chips{ display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; list-style: none; }
-.chips li{
-  background: rgba(96,165,250,0.13);
-  border: 1px solid rgba(96,165,250,0.32);
-  color: #cfe3ff;
-  padding: 8px 16px;
-  border-radius: 30px;
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-/* The free bit */
-.free{
-  background: linear-gradient(160deg, rgba(225,29,72,0.13), rgba(11,15,20,0) 70%), var(--panel);
-  border: 1px solid rgba(225,29,72,0.3);
-}
-blockquote{
-  border-left: 5px solid var(--accent);
-  padding: 4px 0 4px 20px;
-  margin: 22px 0;
-  font-size: clamp(1.1rem, 3.4vw, 1.35rem);
-  line-height: 1.5;
-  color: var(--text);
-  font-style: italic;
-}
-blockquote cite{
-  display: block;
-  margin-top: 10px;
-  font-size: 0.9rem;
-  font-style: normal;
-  color: var(--faint);
-  letter-spacing: 1px;
-}
-
-/* Steps */
-ol.steps{ list-style: none; counter-reset: step; margin-top: 6px; }
-ol.steps > li{
-  counter-increment: step;
-  position: relative;
-  padding-left: 62px;
-  margin-bottom: 26px;
-}
-ol.steps > li:last-child{ margin-bottom: 0; }
-ol.steps > li::before{
-  content: counter(step);
-  position: absolute; left: 0; top: -2px;
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--display);
-  font-size: 1.4rem;
-  color: #fff;
-  background: radial-gradient(circle at 35% 32%, #93c5fd, var(--row-g));
-  border: 2px solid rgba(255,255,255,0.28);
-}
-ol.steps p{ margin-bottom: 0; font-size: 0.98rem; }
-
-/* Feature grid */
-.grid{
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
-  margin-top: 6px;
-  list-style: none;
-}
-.grid li{
-  background: rgba(0,0,0,0.24);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 18px 20px;
-}
-.grid li p{ font-size: 0.94rem; margin: 0; color: var(--faint); }
-.grid li b{ display: block; color: var(--text); font-size: 1rem; margin-bottom: 4px; }
-
-/* Straight talk */
-.plain{ list-style: none; }
-.plain li{
-  padding: 14px 0 14px 30px;
-  border-bottom: 1px solid rgba(255,255,255,0.09);
-  position: relative;
-  color: var(--muted);
-  font-size: 0.98rem;
-}
-.plain li:last-child{ border-bottom: 0; padding-bottom: 0; }
-.plain li::before{
-  content: '';
-  position: absolute; left: 4px; top: 24px;
-  width: 9px; height: 9px; border-radius: 50%;
-  background: var(--gold);
-}
-.plain li b{ color: var(--text); }
-
-/* Quotes from real people (the "proof" section) */
-.quotes{
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
-  margin-top: 8px;
-  list-style: none;
-}
-.quote{
-  background: rgba(0,0,0,0.24);
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--gold);
-  border-radius: 14px;
-  padding: 20px 22px;
-}
-.quote p{
-  font-size: 1rem;
-  color: var(--text);
-  margin-bottom: 12px;
-  max-width: none;
-}
-.quote cite{
-  font-style: normal;
-  font-size: 0.86rem;
-  color: var(--faint);
-  letter-spacing: 1px;
-}
-
-/* Say something */
-.contact-row{
-  display: flex; flex-wrap: wrap; gap: 14px;
-  margin: 22px 0 18px;
-}
-.contact{
-  display: inline-block;
-  font-family: var(--display);
-  font-size: clamp(0.95rem, 3.4vw, 1.15rem);
-  letter-spacing: 1.5px;
-  line-height: 1.3;
-  text-decoration: none;
-  padding: 14px clamp(18px, 5vw, 32px);
-  border-radius: 50px;
-  border: 2px solid rgba(96,165,250,0.45);
-  background: rgba(96,165,250,0.16);
-  color: #dceaff;
-  max-width: 100%;
-  text-align: center;
-}
-.contact:hover{ background: rgba(96,165,250,0.3); }
-.contact.ghost{
-  border-color: rgba(255,255,255,0.22);
-  background: rgba(255,255,255,0.05);
-  color: var(--muted);
-}
-.contact.ghost:hover{ background: rgba(255,255,255,0.11); }
-.small{ font-size: 0.9rem; color: var(--faint); }
-
-/* Footer */
-footer{
-  padding-top: 44px;
-  padding-bottom: 60px;
-  border-top: 1px solid var(--border);
-  margin-top: 24px;
-  text-align: center;
-}
-footer p{ margin: 0 auto 12px; color: var(--faint); font-size: 0.94rem; max-width: 56ch; }
-.footer-launch{
-  display: inline-block;
-  margin-bottom: 26px;
-  font-family: var(--display);
-  font-size: 1.25rem;
-  letter-spacing: 2px;
-  color: #fff;
-  text-decoration: none;
-  background: rgba(225,29,72,0.24);
-  border: 2px solid rgba(225,29,72,0.5);
-  padding: 14px 38px;
-  border-radius: 50px;
-}
-.footer-launch:hover{ background: rgba(225,29,72,0.38); }
-
-@media (max-width: 520px){
-  body{ font-size: 16px; }
-  .wrap{ padding-left: 16px; padding-right: 16px; }
-  .hero{ padding-top: 38px; padding-bottom: 32px; }
-  section{ padding-top: 16px; padding-bottom: 16px; }
-  ol.steps > li{ padding-left: 54px; }
-  ol.steps > li::before{ width: 38px; height: 38px; font-size: 1.2rem; }
-  .launch{ display: block; }
-  .contact-row{ flex-direction: column; gap: 12px; }
-  .contact{ display: block; }
-}
-
-@media (prefers-reduced-motion: reduce){
-  html{ scroll-behavior: auto; }
-  *{ transition: none !important; animation: none !important; }
-}
+  @media (max-width:460px){
+    .card{ grid-template-columns:1fr; }
+    .card__icon{ width:52px; height:52px; }
+    .card__icon svg{ width:30px; height:30px; }
+  }
 </style>
 </head>
-
 <body>
-<a class="skip" href="#main">Skip to main content</a>
+<div class="wrap">
 
-<header class="hero wrap">
-  <p class="balls" aria-hidden="true">
-    <span class="ball b">B</span><span class="ball i">I</span><span class="ball n">N</span><span class="ball g">G</span><span class="ball o">O</span>
-  </p>
+  <header class="masthead">
+    <h1 class="mark">Free apps that&nbsp;<span class="amp">help</span></h1>
+    <p class="lede">One person, making small tools with AI and giving them away. One might help your group raise a little money. One might help you put down something heavy. Each is a single file &mdash; open it in your browser, or download it and keep it for good.</p>
+    <ul class="promise">
+      <li>No ads</li>
+      <li>No accounts</li>
+      <li>No tracking</li>
+    </ul>
+  </header>
 
-  <h1>Bingo Caller</h1>
+  <main>
+    <p class="eyebrow">The apps</p>
+    <div class="apps">
 
-  <p class="lede">
-    A <strong>75-ball bingo caller</strong> you run on a laptop and put up on your TV.
-    It draws the numbers and keeps the whole board lit up where everybody can see it.
-    You call them out. You're still the voice in the room.
-  </p>
+      <article class="card reveal">
+        <div class="card__icon" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none">
+            <g fill="currentColor" opacity="0.25">
+              <circle cx="8" cy="8" r="3.4"/><circle cx="20" cy="8" r="3.4"/><circle cx="32" cy="8" r="3.4"/>
+              <circle cx="8" cy="20" r="3.4"/><circle cx="32" cy="20" r="3.4"/>
+              <circle cx="8" cy="32" r="3.4"/><circle cx="20" cy="32" r="3.4"/><circle cx="32" cy="32" r="3.4"/>
+            </g>
+            <circle cx="20" cy="20" r="4.6" fill="#f0a03c"/>
+          </svg>
+        </div>
+        <div class="card__body">
+          <h2>Bingo Caller</h2>
+          <p>Puts a full 75-ball game up on your TV. Master board, 17 patterns, your pace &mdash; you still call the numbers out loud. Free, so the money a bingo night raises goes to the cause instead of to software.</p>
+          <div class="actions">
+            <a class="btn btn--open" href="bingo/" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h7v7M13 3 3 13"/></svg>
+              Open
+            </a>
+            <a class="btn btn--dl" href="bingo/index.html" download="bingo-caller.html">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8m0 0 3-3m-3 3L5 7M3 13h10"/></svg>
+              Download
+            </a>
+            <a class="btn btn--info" href="bingo/info.html">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6.2"/><path d="M8 7.3v4M8 5.1h.01"/></svg>
+              Info
+            </a>
+          </div>
+        </div>
+      </article>
 
-  <p class="freeline">FREE &nbsp;&middot;&nbsp; NO ACCOUNT &nbsp;&middot;&nbsp; NO CATCH</p>
+      <article class="card reveal">
+        <div class="card__icon" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none">
+            <rect x="9" y="6" width="22" height="28" rx="2" fill="currentColor" opacity="0.2"/>
+            <path d="M13 12h14M13 17h14M13 22h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.5"/>
+            <path d="M7 30c3-1.6 5 1.4 8-.2s5 1.4 8-.2 5 1.4 8-.2v6H7z" fill="#f0a03c"/>
+            <path d="M7 30c3-1.6 5 1.4 8-.2s5 1.4 8-.2 5 1.4 8-.2" stroke="#e0561a" stroke-width="1.4" fill="none"/>
+          </svg>
+        </div>
+        <div class="card__body">
+          <h2>Burn Book</h2>
+          <p>Write down whatever is eating at you, hold the button, and watch the page go up in flames. Nothing is saved. Nothing ever leaves your device.</p>
+          <div class="actions">
+            <a class="btn btn--open" href="burn-book/" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h7v7M13 3 3 13"/></svg>
+              Open
+            </a>
+            <a class="btn btn--dl" href="burn-book/index.html" download="burn-book.html">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8m0 0 3-3m-3 3L5 7M3 13h10"/></svg>
+              Download
+            </a>
+            <a class="btn btn--info" href="burn-book/info.html">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6.2"/><path d="M8 7.3v4M8 5.1h.01"/></svg>
+              Info
+            </a>
+          </div>
+        </div>
+      </article>
 
-  <!-- LAUNCH BUTTON — the one link to update if you rename the caller file. -->
-  <a class="launch" href="caller.html">START THE CALLER</a>
-
-  <p class="launch-note">
-    Opens the caller in this same tab. Nothing to install, nothing to sign up for.
-  </p>
-
-  <p class="device-note">
-    <b>Read this if you're on your phone</b>
-    The caller itself is built for a computer screen or a TV — it needs the width to fit
-    all 75 numbers at once. It'll open on a phone, but it'll be cramped and hard to read.
-    That's not a bug. Send yourself this link and open it on a laptop when you're ready to play.
-  </p>
-</header>
-
-<main id="main">
-
-  <!--
-  ============================================================================
-  PROOF SECTION  ::  NOT LIVE YET  ::  waiting on real comments
-  ============================================================================
-  Nothing here renders. Turn it on once you have two or three good comments
-  off the Facebook page.
-
-  TO ADD A QUOTE: copy one <li> block, paste it, swap the words. That's it.
-  Two or three is plenty. Only use real ones people actually wrote.
-
-  TO TURN THE SECTION ON: delete this opening marker and the END marker below.
-
-  <section class="wrap" id="proof">
-    <div class="card">
-      <h2>What people are saying</h2>
-      <ul class="quotes">
-
-        <li class="quote">
-          <p>Paste what they actually wrote, word for word.</p>
-          <cite>Their name, their group</cite>
-        </li>
-
-        <li class="quote">
-          <p>Second comment goes here.</p>
-          <cite>Name, group</cite>
-        </li>
-
-      </ul>
     </div>
-  </section>
+  </main>
 
-  ========================= END OF PROOF SECTION ============================
-  -->
+  <footer class="foot">
+    <span>Built with AI by one person</span>
+    <a href="https://github.com/Jake7337/Bingo" target="_blank" rel="noopener">Source on GitHub</a>
+    <span>Use them, share them, change them.</span>
+  </footer>
 
-  <section class="wrap">
-    <div class="card">
-      <h2>What this is</h2>
-      <p>
-        It's a bingo caller that lives on a screen instead of in a cage of plastic balls.
-        You run it on a laptop or a desktop PC, plug that machine into your TV or a monitor
-        with an HDMI cable, and the whole room can see the board.
-      </p>
-      <p>
-        You stay in charge of the pace. Press the button (or tap the spacebar) and it pulls the
-        next number, lights it up on the master board, and puts it in big type in the corner.
-        Then you read it out, the way it's always been done.
-      </p>
-      <p>
-        It's deliberately silent. Computers can read numbers aloud, but the voices still sound
-        like computers, and a bingo hall deserves better than that. The code for it is in there
-        and switched off — the day the voices are good enough to be worth listening to, it's a
-        one-line change. Until then, the room gets a person.
-      </p>
-      <p>
-        It runs entirely in your browser. No installer, no login, no internet connection needed
-        once the page is open.
-      </p>
-    </div>
-  </section>
-
-  <section class="wrap">
-    <div class="card">
-      <h2>Who it's for</h2>
-      <p>
-        Anybody running a game for a room full of people — and anybody running one for four people
-        at the kitchen table.
-      </p>
-      <ul class="chips">
-        <li>Fundraising organizations</li>
-        <li>Churches</li>
-        <li>Fire halls</li>
-        <li>Lodges &amp; clubs</li>
-        <li>Senior centers</li>
-        <li>Schools</li>
-        <li>Families at home</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="wrap">
-    <div class="card free">
-      <h2>About the free part</h2>
-
-      <blockquote>
-        &ldquo;Organizations usually have to pay for something like this for them to make money
-        &mdash; not us, not here.&rdquo;
-        <cite>&mdash; Jake, who built it</cite>
-      </blockquote>
-
-      <p>
-        Bingo is how a lot of groups keep the lights on. The hall, the ladder truck, the food
-        pantry, the class trip. And the software that runs the game usually wants a cut of that
-        — a license, a subscription, a per-seat fee, money coming out of the same pot that was
-        supposed to go to the cause.
-      </p>
-      <p>
-        That always seemed backwards. So this one doesn't cost anything. There's no price, no
-        trial that ends, no account to make, no email to hand over, no feature locked behind a
-        button that turns on later. Save it, use it every week for the next ten years, and pass
-        it along to the hall down the road if it helps them too.
-      </p>
-      <p>
-        If it makes your night easier, that's the whole return.
-      </p>
-    </div>
-  </section>
-
-  <section class="wrap">
-    <div class="card">
-      <h2>How to use it</h2>
-      <ol class="steps">
-        <li>
-          <h3>Put it on the big screen</h3>
-          <p>
-            Run an HDMI cable from your laptop or PC to the TV or monitor. Mirroring the display
-            works fine. Extending it works better — then you can drag the caller window onto the
-            TV and keep your own desktop free.
-          </p>
-        </li>
-        <li>
-          <h3>Go fullscreen</h3>
-          <p>
-            Open the caller, click CLICK TO START, then hit FULL SCREEN in the sidebar. The board
-            fills the whole TV. The screen won't go to sleep on you mid-game.
-          </p>
-        </li>
-        <li>
-          <h3>Pick your pattern</h3>
-          <p>
-            CHOOSE GAME gives you 17 patterns — full card, X, T, L, four corners, postage stamp,
-            heart, kite, block of six, and more — plus a blank grid you can paint cell by cell for
-            house rules. Confirm it and a big NOW PLAYING screen shows the room what they're
-            playing for.
-          </p>
-        </li>
-        <li>
-          <h3>Call the numbers</h3>
-          <p>
-            Press START, then the spacebar for each draw. The Pace Delay slider (0&ndash;15 seconds)
-            keeps you from getting ahead of the room. RESET shuffles a fresh game whenever you're
-            ready for the next one.
-          </p>
-        </li>
-      </ol>
-    </div>
-  </section>
-
-  <section class="wrap">
-    <div class="card">
-      <h2>What's in it</h2>
-      <ul class="grid">
-        <li><b>Full master board</b><p>All 75 numbers on screen at once, in color-coded B/I/N/G/O rows. Nobody has to ask what's been called.</p></li>
-        <li><b>Big last-call display</b><p>The number that was just drawn, in type you can read from the back of the hall.</p></li>
-        <li><b>17 patterns + a custom painter</b><p>Presets for the usual games, and a blank card for whatever your house plays.</p></li>
-        <li><b>Rotating pattern preview</b><p>Shows every legal orientation of a shape, so nobody argues about whether a sideways L counts.</p></li>
-        <li><b>Pace control</b><p>A 0&ndash;15 second delay between calls so the room can keep up with you.</p></li>
-        <li><b>Close a letter</b><p>Click a B/I/N/G/O row header to take that letter out of the draw for specialty games.</p></li>
-        <li><b>Fullscreen + no sleep</b><p>Fills the TV and keeps the screen awake through a long session.</p></li>
-        <li><b>Works offline</b><p>One file, zero outside dependencies. Once it's open, you can unplug the internet.</p></li>
-        <li><b>Nothing to install</b><p>It opens in Chrome, Edge, Firefox or Safari like any web page. No download, no setup, no account.</p></li>
-        <li><b>Silent on purpose</b><p>No robot voice talking over you. The screen tracks the game; the calling stays human.</p></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="wrap">
-    <div class="card">
-      <h2>Straight talk about what it doesn't do</h2>
-      <ul class="plain">
-        <li><b>It does not print bingo cards.</b> You bring your own cards and dabbers, same as always.</li>
-        <li><b>It does not verify a winner.</b> When somebody shouts, you check their card against the board by eye, the way it's always been done.</li>
-        <li><b>It doesn't track players, money, or payouts.</b> It calls numbers. That's the job.</li>
-        <li><b>It's built for a computer or TV, not a phone.</b> A phone screen can't hold 75 numbers at a readable size.</li>
-        <li><b>It's not a licensed gaming system.</b> If your state or organization has rules about what equipment a charitable game can use, check those first — that part's on you.</li>
-      </ul>
-    </div>
-  </section>
-
-  <!--
-  ============================================================================
-  "ANYTHING YOU WANT TO SAY" SECTION  ::  NOT LIVE YET
-  ============================================================================
-  Nothing between here and the END marker renders. It's waiting on one thing:
-  a real address to send people to.
-
-  The GitHub version was pulled on purpose. It made people sign up for a
-  GitHub account before they could say anything, and the folks using this
-  are not going to do that.
-
-  TO TURN THIS ON:
-    1. Put a real address in place of SOMEBODY@SOMEWHERE.COM below.
-       Worth using a throwaway or a separate address rather than your main
-       one; any address printed on a public page eventually gets scraped.
-    2. Delete this opening comment marker and the END marker at the bottom.
-
-  PLAN: point people at the Facebook page. They comment there, where they
-  already have an account and already are. Replace FACEBOOK_PAGE_URL below
-  with the real page address.
-
-  The mailto button is here as a second option. Use it, lose it, or swap the
-  address; a public address does eventually get scraped by spam bots.
-
-  <section class="wrap" id="say-something">
-    <div class="card">
-      <h2>Anything you want to say</h2>
-      <p>
-        If your group ran a night on this, I'd like to hear how it went. What worked, what didn't,
-        what confused your volunteers, what you wish it did. Something broken counts too. I'd
-        rather hear it from you than have the next hall run into it.
-      </p>
-      <p>
-        Nothing to sign up for. Leave a comment on the Facebook page, or send a note.
-      </p>
-
-      <div class="contact-row">
-        <a class="contact" href="FACEBOOK_PAGE_URL" target="_blank" rel="noopener noreferrer">
-          FIND US ON FACEBOOK
-        </a>
-        <a class="contact ghost" href="mailto:SOMEBODY@SOMEWHERE.COM?subject=Bingo%20Caller">
-          SEND A NOTE
-        </a>
-      </div>
-
-      <p class="small">
-        Goes straight to a person. No mailing list, no newsletter, nothing gets collected.
-      </p>
-    </div>
-  </section>
-
-  ===================== END OF THE NOT LIVE YET SECTION =====================
-  -->
-
-</main>
-
-<footer class="wrap">
-  <a class="footer-launch" href="caller.html">START THE CALLER</a>
-
-  <p>
-    Built by Jake for the Bellwood FOE 1859 Aerie, and given away to anyone else who can use it.
-  </p>
-  <p>
-    Free to use, free to copy, free to hand to the next group down the road.
-  </p>
-
-  <!--
-  ==========================================================================
-  PAYPAL DONATION PLACEHOLDER  —  NOT ACTIVE, NOTHING IS SHOWN TO VISITORS
-  ==========================================================================
-  Nothing below this line renders. It's a hook for later, if Jake ever wants
-  a "chip in if you want to" option. The page is deliberately free of any
-  payment or donation UI right now.
-
-  To turn it on:
-    1. Grab a PayPal donate button / donation link from paypal.com
-       (Donate button generator, or a paypal.me link).
-    2. Delete the opening "<!- -" and closing "- ->" markers around the
-       block below (remove the spaces in those markers first).
-    3. Replace YOUR_PAYPAL_LINK_HERE with the real URL.
-    4. Nothing else needs to change — the styles below are self-contained.
-
-  <section class="wrap" id="support">
-    <div class="card" style="text-align:center;">
-      <h2>If you want to chip in</h2>
-      <p style="margin:0 auto 20px;">
-        This stays free either way. If it helped your group and you feel like
-        putting something in the hat, it goes toward keeping it online.
-      </p>
-      <a href="YOUR_PAYPAL_LINK_HERE"
-         target="_blank" rel="noopener noreferrer"
-         style="display:inline-block;font-family:var(--display);font-size:1.2rem;
-                letter-spacing:2px;color:#1a1200;text-decoration:none;
-                background:var(--gold);padding:14px 40px;border-radius:50px;">
-        DONATE
-      </a>
-      <p style="font-size:0.88rem;margin-top:16px;">Completely optional. Never required.</p>
-    </div>
-  </section>
-
-  ========================= END PAYPAL PLACEHOLDER ==========================
-  -->
-
-</footer>
-
+</div>
 </body>
 </html>
