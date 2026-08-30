@@ -202,6 +202,32 @@
     @keyframes rise{ to{ opacity:1; transform:none; } }
   }
 
+  /* ---------- say something ---------- */
+  .say{ margin-top:44px; padding-top:26px; border-top:1px solid var(--hair); }
+  .say-lede{ color:var(--ink-soft); font-size:.98rem; max-width:52ch; margin-top:12px; }
+  .note{ display:grid; gap:15px; margin-top:20px; max-width:520px; }
+  .note-field{ display:grid; gap:6px; }
+  .note-field span{ font-size:.85rem; font-weight:600; color:var(--ink-faint); }
+  .note-field em{ font-style:normal; font-weight:400; }
+  .note textarea, .note input[type="text"]:not(.note-hp){
+    width:100%; font:inherit; color:var(--ink);
+    background:var(--surface); border:1px solid var(--hair);
+    border-radius:11px; padding:11px 13px; resize:vertical;
+  }
+  .note textarea:focus, .note input:focus{ outline:2px solid var(--focus); outline-offset:2px; border-color:var(--ember); }
+  .note-hp{ position:absolute; left:-9999px; width:1px; height:1px; opacity:0; }
+  .note-send{
+    justify-self:start; font:inherit; font-weight:600; font-size:.92rem;
+    color:#fff; background:var(--ember); cursor:pointer;
+    border:0; border-radius:9px; padding:10px 22px;
+    transition:transform .12s ease, background-color .12s ease;
+  }
+  .note-send:hover{ transform:translateY(-1px); background:var(--ember-ink); }
+  .note-send:disabled{ opacity:.5; cursor:default; transform:none; }
+  .note-status{ margin:0; font-size:.9rem; color:var(--ember-ink); min-height:1.1em; }
+  .note-status.err{ color:#c0392b; }
+  .note-thanks{ margin-top:20px; font-size:1.05rem; color:var(--ink); }
+
   @media (max-width:460px){
     .card{ grid-template-columns:1fr; }
     .card__icon{ width:52px; height:52px; }
@@ -289,6 +315,27 @@
     </div>
   </main>
 
+  <section class="say">
+    <p class="eyebrow">Say something</p>
+    <p class="say-lede">Did one of these help, or fall flat? Something broken? Tell me &mdash; it goes straight to a person, no sign-up, nothing else collected.</p>
+    <form class="note" action="https://api.web3forms.com/submit" method="POST" novalidate>
+      <label class="note-field">
+        <span>Your note</span>
+        <textarea name="message" rows="4" required placeholder="What worked, what didn't, what you wish it did"></textarea>
+      </label>
+      <label class="note-field">
+        <span>Name <em>(optional)</em></span>
+        <input type="text" name="name" autocomplete="name" />
+      </label>
+      <input type="checkbox" name="botcheck" class="note-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <input type="hidden" name="access_key" value="85dc01d1-e441-4440-a483-de72535c4d2b" />
+      <input type="hidden" name="subject" value="Note from the hub" />
+      <input type="hidden" name="page" value="index.html" />
+      <button type="submit" class="note-send">Send it</button>
+      <p class="note-status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
   <footer class="foot">
     <span>Built with AI by one person</span>
     <a href="https://github.com/Jake7337/Bingo" target="_blank" rel="noopener">Source on GitHub</a>
@@ -296,5 +343,41 @@
   </footer>
 
 </div>
+
+<script>
+(() => {
+  const ENDPOINT = 'https://api.web3forms.com/submit';
+  const form = document.querySelector('form.note');
+  if (!form) return;
+  const status = form.querySelector('.note-status');
+  const btn = form.querySelector('.note-send');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (form.botcheck && form.botcheck.checked) return;
+    if (!form.message.value.trim()){ status.className = 'note-status err'; status.textContent = 'Type something first.'; return; }
+
+    btn.disabled = true; status.className = 'note-status'; status.textContent = 'Sending…';
+    try {
+      const res = await fetch(ENDPOINT, {
+        method: 'POST', body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success){
+        form.outerHTML = '<p class="note-thanks">Thanks &mdash; got it.</p>';
+      } else {
+        status.className = 'note-status err';
+        status.textContent = data.message || 'Something went wrong. Try again in a bit.';
+        btn.disabled = false;
+      }
+    } catch (_){
+      status.className = 'note-status err';
+      status.textContent = 'Couldn’t send — check your connection and try again.';
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
 </body>
 </html>

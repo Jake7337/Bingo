@@ -659,59 +659,120 @@ footer p{ margin: 0 auto 12px; color: var(--faint); font-size: 0.94rem; max-widt
 
   <!--
   ============================================================================
-  "ANYTHING YOU WANT TO SAY" SECTION  ::  NOT LIVE YET
+  "ANYTHING YOU WANT TO SAY" — the note box
   ============================================================================
-  Nothing between here and the END marker renders. It's waiting on one thing:
-  a real address to send people to.
+  The note goes straight to Jake through Formspree (free). The visitor never
+  signs up for anything and sees "Thanks — got it." right on the page.
 
-  The GitHub version was pulled on purpose. It made people sign up for a
-  GitHub account before they could say anything, and the folks using this
-  are not going to do that.
+  TO SWITCH IT ON:  put your Formspree form URL in NOTE_ENDPOINT in the
+  <script> just below this section (replace YOUR_FORM_ID). Until then the
+  box shows "not switched on yet" instead of trying to send.
 
-  TO TURN THIS ON:
-    1. Put a real address in place of SOMEBODY@SOMEWHERE.COM below.
-       Worth using a throwaway or a separate address rather than your main
-       one; any address printed on a public page eventually gets scraped.
-    2. Delete this opening comment marker and the END marker at the bottom.
+  Same endpoint is used by the note box on the hub and the burn-book page;
+  the hidden "page" field tells you which one it came from.
 
-  PLAN: point people at the Facebook page. They comment there, where they
-  already have an account and already are. Replace FACEBOOK_PAGE_URL below
-  with the real page address.
-
-  The mailto button is here as a second option. Use it, lose it, or swap the
-  address; a public address does eventually get scraped by spam bots.
-
+  Facebook option is parked below — drop in a real page URL and uncomment.
+  -->
   <section class="wrap" id="say-something">
     <div class="card">
       <h2>Anything you want to say</h2>
       <p>
         If your group ran a night on this, I'd like to hear how it went. What worked, what didn't,
-        what confused your volunteers, what you wish it did. Something broken counts too. I'd
-        rather hear it from you than have the next hall run into it.
-      </p>
-      <p>
-        Nothing to sign up for. Leave a comment on the Facebook page, or send a note.
+        what confused your volunteers, what you wish it did. Something broken counts too.
       </p>
 
-      <div class="contact-row">
-        <a class="contact" href="FACEBOOK_PAGE_URL" target="_blank" rel="noopener noreferrer">
-          FIND US ON FACEBOOK
-        </a>
-        <a class="contact ghost" href="mailto:SOMEBODY@SOMEWHERE.COM?subject=Bingo%20Caller">
-          SEND A NOTE
-        </a>
-      </div>
+      <form class="note" action="https://api.web3forms.com/submit" method="POST" novalidate>
+        <label class="note-field">
+          <span>Your note</span>
+          <textarea name="message" rows="4" required
+            placeholder="How did it go?"></textarea>
+        </label>
+        <label class="note-field">
+          <span>Name <em>(optional)</em></span>
+          <input type="text" name="name" autocomplete="name" />
+        </label>
+        <input type="checkbox" name="botcheck" class="note-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <input type="hidden" name="access_key" value="85dc01d1-e441-4440-a483-de72535c4d2b" />
+        <input type="hidden" name="subject" value="Note from the Bingo Caller page" />
+        <input type="hidden" name="page" value="bingo/info.html" />
+        <button type="submit" class="note-send">Send it</button>
+        <p class="note-status" role="status" aria-live="polite"></p>
+      </form>
 
       <p class="small">
-        Goes straight to a person. No mailing list, no newsletter, nothing gets collected.
+        Goes straight to a person. No mailing list, no newsletter, nothing else gets collected.
       </p>
+
+      <!-- Parked: point people at a Facebook page instead of / as well as the box.
+      <div class="contact-row">
+        <a class="contact" href="FACEBOOK_PAGE_URL" target="_blank" rel="noopener noreferrer">FIND US ON FACEBOOK</a>
+      </div>
+      -->
     </div>
   </section>
 
-  ===================== END OF THE NOT LIVE YET SECTION =====================
-  -->
-
 </main>
+
+<style>
+  .note{ display:grid; gap:16px; margin:22px 0 6px; max-width:520px; }
+  .note-field{ display:grid; gap:6px; }
+  .note-field span{ font-size:0.9rem; color:var(--muted); font-weight:600; }
+  .note-field em{ color:var(--faint); font-style:normal; font-weight:400; }
+  .note textarea, .note input[type="text"]:not(.note-hp){
+    width:100%; font:inherit; color:var(--text);
+    background:rgba(0,0,0,0.28); border:1px solid var(--border);
+    border-radius:12px; padding:12px 14px; resize:vertical;
+  }
+  .note textarea:focus, .note input:focus{ outline:2px solid var(--gold); outline-offset:2px; border-color:var(--gold); }
+  .note-hp{ position:absolute; left:-9999px; width:1px; height:1px; opacity:0; }
+  .note-send{
+    justify-self:start; font-family:var(--display); letter-spacing:1.5px;
+    font-size:1.05rem; color:#fff; cursor:pointer;
+    background:linear-gradient(135deg,#e11d48,#be123c);
+    border:2px solid rgba(255,255,255,0.18); border-radius:50px;
+    padding:12px 34px;
+  }
+  .note-send:hover{ transform:scale(1.03); }
+  .note-send:disabled{ opacity:.55; cursor:default; transform:none; }
+  .note-status{ margin:0; font-size:0.95rem; color:var(--gold); min-height:1.2em; }
+  .note-status.err{ color:#fca5a5; }
+  .note-thanks{ font-size:1.15rem; color:var(--text); margin:22px 0 6px; }
+</style>
+<script>
+(() => {
+  const ENDPOINT = 'https://api.web3forms.com/submit';
+  const form = document.querySelector('form.note');
+  if (!form) return;
+  const status = form.querySelector('.note-status');
+  const btn = form.querySelector('.note-send');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (form.botcheck && form.botcheck.checked) return;         // bot tripped the honeypot
+    if (!form.message.value.trim()){ status.className = 'note-status err'; status.textContent = 'Type something first.'; return; }
+
+    btn.disabled = true; status.className = 'note-status'; status.textContent = 'Sending…';
+    try {
+      const res = await fetch(ENDPOINT, {
+        method: 'POST', body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success){
+        form.outerHTML = '<p class="note-thanks">Thanks &mdash; got it.</p>';
+      } else {
+        status.className = 'note-status err';
+        status.textContent = data.message || 'Something went wrong. Try again in a bit.';
+        btn.disabled = false;
+      }
+    } catch (_){
+      status.className = 'note-status err';
+      status.textContent = 'Couldn’t send — check your connection and try again.';
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
 
 <footer class="wrap">
   <a class="footer-launch" href="index.html">START THE CALLER</a>
