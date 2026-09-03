@@ -16,6 +16,8 @@ bingo/info.html       <- Bingo Caller showcase  (Jake's July landing page, moved
 burn-book/index.html  <- Burn Book app  (mirrors C:\Users\jrsrl\OneDrive\Desktop\burnbook.html)
 burn-book/info.html   <- Burn Book showcase
 burn-book/cover.jpg   <- cover art (the app has its own embedded copy)
+dinner/index.html     <- Just Pick Something app  (mirrors C:\Users\jrsrl\OneDrive\Desktop\Just_Pick_Something.html)
+dinner/info.html      <- Just Pick Something showcase
 og-preview.png        <- link-preview image for the bingo info page (abs URL in its meta)
 og-hub.png            <- link-preview image for the hub
 ```
@@ -46,6 +48,14 @@ og-hub.png            <- link-preview image for the hub
 ### Burn Book (`burn-book/index.html` + `info.html`)
 - App: cover screen (tap the embedded cover image) → dark leather writing page → hold "burn" → canvas fire eats the text, ~3s, wiped. Nothing persisted, ever. iOS: cover opens on click/touchend/pointerup, img is `pointer-events:none`. Master copy on Jake's Desktop — keep in sync.
 - Info page: deliberately darker than the bingo page (near-black, hot pink, embers canvas), Permanent Marker + IBM Plex Sans. Steps 1-2-3, "where it goes: nowhere" privacy section.
+
+### Just Pick Something (`dinner/index.html` + `info.html`) - added 2026-09-03
+- The dinner decider. One start page: title, one line of what it is, a big "Help Me Choose" button, and the answer lands in a panel below it on the same page. "That's it" locks it in. Opens already showing a dinner, never an empty box.
+- **It is deliberately tiny.** A first version had filters (time / effort / cost / one-pan), a spin wheel, swipe mode, favorites, a grocery list and a vote mode - Jake cut all of it: *"too busy... it's a what do you want for dinner idk what do you want."* The whole product is one button and one name. **Don't add features back without Jake asking.**
+- `IDEAS` near the bottom of the script is a plain template string, one dinner per line as `emoji space name` - that's the only thing meant to be edited. 105 of them, plain central-PA everyday food (chicken and noodles, haluski, ham pot pie, tater tot casserole, chipped ham barbecues, wedding soup). Keep that register: no cheffy or trendy food.
+- Won't repeat anything from the last 12 taps. No localStorage except the light/dark choice.
+- Palette is its own: olive-biased neutrals, one saffron accent (`#E8A317` light / `#F5B933` dark). System font stack at weight 900 for display - no CDN, per the single-file rule.
+- Name was picked over "What's For Dinner" (too generic). Desktop master copy: `Just_Pick_Something.html`.
 
 ## Notes
 - Jake builds in sections — validate each before the next. Ask what's next, don't assume.

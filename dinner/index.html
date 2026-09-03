@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="Nobody knows what's for dinner and nobody wants to decide. Hit the button, it picks one ordinary dinner. Free, no account, no sign-up.">
+<meta name="author" content="Jake">
+<meta name="theme-color" content="#14170F">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2314170F'/%3E%3Ccircle cx='32' cy='34' r='17' fill='none' stroke='%23F5B933' stroke-width='4'/%3E%3Cpath d='M15 14v18M15 14c-4 2-4 10 0 12M49 14v40M49 14c4 3 4 15 0 17h-4' fill='none' stroke='%23F5B933' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<title>Just Pick Something</title>
+
+<style>
+/* ==========================================================================
+   JUST PICK SOMETHING
+   A start page that is also the whole app: title, what it is, one button,
+   and the answer lands underneath it. Nothing else.
+
+   To add or remove dinners, scroll down to the IDEAS list near the bottom.
+   It's one dinner per line: emoji, space, name. Nothing else needs touching.
+   ========================================================================== */
+:root{
+  --bg:      #F1F2EA;
+  --ink:     #1A1F17;
+  --muted:   #5A6150;
+  --faint:   #868D75;
+  --line:    #D2D7C2;
+  --surface: #FBFCF6;
+  --saffron: #E8A317;
+  --on-saffron:#211903;
+
+  --display: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --body: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:      #14170F;
+    --ink:     #F0F1E4;
+    --muted:   #A7AF93;
+    --faint:   #7C846C;
+    --line:    #3B4230;
+    --surface: #1D2117;
+    --saffron: #F5B933;
+    --on-saffron:#1A1400;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:      #14170F;
+  --ink:     #F0F1E4;
+  --muted:   #A7AF93;
+  --faint:   #7C846C;
+  --line:    #3B4230;
+  --surface: #1D2117;
+  --saffron: #F5B933;
+  --on-saffron:#1A1400;
+}
+
+*{ box-sizing: border-box; }
+body{
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+button{ font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+:focus-visible{ outline: 3px solid var(--saffron); outline-offset: 3px; border-radius: 10px; }
+
+.page{
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 26px 22px calc(30px + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-direction: column; gap: 22px;
+}
+
+/* ---- the title block ----------------------------------------------------- */
+.head{ position: relative; }
+.themebtn{
+  position: absolute; top: 0; right: -6px;
+  color: var(--faint); font-size: 19px; line-height: 1; padding: 7px;
+}
+.themebtn:hover{ color: var(--ink); }
+h1{
+  font-family: var(--display); font-weight: 900;
+  font-size: clamp(38px, 11.5vw, 60px);
+  line-height: .95; letter-spacing: -.04em;
+  margin: 0; padding-right: 34px; text-wrap: balance;
+}
+.sub{
+  font-family: var(--display); font-weight: 700;
+  font-size: clamp(19px, 5.4vw, 26px); letter-spacing: -.02em;
+  color: var(--saffron); margin: 2px 0 0;
+}
+.what{
+  color: var(--muted); font-size: 16px; line-height: 1.55;
+  margin: 14px 0 0; max-width: 42ch;
+}
+
+/* ---- the button ---------------------------------------------------------- */
+.choose{
+  width: 100%; padding: 26px 22px;
+  border-radius: 20px; background: var(--saffron); color: var(--on-saffron);
+  font-family: var(--display); font-weight: 900;
+  font-size: clamp(26px, 7vw, 34px); letter-spacing: -.025em;
+  box-shadow: 0 12px 32px -16px rgba(0,0,0,.55);
+  transition: transform .1s, filter .12s;
+}
+.choose:hover{ filter: brightness(1.04); }
+.choose:active{ transform: scale(.985); }
+
+/* ---- the answer panel ---------------------------------------------------- */
+.result{
+  border: 1px solid var(--line); border-radius: 20px; background: var(--surface);
+  padding: 34px 22px 26px; text-align: center;
+}
+.emo{ font-size: clamp(52px, 15vw, 76px); line-height: 1; display: block; }
+.name{
+  font-family: var(--display); font-weight: 900;
+  font-size: clamp(32px, 10vw, 52px);
+  line-height: 1; letter-spacing: -.035em;
+  margin: 12px 0 0; text-wrap: balance;
+}
+.settled .name, .settled .emo{ animation: land .32s cubic-bezier(.2,1.5,.4,1); }
+@keyframes land{ from{ transform: scale(.93); opacity: .25 } to{ transform: none; opacity: 1 } }
+
+.yes{
+  margin-top: 22px; padding: 14px 26px;
+  border-radius: 14px; border: 1px solid var(--line); background: var(--bg);
+  font-size: 16px; font-weight: 700;
+}
+.yes:hover{ border-color: var(--muted); }
+.locked .yes{ display: none; }
+.settledmsg{
+  margin: 22px 0 0; font-size: 16px; font-weight: 600; color: var(--saffron);
+  min-height: 0; display: none;
+}
+.locked .settledmsg{ display: block; }
+
+.foot{
+  text-align: center; color: var(--faint); font-size: 13px; line-height: 1.6;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="page" id="page">
+
+  <header class="head">
+    <button class="themebtn" id="theme" aria-label="Light or dark">◐</button>
+    <h1>Just Pick Something</h1>
+    <p class="sub">…for dinner.</p>
+    <p class="what">
+      Nobody knows. Nobody wants to decide. Hit the button and it decides for you —
+      one ordinary dinner, the kind you'd actually make.
+    </p>
+  </header>
+
+  <button class="choose" id="choose">Help Me Choose</button>
+
+  <section class="result settled" id="result" aria-live="polite">
+    <span class="emo" id="emo">🍝</span>
+    <p class="name" id="name">Spaghetti</p>
+    <p class="settledmsg" id="msg">Alright. That's dinner.</p>
+    <button class="yes" id="yes">That's it</button>
+  </section>
+
+  <p class="foot" id="foot"></p>
+</div>
+
+<script>
+/* ==========================================================================
+   THE IDEAS
+   Plain everyday dinners. Add yours to the bottom, delete any you'd never
+   make. One per line: emoji, space, name.
+   ========================================================================== */
+const IDEAS = `
+🍝 Spaghetti
+🌮 Tacos
+🥩 Pot roast
+🍗 Roast chicken
+🍲 Chili
+🍔 Hamburgers
+🥪 Sloppy joes
+🍕 Frozen pizza
+🍞 Meatloaf
+🥔 Ham and scalloped potatoes
+🍜 Chicken and noodles
+🥟 Kielbasa and pierogies
+🥬 Haluski
+🍚 Chicken stir-fry
+🥣 Hamburger gravy over mashed
+🍲 Goulash
+🐟 Tuna noodle casserole
+🥔 Tater tot casserole
+🍗 Fried chicken
+🐷 Breaded pork chops
+🌭 Hot dogs and baked beans
+🍳 Breakfast for dinner
+🥞 Pancakes and sausage
+🧀 Grilled cheese and tomato soup
+🥪 Ham barbecues
+🍜 Chicken noodle soup
+🫘 Ham and bean soup
+🌽 Chicken corn soup
+🥣 Wedding soup
+🥧 Chicken pot pie
+🥧 Ham pot pie
+🥟 Chicken and dumplings
+🍲 Beef stew
+🍝 Baked ziti
+🍝 Lasagna
+🧀 Baked mac and cheese
+🥧 Shepherd's pie
+🫑 Stuffed peppers
+🥬 Halupki
+🍗 Chicken and stuffing bake
+🥐 Chicken and biscuits
+🥦 Chicken divan
+🍚 Chicken and rice
+🌯 Chicken fajitas
+🫓 Quesadillas
+🐖 Pork and sauerkraut
+🍖 Baked ham
+🥩 Cube steaks and gravy
+🍔 Salisbury steak
+🍢 City chicken
+🍖 Ham loaf
+🥩 Swiss steak
+🦌 Venison roast
+🌶️ Hot sausage and peppers
+🌭 Brats and sauerkraut
+🌽 Grilled chicken and corn
+🍟 Chicken nuggets and fries
+🍔 Chicken patties on buns
+🐠 Fish sticks and mac and cheese
+🐟 Salmon patties
+🥔 Fried potatoes and eggs
+🥔 Ring bologna and fried potatoes
+🍜 Beef and noodles
+🌶️ Chili mac
+🌮 Taco soup
+🫑 Stuffed pepper soup
+🥕 Vegetable beef soup
+🥔 Potato soup
+🥦 Broccoli cheddar soup
+🌾 Beef barley soup
+🫛 Split pea soup
+🥪 Hot ham and cheese
+🥖 Hoagies
+🥪 Chipped ham sandwiches
+🐟 Tuna salad sandwiches
+🥚 Egg salad sandwiches
+🥪 Chicken salad sandwiches
+🥓 BLTs
+🥓 Cold cut night
+🧀 Snack plate dinner
+🧀 Nachos
+🌭 Texas hot dogs
+🍕 Pizza burgers
+🥔 Sheet pan sausage and potatoes
+🍚 Rice-a-roni and grilled chicken
+🍝 Buttered noodles and green beans
+🥫 Corned beef hash and eggs
+🍝 Spaghetti with jar sauce
+🫘 Black bean tacos
+🍳 Omelets
+🧇 Waffles and eggs
+🍞 French toast and bacon
+🥯 Biscuits and gravy
+🥚 Egg sandwiches
+🥔 Breakfast hash
+🐖 Sauerkraut over mashed
+🥔 Hamburger and potato bake
+🍜 Ham and noodle casserole
+🥟 Pierogi casserole
+🧀 Chicken parm
+🍎 Pork chops and applesauce
+🍗 Air fryer chicken and potatoes
+🌭 Scalloped potatoes and hot dogs
+♻️ Leftovers
+`.trim().split("\n").map(l => {
+  const s = l.trim();
+  const i = s.indexOf(" ");
+  return { e: s.slice(0, i), n: s.slice(i + 1) };
+});
+
+const $ = s => document.querySelector(s);
+const result = $("#result"), page = $("#page");
+
+/* Don't repeat anything from the last dozen taps — the fastest way to make
+   this feel broken is to say "tacos" twice in a row. */
+let recent = [];
+function next(){
+  let pool = IDEAS.filter(m => !recent.includes(m.n));
+  if(!pool.length){ recent = []; pool = IDEAS; }
+  const m = pool[Math.floor(Math.random() * pool.length)];
+  recent = [m.n, ...recent].slice(0, 12);
+
+  page.classList.remove("locked");
+  $("#emo").textContent = m.e;
+  $("#name").textContent = m.n;
+  result.classList.remove("settled");
+  void result.offsetWidth;            // restart the little landing animation
+  result.classList.add("settled");
+}
+
+$("#choose").onclick = next;
+$("#yes").onclick = () => page.classList.add("locked");
+
+/* light/dark, remembered */
+try{
+  const t = localStorage.getItem("jps-theme");
+  if(t) document.documentElement.setAttribute("data-theme", t);
+}catch(e){}
+$("#theme").onclick = () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark"
+    || (!document.documentElement.hasAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
+  const t = dark ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", t);
+  try{ localStorage.setItem("jps-theme", t); }catch(e){}
+};
+
+$("#foot").textContent = IDEAS.length + " everyday dinners · nothing saved, nothing uploaded · free";
+
+/* Open on a real answer, not an empty box. */
+next();
+</script>
+</body>
+</html>
