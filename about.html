@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!--
+  ============================================================================
+  ABOUT  —  the how and why behind the free apps
+  ============================================================================
+  Sits at the site root beside index.html (the hub). Linked from the hub
+  footer and from each app's info page footer.
+
+  Same tokens and fonts as the hub on purpose — this is a site page, not an
+  app, so it's allowed the Google Fonts link the hub uses. The apps
+  themselves stay fully self-contained.
+  ============================================================================
+-->
+
+<title>About — Free Apps That Help</title>
+<meta name="description" content="Who makes these, why they're free, and how they get built. One person, small tools made with AI, given away — no ads, no accounts, no tracking." />
+<meta name="author" content="Jake" />
+<meta name="theme-color" content="#141110" />
+<meta name="color-scheme" content="light dark" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Free Apps That Help" />
+<meta property="og:url" content="https://jake7337.github.io/Bingo/about.html" />
+<meta property="og:title" content="About — Free apps that help" />
+<meta property="og:description" content="Who makes these, why they're free, and how they get built." />
+<meta property="og:image" content="https://jake7337.github.io/Bingo/og-hub.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://jake7337.github.io/Bingo/og-hub.png" />
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141110'/%3E%3Ccircle cx='32' cy='34' r='13' fill='%23f0a03c'/%3E%3Ccircle cx='32' cy='34' r='13' fill='none' stroke='%23ff7a1e' stroke-width='3'/%3E%3C/svg%3E" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ---------- tokens: same set as the hub ---------- */
+  :root{
+    --bg:        #f6f2ec;
+    --surface:   #ffffff;
+    --surface-2: #f0e9df;
+    --ink:       #211d18;
+    --ink-soft:  #5c554b;
+    --ink-faint: #8a8175;
+    --hair:      rgba(60,45,25,.14);
+    --hair-soft: rgba(60,45,25,.08);
+    --ember:     #c76a1c;
+    --ember-ink: #9a4e12;
+    --focus:     #c76a1c;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:        #14110f;
+      --surface:   #1d1916;
+      --surface-2: #241f1b;
+      --ink:       #ece5dc;
+      --ink-soft:  #b3a99c;
+      --ink-faint: #7d7364;
+      --hair:      rgba(240,190,130,.16);
+      --hair-soft: rgba(240,190,130,.08);
+      --ember:     #f0a03c;
+      --ember-ink: #f6b866;
+      --focus:     #f0a03c;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:        #14110f;
+    --surface:   #1d1916;
+    --surface-2: #241f1b;
+    --ink:       #ece5dc;
+    --ink-soft:  #b3a99c;
+    --ink-faint: #7d7364;
+    --hair:      rgba(240,190,130,.16);
+    --hair-soft: rgba(240,190,130,.08);
+    --ember:     #f0a03c;
+    --ember-ink: #f6b866;
+    --focus:     #f0a03c;
+    color-scheme: dark;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    padding:clamp(28px, 7vw, 72px) 22px calc(64px + env(safe-area-inset-bottom));
+  }
+  .wrap{ max-width:640px; margin-inline:auto; }
+  a{ color:var(--ember-ink); }
+  :focus-visible{ outline:2px solid var(--focus); outline-offset:3px; border-radius:4px; }
+
+  .back{
+    display:inline-block; font-size:.9rem; font-weight:600;
+    color:var(--ink-faint); text-decoration:none; margin-bottom:34px;
+  }
+  .back:hover{ color:var(--ink); }
+
+  /* ---------- masthead ---------- */
+  .mark{
+    font-family:'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight:600;
+    font-size:clamp(2rem, 6.5vw, 2.9rem);
+    line-height:1.1;
+    letter-spacing:-.015em;
+    text-wrap:balance;
+  }
+  .mark .amp{ color:var(--ember); font-style:italic; }
+  .lede{
+    margin-top:16px;
+    font-size:1.075rem;
+    color:var(--ink-soft);
+    max-width:52ch;
+  }
+
+  /* ---------- the Q&A: each question is a real question someone asks ---- */
+  .qa{ margin-top:46px; display:flex; flex-direction:column; gap:38px; }
+  .qa section h2{
+    font-family:'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight:600;
+    font-size:1.32rem;
+    line-height:1.25;
+    letter-spacing:-.01em;
+    margin-bottom:12px;
+    text-wrap:balance;
+  }
+  .qa p{ color:var(--ink-soft); max-width:52ch; }
+  .qa p + p{ margin-top:12px; }
+  .qa strong{ color:var(--ink); font-weight:600; }
+
+  /* the one pulled-out line — used once, on the money question */
+  .pull{
+    border-left:2px solid var(--ember);
+    padding:4px 0 4px 18px;
+    margin-top:16px;
+  }
+  .pull p{ color:var(--ink); font-size:1.06rem; }
+
+  /* what they'll never have */
+  .never{ list-style:none; margin-top:14px; display:flex; flex-direction:column; gap:9px; }
+  .never li{ color:var(--ink-soft); padding-left:22px; position:relative; max-width:52ch; }
+  .never li::before{
+    content:"—"; position:absolute; left:0; color:var(--ember); font-weight:600;
+  }
+  .never li strong{ color:var(--ink); font-weight:600; }
+
+  /* ---------- closing ---------- */
+  .closer{
+    margin-top:46px; padding:24px; border:1px solid var(--hair);
+    border-radius:16px; background:var(--surface);
+  }
+  .closer h2{
+    font-family:'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight:600; font-size:1.22rem; margin-bottom:10px;
+  }
+  .closer p{ color:var(--ink-soft); max-width:52ch; }
+  .closer .btns{ display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+  .btn{
+    display:inline-block; padding:12px 22px; border-radius:999px;
+    font-weight:600; font-size:.95rem; text-decoration:none;
+  }
+  .btn--go{ background:var(--ember); color:#fff; }
+  .btn--go:hover{ filter:brightness(1.06); }
+  .btn--alt{ border:1px solid var(--hair); color:var(--ink); }
+  .btn--alt:hover{ border-color:var(--ember); color:var(--ember-ink); }
+
+  .foot{
+    margin-top:48px; padding-top:22px; border-top:1px solid var(--hair);
+    display:flex; flex-wrap:wrap; gap:6px 18px;
+    font-size:.88rem; color:var(--ink-faint);
+  }
+  .foot a{ color:var(--ink-soft); text-decoration:none; border-bottom:1px solid var(--hair); }
+  .foot a:hover{ color:var(--ember-ink); border-color:var(--ember); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back" href="./">&larr; All free apps</a>
+
+  <header>
+    <h1 class="mark">The how and&nbsp;<span class="amp">why</span></h1>
+    <p class="lede">
+      Fair questions to ask about anything that says it's free. Here are the honest answers.
+    </p>
+  </header>
+
+  <div class="qa">
+
+    <section>
+      <h2>What is this place?</h2>
+      <p>
+        A handful of small web apps that each do <strong>one useful thing</strong>. A bingo
+        caller for a fundraiser night. A page you can write your worst thoughts on and then
+        burn. A button that decides what's for dinner so nobody has to.
+      </p>
+      <p>
+        None of them are big. That's the point. Each one started the same way &mdash; somebody
+        needed that exact thing, and what you could find online wanted a subscription and an
+        email address for it.
+      </p>
+    </section>
+
+    <section>
+      <h2>Who makes them?</h2>
+      <p>
+        One person. Not a company, not a startup, not a team. There's nobody to escalate to
+        and no support department &mdash; if you send a note it lands with the same person who
+        built the thing.
+      </p>
+    </section>
+
+    <section>
+      <h2>Why are they free? What's the catch?</h2>
+      <p>
+        There isn't one. No trial that runs out, no paid tier, no "upgrade to unlock," no
+        donate button guilting you on the way in. Nothing is collected from you, so there's
+        nothing to sell to anybody either.
+      </p>
+      <div class="pull">
+        <p>
+          If one of these helps a group raise a little money, or helps somebody put down
+          something heavy for a night, it already did the job it was made for.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2>How are they made?</h2>
+      <p>
+        With AI, and that's said plainly rather than hidden. The ideas, the decisions about
+        what a thing should be and who it's for, and the judgment about when something isn't
+        good enough yet &mdash; those are a person's. The code underneath is written with AI
+        tools.
+      </p>
+      <p>
+        That's the only reason a single person can hand out finished apps at all. It seems
+        more honest to say so than to pretend a small workshop is bigger than it is.
+      </p>
+    </section>
+
+    <section>
+      <h2>Why is each one a single file?</h2>
+      <p>
+        Because then it's actually <strong>yours</strong>. Hit Download and you have the whole
+        app &mdash; one file, nothing else needed. Open it on a laptop with no internet and it
+        still runs. Put it on a thumb drive. Email it to somebody.
+      </p>
+      <p>
+        Nothing here can be taken away from you later, quietly locked behind a login, or
+        broken because a company shut down. The copy you saved keeps working, forever, whatever
+        happens to this website.
+      </p>
+    </section>
+
+    <section>
+      <h2>What will these never have?</h2>
+      <ul class="never">
+        <li><strong>No ads.</strong> Not now, not later, not "just a small one."</li>
+        <li><strong>No accounts.</strong> Nothing to sign up for, no password to forget.</li>
+        <li><strong>No tracking.</strong> No analytics, no pixels, nobody counting you.</li>
+        <li><strong>No mailing list.</strong> Nothing will show up in your inbox.</li>
+      </ul>
+      <p style="margin-top:14px">
+        Most of the apps never talk to the internet at all once they're open. The Burn Book
+        in particular keeps nothing, sends nothing, and remembers nothing &mdash; that's the
+        entire promise of it.
+      </p>
+    </section>
+
+    <section>
+      <h2>Can I share them? Change them?</h2>
+      <p>
+        Yes to both, and you don't have to ask. Send them to whoever you want. Run them at
+        your church, your fire hall, your lodge, your kitchen table. If you know a little
+        HTML, open the file and change it &mdash; the code is commented so a person can follow
+        it. Every app's source is
+        <a href="https://github.com/Jake7337/Bingo" target="_blank" rel="noopener">on GitHub</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>Will there be more?</h2>
+      <p>
+        Probably, but there's no schedule and no roadmap. A new one shows up when there's a
+        real reason for it &mdash; somebody needed something, and nothing decent existed for
+        free. That's the whole process.
+      </p>
+    </section>
+
+  </div>
+
+  <section class="closer">
+    <h2>Got something to say?</h2>
+    <p>
+      Did one of these help, or fall flat? Something broken, something confusing, something
+      you wish it did? There's a note box at the bottom of the front page. It goes straight
+      to a person &mdash; no sign-up, nothing else collected.
+    </p>
+    <div class="btns">
+      <a class="btn btn--go" href="./#say">Leave a note</a>
+      <a class="btn btn--alt" href="./">See the apps</a>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>Built with AI by one person</span>
+    <a href="https://github.com/Jake7337/Bingo" target="_blank" rel="noopener">Source on GitHub</a>
+    <span>Use them, share them, change them.</span>
+  </footer>
+
+</div>
+</body>
+</html>
