@@ -117,6 +117,16 @@
     border-radius:999px;
     padding:5px 12px;
   }
+  /* Fourth chip is a link, not a promise — ember so it reads as the one
+     you can press, and it keeps the same pill shape as its neighbours. */
+  .promise li.promise-link{ padding:0; border-color:var(--ember); }
+  .promise li.promise-link a{
+    display:inline-block; padding:5px 13px;
+    color:var(--ember-ink); text-decoration:none;
+    border-radius:999px;
+  }
+  .promise li.promise-link a:hover{ background:var(--ember); color:#fff; }
+  .promise li.promise-link .arw{ font-weight:400; }
 
   /* ---------- section label ---------- */
   .eyebrow{
@@ -245,6 +255,7 @@
       <li>No ads</li>
       <li>No accounts</li>
       <li>No tracking</li>
+      <li class="promise-link"><a href="about.html">How &amp; why <span class="arw" aria-hidden="true">&rarr;</span></a></li>
     </ul>
   </header>
 
