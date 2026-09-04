@@ -1,7 +1,9 @@
 # Free Apps That Help
 
 ## Project Info
-- **Live URL:** https://jake7337.github.io/Bingo/  (GitHub Pages, `main` branch, repo root)
+- **Live URL:** https://freeapps.pages.dev  (Cloudflare Pages, project `freeapps`, `main` branch, repo root - `git push` auto-deploys in ~30s)
+- **Old URL:** https://jake7337.github.io/Bingo/  (GitHub Pages, still live on purpose as a safety net for links already shared - Cloudflare only reads the repo, so both serve the same site)
+- **Note:** Cloudflare serves extensionless URLs - `/about`, `/bingo/info`. The old `.html` forms 308-redirect, so existing links keep working. Every internal link in the site is relative, so nothing broke when the `/Bingo/` path segment went away.
 - **GitHub:** https://github.com/Jake7337/Bingo  (repo name is still `Bingo`; URLs stay stable — don't rename without Jake asking)
 - **Creator:** Jake — makes all art/ideas with AI tools; gives the code away to help others
 - **The point:** free tools that actually help someone — a group raising money on bingo night, or a person needing to put something heavy down. "Maybe it saves one life." Keep the tone honest and unslick, never markety.
@@ -19,7 +21,9 @@ burn-book/cover.jpg   <- cover art (the app has its own embedded copy)
 dinner/index.html     <- Just Pick Something app  (mirrors C:\Users\jrsrl\OneDrive\Desktop\Just_Pick_Something.html)
 dinner/info.html      <- Just Pick Something showcase
 og-preview.png        <- link-preview image for the bingo info page (abs URL in its meta)
-og-hub.png            <- link-preview image for the hub
+og-hub.png            <- link-preview image for the hub  [STALE: names only 2 of the 3 apps]
+burn-book/og-burn-book.png <- link-preview image for the burn book info page
+dinner/og-dinner.png       <- link-preview image for the dinner info page
 ```
 
 - Every app is ONE self-contained HTML file: embedded CSS/JS/assets, no build step, no dependencies, works offline.
@@ -32,7 +36,7 @@ og-hub.png            <- link-preview image for the hub
 - Warm near-black / off-white, single ember accent. Inline-SVG icons, no emoji.
 
 ### Bingo Caller (`bingo/index.html`) — Jake's, mostly hands-off
-- Live at https://jake7337.github.io/Bingo/bingo/ (was the bare `/Bingo/`).
+- Live at https://freeapps.pages.dev/bingo/ (was the bare `/Bingo/` on GitHub Pages).
 - Originally built for one club's fundraiser bingo night (hence the TV-first, silent design). As of 2026-08-29 Jake has **disassociated it from that club** — they run their own copy now, and the public copy is a general free tool. Don't name any specific club/org in public-facing copy.
 - Full-screen 75-ball board, colour-coded B/I/N/G/O rows, right sidebar (Last Call, Now Playing + mini grid, Choose Game, Rotate, Pace 0–15s, Call/Reset/Fullscreen), pattern picker modal (17 presets + custom painter), "Let's Play" reveal, Wake Lock, fullscreen.
 - **SILENT by design.** Voice code is intact but gated behind `const SPEECH_ENABLED = false` (forces a local/offline voice when re-enabled). Don't describe it as "speaking" or "spoken calls" anywhere.
