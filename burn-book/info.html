@@ -379,5 +379,12 @@
   boot();
 })();
 </script>
+
+<!-- Cloudflare Web Analytics - cookieless, no individual-visitor tracking.
+     Deliberately NOT in the app files (bingo/, burn-book/, dinner/ index.html):
+     those get downloaded and run offline, and the promise on every one of them
+     is no dependencies and no trackers. Site pages only. -->
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon='{"token": "21c66a4018ee4916a7c1ce7354b6df50"}'></script>
 </body>
 </html>
