@@ -221,6 +221,91 @@
         #row-group-3 .number-cell.last-called::after { border-color: var(--row-g); }
         #row-group-4 .number-cell.last-called::after { border-color: var(--row-o); }
 
+        /* --- 3D CALLED BALL ---
+           A ball lifts off its number, flies to the middle of the screen,
+           hangs there, then goes back. Timing lives in BALL_* in the script. */
+        #ball-stage{
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            pointer-events: none;
+            background: rgba(0,0,0,0);
+            transition: background 0.5s ease;
+        }
+        #ball-stage.on{ background: rgba(0,0,0,0.38); }
+
+        /* the cell the ball came from looks like an empty socket while it's away */
+        #board .board-row .number-cell.lifted{
+            background: rgba(0,0,0,0.35);
+            color: transparent;
+            border-color: rgba(255,255,255,0.12);
+            box-shadow: inset 0 3px 8px rgba(0,0,0,0.55);
+        }
+        #board .board-row .number-cell.lifted span{ color: transparent; }
+        #board .number-cell.lifted::after{ display: none; }
+
+        .ball{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: var(--d);
+            height: var(--d);
+            margin: calc(var(--d) / -2) 0 0 calc(var(--d) / -2);
+            perspective: calc(var(--d) * 2.4);
+            will-change: transform;
+        }
+        .ball-body{
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle at 36% 30%, var(--c-light), var(--c-base) 52%, var(--c-dark) 100%);
+            box-shadow: 0 calc(var(--d) * 0.06) calc(var(--d) * 0.14) rgba(0,0,0,0.6),
+                        0 0 calc(var(--d) * 0.22) var(--c-glow);
+        }
+        .ball-spin{
+            position: absolute;
+            inset: 0;
+            transform-style: preserve-3d;
+        }
+        /* the white number plate sits ON the sphere, so it foreshortens as the ball turns */
+        .ball-plate{
+            position: absolute;
+            left: 25%;
+            top: 25%;
+            width: 50%;
+            height: 50%;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: inset 0 0 0 calc(var(--d) * 0.012) var(--c-base);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #111;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            line-height: 1;
+        }
+        .ball-plate.front{ transform: translateZ(calc(var(--d) * 0.44)); }
+        .ball-plate.back{ transform: rotateY(180deg) translateZ(calc(var(--d) * 0.44)); }
+        .ball-plate .l{ font-size: calc(var(--d) * 0.115); margin-bottom: calc(var(--d) * 0.01); color: var(--c-base); }
+        .ball-plate .n{ font-size: calc(var(--d) * 0.2); }
+        /* fixed light: stays put while the ball spins under it */
+        .ball-shine{
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 32% 26%, rgba(255,255,255,0.7) 0, rgba(255,255,255,0.16) 13%, transparent 30%),
+                radial-gradient(circle at 50% 50%, transparent 56%, rgba(0,0,0,0.38) 100%);
+        }
+        .ball-r0{ --c-light:#f9a8d4; --c-base:var(--row-b); --c-dark:#7f0f2a; --c-glow:rgba(225,29,72,0.55); }
+        .ball-r1{ --c-light:#fde68a; --c-base:var(--row-i); --c-dark:#8a4a05; --c-glow:rgba(245,158,11,0.55); }
+        .ball-r2{ --c-light:#a7f3d0; --c-base:var(--row-n); --c-dark:#065f46; --c-glow:rgba(16,185,129,0.55); }
+        .ball-r3{ --c-light:#bfdbfe; --c-base:var(--row-g); --c-dark:#1e3a8a; --c-glow:rgba(59,130,246,0.55); }
+        .ball-r4{ --c-light:#ddd6fe; --c-base:var(--row-o); --c-dark:#4c1d95; --c-glow:rgba(168,85,247,0.55); }
+
         /* --- RIGHT SIDEBAR (Controls) --- */
         .sidebar{
             width: min(340px, 26vw);
@@ -599,6 +684,9 @@
         <div class="board" id="board"></div>
     </div>
 
+    <!-- Where the called ball flies (see launchBall) -->
+    <div id="ball-stage" aria-hidden="true"></div>
+
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="panel panel-last-call">
@@ -852,6 +940,7 @@
             }
 
             lastCallEl.textContent = "--";
+            clearBalls();
             renderBoard();
 
             btnCall.disabled = false;
@@ -948,6 +1037,96 @@
             }
         }
 
+        // ==================================================================
+        //  3D BALL
+        //  When a number is called, a ball lifts off its cell, spins to the
+        //  middle of the screen, hangs there, then spins back home.
+        //  Tweak the feel here:
+        // ==================================================================
+        const BALL_HOLD_MS  = 5000;   // how long it stays in the middle
+        const BALL_FLY_MS   = 900;    // each trip (out, and back)
+        const BALL_SIZE     = 0.6;    // fraction of the shorter screen side
+        const ballStage     = document.getElementById('ball-stage');
+        const activeBalls   = new Set();
+        const reduceMotion  = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function launchBall(num, cell) {
+            if (!ballStage || !cell || !ballStage.animate) return;
+
+            // a ball still out from the last call heads home now
+            activeBalls.forEach(b => b.sendHome());
+
+            const r  = cell.getBoundingClientRect();
+            const vw = window.innerWidth, vh = window.innerHeight;
+            const d  = Math.round(Math.min(vw, vh) * BALL_SIZE);
+            const dx = r.left + r.width / 2 - vw / 2;
+            const dy = r.top + r.height / 2 - vh / 2;
+            const s0 = r.width / d;
+            const letter = getLetter(num);
+
+            const ball = document.createElement('div');
+            ball.className = `ball ball-r${getRowIndex(num)}`;
+            ball.style.setProperty('--d', d + 'px');
+            const plate = `<span class="l">${letter}</span><span class="n">${num}</span>`;
+            ball.innerHTML =
+                '<div class="ball-body"></div>' +
+                `<div class="ball-spin"><div class="ball-plate front">${plate}</div><div class="ball-plate back">${plate}</div></div>` +
+                '<div class="ball-shine"></div>';
+            ballStage.appendChild(ball);
+            cell.classList.add('lifted');
+
+            const T = BALL_FLY_MS * 2 + BALL_HOLD_MS;
+            const a = BALL_FLY_MS / T;                  // arrives in the middle
+            const b = (BALL_FLY_MS + BALL_HOLD_MS) / T; // starts heading home
+            const mid = (a + b) / 2;
+            const at = f => a + (b - a) * f;
+            const home    = `translate(${dx}px, ${dy}px) scale(${s0})`;
+            const homeEnd = `translate(${dx}px, ${dy}px) scale(${s0 * 1.15})`; // cell is scaled up when it's the last call
+            const centre  = 'translate(0px, 0px) scale(1)';
+
+            const flight = [
+                { offset: 0,   transform: home,   easing: 'cubic-bezier(.22,1,.36,1)' },
+                { offset: a,   transform: centre, easing: 'ease-in-out' }
+            ];
+            if (!reduceMotion) flight.push({ offset: mid, transform: 'translate(0px, -2.5%) scale(1.03)', easing: 'ease-in-out' });
+            flight.push(
+                { offset: b,   transform: centre, easing: 'cubic-bezier(.5,0,.8,.4)' },
+                { offset: 1,   transform: homeEnd }
+            );
+            const opts = { duration: T, fill: 'both' };
+            const anims = [ball.animate(flight, opts)];
+
+            if (!reduceMotion) {
+                anims.push(ball.querySelector('.ball-spin').animate([
+                    { offset: 0,       transform: 'rotateY(-720deg)', easing: 'cubic-bezier(.22,1,.36,1)' },
+                    { offset: a,       transform: 'rotateY(0deg)',    easing: 'ease-in-out' },
+                    { offset: at(.33), transform: 'rotateY(16deg) rotateX(-6deg)', easing: 'ease-in-out' },
+                    { offset: at(.66), transform: 'rotateY(-16deg) rotateX(6deg)', easing: 'ease-in-out' },
+                    { offset: b,       transform: 'rotateY(0deg)',    easing: 'cubic-bezier(.5,0,.8,.4)' },
+                    { offset: 1,       transform: 'rotateY(720deg)' }
+                ], opts));
+            }
+
+            const handle = {
+                sendHome() {
+                    if (anims[0].currentTime < b * T) anims.forEach(x => x.currentTime = b * T);
+                },
+                remove() {
+                    activeBalls.delete(handle);
+                    ball.remove();
+                    cell.classList.remove('lifted');
+                    ballStage.classList.toggle('on', activeBalls.size > 0);
+                }
+            };
+            anims[0].onfinish = handle.remove;
+            activeBalls.add(handle);
+            ballStage.classList.add('on');
+        }
+
+        function clearBalls() {
+            Array.from(activeBalls).forEach(b => b.remove());
+        }
+
         // --- Call Number Logic ---
         function callNumber() {
             if (isCooldown) return;
@@ -993,6 +1172,7 @@
             if (cell) {
                 cell.classList.add('active');
                 cell.classList.add('last-called');
+                launchBall(num, cell);
             }
 
             speak(`${letter} ${num}`);

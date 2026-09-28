@@ -41,6 +41,7 @@ dinner/og-dinner.png       <- link-preview image for the dinner info page
 - Full-screen 75-ball board, colour-coded B/I/N/G/O rows, right sidebar (Last Call, Now Playing + mini grid, Choose Game, Rotate, Pace 0–15s, Call/Reset/Fullscreen), pattern picker modal (17 presets + custom painter), "Let's Play" reveal, Wake Lock, fullscreen.
 - **SILENT by design.** Voice code is intact but gated behind `const SPEECH_ENABLED = false` (forces a local/offline voice when re-enabled). Don't describe it as "speaking" or "spoken calls" anywhere.
 - Start screen has a "← What is this?" link → `info.html`.
+- **3D called ball (2026-09-28):** each call launches a CSS-3D ball from its board cell to screen centre, holds 5s, then returns it (Web Animations API, no libs). Feel is tunable via `BALL_HOLD_MS` / `BALL_FLY_MS` / `BALL_SIZE` above `callNumber()`. A new call sends any ball still out home early; Reset clears them; honours `prefers-reduced-motion` (no spin/bob).
 - No video/image assets — removed 2026-07-01, don't re-add without Jake asking.
 
 ### Bingo info (`bingo/info.html`) — Jake's July landing page
