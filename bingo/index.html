@@ -254,57 +254,86 @@
             perspective: calc(var(--d) * 2.4);
             will-change: transform;
         }
+        /* soft shadow under the ball */
+        .ball::before{
+            content: '';
+            position: absolute;
+            left: 14%;
+            width: 72%;
+            top: 106%;
+            height: 9%;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0.6), transparent 70%);
+            filter: blur(calc(var(--d) * 0.012));
+        }
+        /* solid, saturated plastic - not a glowing orb */
         .ball-body{
             position: absolute;
             inset: 0;
             border-radius: 50%;
-            background: radial-gradient(circle at 36% 30%, var(--c-light), var(--c-base) 52%, var(--c-dark) 100%);
-            box-shadow: 0 calc(var(--d) * 0.06) calc(var(--d) * 0.14) rgba(0,0,0,0.6),
-                        0 0 calc(var(--d) * 0.22) var(--c-glow);
+            background: radial-gradient(circle at 40% 32%, var(--c-light) 0, var(--c-base) 34%, var(--c-base) 52%, var(--c-dark) 100%);
+            box-shadow: 0 calc(var(--d) * 0.05) calc(var(--d) * 0.12) rgba(0,0,0,0.55),
+                        0 0 calc(var(--d) * 0.10) var(--c-glow);
         }
         .ball-spin{
             position: absolute;
             inset: 0;
             transform-style: preserve-3d;
         }
-        /* the white number plate sits ON the sphere, so it foreshortens as the ball turns */
+        /* the white spot with the print, sitting ON the sphere so it foreshortens as the ball turns */
         .ball-plate{
             position: absolute;
-            left: 25%;
-            top: 25%;
-            width: 50%;
-            height: 50%;
+            left: 24%;
+            top: 24%;
+            width: 52%;
+            height: 52%;
             border-radius: 50%;
-            background: #fff;
-            box-shadow: inset 0 0 0 calc(var(--d) * 0.012) var(--c-base);
+            background: radial-gradient(circle at 42% 36%, #fff 0, #fff 55%, #e2e2e2 100%);
+            box-shadow: 0 0 0 calc(var(--d) * 0.008) rgba(0,0,0,0.22),
+                        0 calc(var(--d) * 0.006) calc(var(--d) * 0.02) rgba(0,0,0,0.35);
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #111;
-            font-family: 'Impact', 'Arial Black', sans-serif;
+            color: #141414;
+            font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 900;
             line-height: 1;
         }
         .ball-plate.front{ transform: translateZ(calc(var(--d) * 0.44)); }
         .ball-plate.back{ transform: rotateY(180deg) translateZ(calc(var(--d) * 0.44)); }
-        .ball-plate .l{ font-size: calc(var(--d) * 0.115); margin-bottom: calc(var(--d) * 0.01); color: var(--c-base); }
-        .ball-plate .n{ font-size: calc(var(--d) * 0.2); }
-        /* fixed light: stays put while the ball spins under it */
+        .ball-plate .l{ font-size: calc(var(--d) * 0.13); margin-bottom: calc(var(--d) * 0.012); }
+        .ball-plate .n{ font-size: calc(var(--d) * 0.2); letter-spacing: -0.02em; }
+        /* fixed light: stays put while the ball spins under it, and glosses the print too */
         .ball-shine{
             position: absolute;
             inset: 0;
             border-radius: 50%;
+            /* darker edge + bright rim light on the shadow side */
             background:
-                radial-gradient(circle at 32% 26%, rgba(255,255,255,0.7) 0, rgba(255,255,255,0.16) 13%, transparent 30%),
-                radial-gradient(circle at 50% 50%, transparent 56%, rgba(0,0,0,0.38) 100%);
+                radial-gradient(circle at 50% 50%, transparent 60%, rgba(0,0,0,0.30) 100%),
+                radial-gradient(circle at 72% 84%, rgba(255,255,255,0.22), transparent 26%);
         }
-        .ball-r0{ --c-light:#f9a8d4; --c-base:var(--row-b); --c-dark:#7f0f2a; --c-glow:rgba(225,29,72,0.55); }
-        .ball-r1{ --c-light:#fde68a; --c-base:var(--row-i); --c-dark:#8a4a05; --c-glow:rgba(245,158,11,0.55); }
-        .ball-r2{ --c-light:#a7f3d0; --c-base:var(--row-n); --c-dark:#065f46; --c-glow:rgba(16,185,129,0.55); }
-        .ball-r3{ --c-light:#bfdbfe; --c-base:var(--row-g); --c-dark:#1e3a8a; --c-glow:rgba(59,130,246,0.55); }
-        .ball-r4{ --c-light:#ddd6fe; --c-base:var(--row-o); --c-dark:#4c1d95; --c-glow:rgba(168,85,247,0.55); }
+        /* the crisp window-style highlight */
+        .ball-shine::before{
+            content: '';
+            position: absolute;
+            left: 15%;
+            top: 8%;
+            width: 34%;
+            height: 19%;
+            border-radius: 50%;
+            transform: rotate(-33deg);
+            background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.10));
+            filter: blur(calc(var(--d) * 0.006));
+        }
+        .ball-r0{ --c-light:#f472a3; --c-base:var(--row-b); --c-dark:#6d0c24; --c-glow:rgba(225,29,72,0.45); }
+        .ball-r1{ --c-light:#fcd34d; --c-base:var(--row-i); --c-dark:#7a3f04; --c-glow:rgba(245,158,11,0.45); }
+        .ball-r2{ --c-light:#6ee7b7; --c-base:var(--row-n); --c-dark:#054d38; --c-glow:rgba(16,185,129,0.45); }
+        .ball-r3{ --c-light:#93c5fd; --c-base:var(--row-g); --c-dark:#172e6e; --c-glow:rgba(59,130,246,0.45); }
+        .ball-r4{ --c-light:#c4b5fd; --c-base:var(--row-o); --c-dark:#3f1780; --c-glow:rgba(168,85,247,0.45); }
 
         /* --- RIGHT SIDEBAR (Controls) --- */
         .sidebar{
@@ -455,15 +484,17 @@
             width: 100%;
         }
 
-        #btn-rotate-toggle{
-            width: 100%;
+        .toggle-row{ display: flex; gap: 10px; }
+        #btn-rotate-toggle, #btn-ball-toggle{
+            flex: 1;
+            min-width: 0;
             font-size: 0.95rem;
             padding: 12px;
             background: rgba(255,255,255,0.06);
             border-color: rgba(255,255,255,0.14);
             color: var(--muted);
         }
-        #btn-rotate-toggle.active{
+        #btn-rotate-toggle.active, #btn-ball-toggle.active{
             background: rgba(74, 222, 128, 0.18);
             border-color: rgba(74, 222, 128, 0.4);
             color: #4ade80;
@@ -701,7 +732,10 @@
         </div>
 
         <button id="btn-choose-game">CHOOSE GAME</button>
-        <button id="btn-rotate-toggle" class="active">ROTATE: ON</button>
+        <div class="toggle-row">
+            <button id="btn-rotate-toggle" class="active">ROTATE: ON</button>
+            <button id="btn-ball-toggle" class="active" title="3D ball flies out on each call. Its timing follows Pace Delay.">BALL: ON</button>
+        </div>
 
         <div class="delay-control">
             <div class="delay-label">
@@ -1041,17 +1075,20 @@
         //  3D BALL
         //  When a number is called, a ball lifts off its cell, spins to the
         //  middle of the screen, hangs there, then spins back home.
-        //  Tweak the feel here:
+        //  Timing follows the Pace Delay slider, so a ball is always done
+        //  before the next call is allowed:
+        //      1/2 of the pace = the ball sits in the middle
+        //      1/4             = flying out      1/4 = flying back
+        //  Pace 0 = no wait between calls, so no ball.
         // ==================================================================
-        const BALL_HOLD_MS  = 5000;   // how long it stays in the middle
-        const BALL_FLY_MS   = 900;    // each trip (out, and back)
         const BALL_SIZE     = 0.6;    // fraction of the shorter screen side
+        let   ballEnabled   = true;   // the BALL: ON/OFF button
         const ballStage     = document.getElementById('ball-stage');
         const activeBalls   = new Set();
         const reduceMotion  = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         function launchBall(num, cell) {
-            if (!ballStage || !cell || !ballStage.animate) return;
+            if (!ballEnabled || callDelay <= 0 || !ballStage || !cell || !ballStage.animate) return;
 
             // a ball still out from the last call heads home now
             activeBalls.forEach(b => b.sendHome());
@@ -1075,9 +1112,10 @@
             ballStage.appendChild(ball);
             cell.classList.add('lifted');
 
-            const T = BALL_FLY_MS * 2 + BALL_HOLD_MS;
-            const a = BALL_FLY_MS / T;                  // arrives in the middle
-            const b = (BALL_FLY_MS + BALL_HOLD_MS) / T; // starts heading home
+            const T = callDelay * 1000;
+            const a = 0.25;   // arrives in the middle
+            const b = 0.75;   // starts heading home
+            const turns = Math.max(1, Math.min(2, Math.round(T / 2400))) * 360; // 1 turn on quick paces, 2 on slow
             const mid = (a + b) / 2;
             const at = f => a + (b - a) * f;
             const home    = `translate(${dx}px, ${dy}px) scale(${s0})`;
@@ -1098,12 +1136,12 @@
 
             if (!reduceMotion) {
                 anims.push(ball.querySelector('.ball-spin').animate([
-                    { offset: 0,       transform: 'rotateY(-720deg)', easing: 'cubic-bezier(.22,1,.36,1)' },
+                    { offset: 0,       transform: `rotateY(${-turns}deg)`, easing: 'cubic-bezier(.22,1,.36,1)' },
                     { offset: a,       transform: 'rotateY(0deg)',    easing: 'ease-in-out' },
                     { offset: at(.33), transform: 'rotateY(16deg) rotateX(-6deg)', easing: 'ease-in-out' },
                     { offset: at(.66), transform: 'rotateY(-16deg) rotateX(6deg)', easing: 'ease-in-out' },
                     { offset: b,       transform: 'rotateY(0deg)',    easing: 'cubic-bezier(.5,0,.8,.4)' },
-                    { offset: 1,       transform: 'rotateY(720deg)' }
+                    { offset: 1,       transform: `rotateY(${turns}deg)` }
                 ], opts));
             }
 
@@ -1126,6 +1164,14 @@
         function clearBalls() {
             Array.from(activeBalls).forEach(b => b.remove());
         }
+
+        const btnBallToggle = document.getElementById('btn-ball-toggle');
+        btnBallToggle.addEventListener('click', () => {
+            ballEnabled = !ballEnabled;
+            btnBallToggle.textContent = ballEnabled ? 'BALL: ON' : 'BALL: OFF';
+            btnBallToggle.classList.toggle('active', ballEnabled);
+            if (!ballEnabled) clearBalls();
+        });
 
         // --- Call Number Logic ---
         function callNumber() {
