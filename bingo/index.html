@@ -1075,13 +1075,16 @@
         //  3D BALL
         //  When a number is called, a ball lifts off its cell, spins to the
         //  middle of the screen, hangs there, then spins back home.
-        //  Timing follows the Pace Delay slider, so a ball is always done
-        //  before the next call is allowed:
-        //      1/2 of the pace = the ball sits in the middle
-        //      1/4             = flying out      1/4 = flying back
+        //  The ball's whole trip is capped at BALL_MAX_MS and never takes
+        //  more than BALL_PACE_SHARE of the Pace Delay, so the rest of the
+        //  pace is the plain board with the called number lit - time to see
+        //  what was called. Inside the trip:
+        //      1/4 flying out    1/2 sitting in the middle    1/4 flying back
         //  Pace 0 = no wait between calls, so no ball.
         // ==================================================================
-        const BALL_SIZE     = 0.6;    // fraction of the shorter screen side
+        const BALL_MAX_MS     = 6000; // longest the ball is ever out
+        const BALL_PACE_SHARE = 0.6;  // ...and at most this much of the pace
+        const BALL_SIZE       = 0.6;  // fraction of the shorter screen side
         let   ballEnabled   = true;   // the BALL: ON/OFF button
         const ballStage     = document.getElementById('ball-stage');
         const activeBalls   = new Set();
@@ -1112,7 +1115,7 @@
             ballStage.appendChild(ball);
             cell.classList.add('lifted');
 
-            const T = callDelay * 1000;
+            const T = Math.min(BALL_MAX_MS, callDelay * 1000 * BALL_PACE_SHARE);
             const a = 0.25;   // arrives in the middle
             const b = 0.75;   // starts heading home
             const turns = Math.max(1, Math.min(2, Math.round(T / 2400))) * 360; // 1 turn on quick paces, 2 on slow
